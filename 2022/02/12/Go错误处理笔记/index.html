@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yukiouma.github.io","root":"/blog/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":5,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Error概述error在go中是一个接口，定义如下 123type error interface &amp;#123;    Error() string&amp;#125;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go错误处理笔记">
+<meta property="og:url" content="https://yukiouma.github.io/blog/2022/02/12/Go%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Meowthra@ᓚᘏᗢ">
+<meta property="og:description" content="Error概述error在go中是一个接口，定义如下 123type error interface &amp;#123;    Error() string&amp;#125;">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-02-12T10:48:58.000Z">
+<meta property="article:modified_time" content="2022-09-06T15:43:24.086Z">
+<meta property="article:author" content="Yuki">
+<meta property="article:tag" content="Golang">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://yukiouma.github.io/blog/2022/02/12/Go%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E7%AC%94%E8%AE%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Go错误处理笔记 | Meowthra@ᓚᘏᗢ</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Meowthra@ᓚᘏᗢ</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://yukiouma.github.io/blog/2022/02/12/Go%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpg">
+      <meta itemprop="name" content="Yuki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Meowthra@ᓚᘏᗢ">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Go错误处理笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-02-12 10:48:58" itemprop="dateCreated datePublished" datetime="2022-02-12T10:48:58+00:00">2022-02-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-09-06 15:43:24" itemprop="dateModified" datetime="2022-09-06T15:43:24+00:00">2022-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Web%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">Web开发</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Error"><a href="#Error" class="headerlink" title="Error"></a>Error</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>error在go中是一个接口，定义如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> <span class="type">error</span> <span class="keyword">interface</span> &#123;</span><br><span class="line">    Error() <span class="type">string</span></span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<span id="more"></span> 
+
+<p>标准库里的errors包的实现：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> errorString <span class="keyword">struct</span> &#123;</span><br><span class="line">    s <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *errorString)</span></span> Error() <span class="type">string</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> e.s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(text <span class="type">string</span>)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;errorString&#123;text&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="对比panic"><a href="#对比panic" class="headerlink" title="对比panic"></a>对比panic</h2><p>error是函数或者方法主动抛出，希望调用者手动去处理的错误</p>
+<p>panic意味着发生严重错误，程序不应该继续运行下去，并且不能假设调用者来解决panic</p>
+<h2 id="定义Error"><a href="#定义Error" class="headerlink" title="定义Error"></a>定义Error</h2><p>最佳实践为：<code>package name: error information</code></p>
+<p>例如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// from bufio</span></span><br><span class="line"><span class="keyword">var</span> ErrBufferFull = errors.New(<span class="string">&quot;bufio: buffer full&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="Error-Type"><a href="#Error-Type" class="headerlink" title="Error Type"></a>Error Type</h1><h2 id="Sentinel-Error"><a href="#Sentinel-Error" class="headerlink" title="Sentinel Error"></a>Sentinel Error</h2><p>预定义的特定错误</p>
+<ul>
+<li><p>sentinel值是最不灵活的错误处理策略，我们不应该依赖检查error.Error的输出</p>
+</li>
+<li><p>sentinel error会成为你的API的公共部分，会增大API的暴露的表面积（如果接口的表面积越大，则抽象越脆弱），并且会在两个包之间创建依赖，这样就增大了import loop的风险</p>
+</li>
+<li><p>我们应该尽可能避免直接使用sentinel errors</p>
+</li>
+</ul>
+<h2 id="Error-Types"><a href="#Error-Types" class="headerlink" title="Error Types"></a>Error Types</h2><p>使用switch + type断言来判断错误类型，能获取更多的上下文信息</p>
+<p>但是还是没有解决包之间的强耦合的问题</p>
+<p>尽可能避免直接使用error types</p>
+<h2 id="Opaque-Error"><a href="#Opaque-Error" class="headerlink" title="Opaque Error"></a>Opaque Error</h2><p>不透明的错误处理，调用者虽然知道发生了错误，但是无法知道错误的内部，仅仅能知道该次调用成功或者失败了</p>
+<p>其实就是<code>if err != nil &#123;&#125;</code>这种处理方式</p>
+<p>但是在一些情况下，这种二分错误处理是不够的，有时候调用方需要知道具体的错误类型，根据错误类型去进行下一步的操作（例如因为网络原因的错误决定是否要进行重试）</p>
+<p>这种情况下，我们可以断言错误实现了特定的行为，而不是断言错误是特定的类型或者值，比如下面这个例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> myerror <span class="keyword">struct</span> &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(*myerror)</span></span> Error() <span class="type">string</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;my error&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">IsMyError</span><span class="params">(err <span class="type">error</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">    _, ok := err.(myerror)</span><br><span class="line">    <span class="keyword">return</span> ok</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过暴露一个类型断言的方法，来避免直接暴露错误的类型，是比较推荐的实践</p>
+<h1 id="Handling-Error"><a href="#Handling-Error" class="headerlink" title="Handling Error"></a>Handling Error</h1><h2 id="处理位置"><a href="#处理位置" class="headerlink" title="处理位置"></a>处理位置</h2><p>错误处理应尽可能在缩进行中进行</p>
+<p>无错误的正常流程代码，应成为一条直线，而不是缩进的代码。我们处理错误的时候，应尽可能在<code>if err != nil &#123;&#125;</code>的缩进位置去处理错误的情形，避免代码主干逻辑混乱</p>
+<h2 id="减少错误处理"><a href="#减少错误处理" class="headerlink" title="减少错误处理"></a>减少错误处理</h2><p>处理调用结构体内部的方法产生的错误，我们可以在结构体内部包裹一个不对外暴露的错误来讲错误暂存，在结构体的方法前面加上错误判断，如果暂存的错误不为nil，则不做任何处理，直接讲错误返回。这种模式下，调用方则可以减少大量的错误处理。参考下面的例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> errWriter <span class="keyword">struct</span> &#123;</span><br><span class="line">    io.Writer</span><br><span class="line">    err <span class="type">error</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *errWriter)</span></span> Write(buf []<span class="type">byte</span>) (<span class="type">int</span>, <span class="type">error</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> e.err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>, e.err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> n <span class="type">int</span></span><br><span class="line">    n, e.err = e.Writer.Write(buf)</span><br><span class="line">    <span class="keyword">return</span> n, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>原本<code>io.Writer.Write</code>方法每次都会返回一个错误需要调用者来进行处理，上面的例子使用一个结构体将其与一个暂存错误包裹起来，这样调用方仅需要处理最后的那个错误，而不是每写入一次就要处理一次错误，减少了代码量</p>
+<h2 id="Wrap-Error"><a href="#Wrap-Error" class="headerlink" title="Wrap Error"></a>Wrap Error</h2><p>错误的调用堆栈信息对调用者而言十分重要，否则在出现错误的时候调用者就要一层层往下查找调用链，非常的麻烦。日志记录与错误无关且对调试没有帮助的信息应被视为噪音，记录的原因应是某个调用失败了，而日志中包含了它失败的原因，因此，同一个调用的错误信息，应在日志中完整且连续。</p>
+<p>我们在遇到错误的时候，只应该从下面的行为中挑选一种方式去处理：</p>
+<ul>
+<li>将错误抛给上层</li>
+<li>自行对错误进行处理，处理完后该错误则无需再抛给上层（如记录日志）</li>
+</ul>
+<p>目前go的wrap error在标准库的实现做的不是很好，需要依赖第三方的库，常用的为<code>github.com/pkg/errors</code></p>
+<ul>
+<li>能方便我们保留原始的堆栈信息</li>
+<li>同时在不破坏原始错误信息的类型或者值的前提下，附带上一些额外的上下文信息。</li>
+</ul>
+<h2 id="pkg-x2F-errors"><a href="#pkg-x2F-errors" class="headerlink" title="pkg&#x2F;errors"></a>pkg&#x2F;errors</h2><ul>
+<li><p>为错误添加上下文</p>
+<p>在与其它库进行协作的时候，考虑使用<code>errors.Wrap</code>或者<code>errors.Wrapf</code>来保存堆栈信息</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Write</span><span class="params">(w io.Write, buf []<span class="type">byte</span>)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    _, err := w.Write(buf)</span><br><span class="line">    <span class="keyword">return</span> errors.Wrap(err, <span class="string">&quot;write failed&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在最后记录日志错误时，在最顶部的位置，使用<code>%+v</code>把堆栈详情记录下来</p>
+</li>
+<li><p>在应用代码中，使用<code>pkg/errors</code>中的<code>errors.New</code>或者<code>errors.Errorf</code>返回错误</p>
+<p>在<code>pkg/errors</code>中的这两个方法是包含堆栈信息的，而标准库中的<code>errors.New</code>则没有这个功能</p>
+</li>
+<li><p>使用<code>errors.Cause</code>来获取根错误，来进行错误判定或者类型断言</p>
+</li>
+<li><p>如果你的库是基础库，是会被其他人去使用的，此时你应该尽量返回原始错误而不是使用wrap后的错误，我们尽量是在应用级别的代码去使用wrap</p>
+<p>因为在进行wrap一次之后，如果调用方在wrap一次，在打印堆栈信息的时候就会被打印两次，对于调试没有帮助</p>
+</li>
+</ul>
+<h2 id="1-13的error"><a href="#1-13的error" class="headerlink" title="1.13的error"></a>1.13的error</h2><ul>
+<li><p><code>errors.Unwrap</code></p>
+<p>我们可以为自定义的error来实现Unwrap方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *CustomError)</span></span> UnWrap() <span class="type">error</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> e.Err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过该形式为<code>errors.Is</code>和<code>errors.As</code>提供根因检查</p>
+</li>
+<li><p>使用<code>%w</code>来包装错误</p>
+<p>1.13中可以使用<code>fmt.Errorf</code>为错误追加附加信息时，还可以通过<code>%w</code>来讲原始错误的值和类型信息保留，效果与<code>pkg/errors</code>中的wrap类似，但是，它没有保留调用堆栈信息</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> fmt.Errorf(<span class="string">&quot;error happened: %w&quot;</span>, err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><code>errors.Is</code></p>
+<p>使用了<code>%w</code>来包装的错误，可以通过<code>errors.Is</code>来进行错误等值判断</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> errors.Is(err, MyCustomError) &#123;</span><br><span class="line">        <span class="comment">// your action</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>errors.Is</code>方法会按照以下步骤运行：</p>
+<ol>
+<li>该error有无实现了<code>func Is(err, target error)bool</code>方法，若有，则按照用户自己实现的Is方法进行等值判断</li>
+<li>若没有实现Is方法，则不断调用<code>errors.Unwrap</code>来层层获取，直到获取到了错误的根因，再与提供的错误进行判断</li>
+</ol>
+<p>因此我们可以自己对自定义的错误类型的Is方法进行扩展</p>
+</li>
+<li><p><code>errors.As</code></p>
+<p>使用了<code>%w</code>来包装的错误，可以通过<code>errors.As</code>来进行错误类型断言</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> errors.As(err, &amp;MyCustomError&#123;&#125;) &#123;</span><br><span class="line">        <span class="comment">// your action</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>和<code>errors.Is</code>一样，我们也可以自己对自定义的错误类型的As方法进行扩展</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/Golang/" rel="tag"># Golang</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2022/02/11/Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0/" rel="prev" title="Go并发编程笔记">
+      <i class="fa fa-chevron-left"></i> Go并发编程笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2022/04/01/grpc%E7%9A%84%E5%9B%9B%E7%A7%8D%E9%80%9A%E4%BF%A1%E6%A8%A1%E5%BC%8F/" rel="next" title="gRPC的四种通信模式">
+      gRPC的四种通信模式 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Error"><span class="nav-number">1.</span> <span class="nav-text">Error</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E6%AF%94panic"><span class="nav-number">1.2.</span> <span class="nav-text">对比panic</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89Error"><span class="nav-number">1.3.</span> <span class="nav-text">定义Error</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Error-Type"><span class="nav-number">2.</span> <span class="nav-text">Error Type</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Sentinel-Error"><span class="nav-number">2.1.</span> <span class="nav-text">Sentinel Error</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Error-Types"><span class="nav-number">2.2.</span> <span class="nav-text">Error Types</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Opaque-Error"><span class="nav-number">2.3.</span> <span class="nav-text">Opaque Error</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Handling-Error"><span class="nav-number">3.</span> <span class="nav-text">Handling Error</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E4%BD%8D%E7%BD%AE"><span class="nav-number">3.1.</span> <span class="nav-text">处理位置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%8F%E5%B0%91%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">3.2.</span> <span class="nav-text">减少错误处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Wrap-Error"><span class="nav-number">3.3.</span> <span class="nav-text">Wrap Error</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pkg-x2F-errors"><span class="nav-number">3.4.</span> <span class="nav-text">pkg&#x2F;errors</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-13%E7%9A%84error"><span class="nav-number">3.5.</span> <span class="nav-text">1.13的error</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yuki"
+      src="/blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Yuki</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yuki</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/schemes/pisces.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/blog/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

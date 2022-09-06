@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yukiouma.github.io","root":"/blog/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":5,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Goroutine基本概念 轻量，可大量创建，以并发的特性去执行  main函数就是作为goroutine执行的，是主goroutine，当该goroutine退出后，它派生的所有goroutine将被强制退出  OS调度线程到可用的处理器上运行  Go runtime调度goroutine在绑定到单个OS线程的逻辑处理器（一般简称为P）的队列上，最终各个线程到队列中获取一个goroutine去执">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go并发编程笔记">
+<meta property="og:url" content="https://yukiouma.github.io/blog/2022/02/11/Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Meowthra@ᓚᘏᗢ">
+<meta property="og:description" content="Goroutine基本概念 轻量，可大量创建，以并发的特性去执行  main函数就是作为goroutine执行的，是主goroutine，当该goroutine退出后，它派生的所有goroutine将被强制退出  OS调度线程到可用的处理器上运行  Go runtime调度goroutine在绑定到单个OS线程的逻辑处理器（一般简称为P）的队列上，最终各个线程到队列中获取一个goroutine去执">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-02-11T22:24:47.000Z">
+<meta property="article:modified_time" content="2022-09-06T15:43:24.086Z">
+<meta property="article:author" content="Yuki">
+<meta property="article:tag" content="Golang">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://yukiouma.github.io/blog/2022/02/11/Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Go并发编程笔记 | Meowthra@ᓚᘏᗢ</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Meowthra@ᓚᘏᗢ</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://yukiouma.github.io/blog/2022/02/11/Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpg">
+      <meta itemprop="name" content="Yuki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Meowthra@ᓚᘏᗢ">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Go并发编程笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-02-11 22:24:47" itemprop="dateCreated datePublished" datetime="2022-02-11T22:24:47+00:00">2022-02-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-09-06 15:43:24" itemprop="dateModified" datetime="2022-09-06T15:43:24+00:00">2022-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Web%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">Web开发</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Goroutine"><a href="#Goroutine" class="headerlink" title="Goroutine"></a>Goroutine</h1><h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><ul>
+<li><p>轻量，可大量创建，以并发的特性去执行</p>
+</li>
+<li><p>main函数就是作为goroutine执行的，是主goroutine，当该goroutine退出后，它派生的所有goroutine将被强制退出</p>
+</li>
+<li><p>OS调度线程到可用的处理器上运行</p>
+</li>
+<li><p>Go runtime调度goroutine在绑定到单个OS线程的逻辑处理器（一般简称为P）的队列上，最终各个线程到队列中获取一个goroutine去执行</p>
+</li>
+</ul>
+<span id="more"></span>  
+
+<blockquote>
+<p>补充：并发与并行的概念</p>
+<ul>
+<li>并发：可以处理多个任务，无需等待上一个任务处理完在执行下一个任务，但不需要是同时处理</li>
+<li>并行：不同的任务在不同的CPU核心上同时进行处理</li>
+</ul>
+</blockquote>
+<h2 id="基本原则"><a href="#基本原则" class="headerlink" title="基本原则"></a>基本原则</h2><ul>
+<li><p>让方法的调用者决定是否并发</p>
+<p>调用者来决定是否并发，意味着调用者可以随时销毁该goroutine，减少内存泄漏的问题</p>
+</li>
+<li><p>永远不要开启一个你不知道什么时候会结束的goroutine</p>
+<ul>
+<li>开启的goroutine什么时候会结束</li>
+<li>你有没有办法让他结束</li>
+</ul>
+</li>
+<li><p>数据的发送者才可以决定channel什么时候可以关闭</p>
+</li>
+<li><p>要注意channel关闭不能有二义性</p>
+<p>要区分channel关闭是由于数据被消费完成了，还是因为出现了错误导致的channel关闭</p>
+</li>
+</ul>
+<h2 id="并发例子"><a href="#并发例子" class="headerlink" title="并发例子"></a>并发例子</h2><ul>
+<li><p>内存泄露</p>
+<p>由于unbuffered channel里的数据没有人去获取而导致goroutine被阻塞</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">ch := <span class="built_in">make</span>(<span class="keyword">chan</span> result)</span><br><span class="line"></span><br><span class="line">ctx, cancel := context.WithTimeout(context.Background(), time.Duration(<span class="number">2</span>))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(term <span class="type">string</span>)</span></span> (<span class="type">string</span>, <span class="type">error</span>) &#123;</span><br><span class="line">    time.sleep(<span class="number">3</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;test&quot;</span>, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">    record, err := search(term)</span><br><span class="line">    ch &lt;- result&#123;record, err&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">    	<span class="keyword">return</span> errors.New(<span class="string">&quot;timeout&quot;</span>)</span><br><span class="line">    <span class="keyword">case</span> result := &lt;-ch:</span><br><span class="line">        <span class="comment">// TODO</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的代码，由于创建的channel是unbuffered channel，由于context超时比search函数的运行时间短，因此select会因为超时直接退出。当main goroutine还在运行时，上面的goroutine就会因为channel的值没有被获取和一直被阻塞无法被销毁，造成内存写漏</p>
+<p>改进办法：</p>
+<p>把channel改为带缓存的channel即可</p>
+</li>
+<li><p>埋点上报事件丢失</p>
+<p>埋点上报事件相对业务而言，一般属于旁路逻辑，为了避免阻塞主干业务逻辑，一般会开启一个goroutine单独去执行，如下面的例子所示：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a *App)</span></span> Handle(w http.ResponseWriter, r *http.Request) &#123;</span><br><span class="line">    w.WriteHeader(http.StatusOK)</span><br><span class="line">    <span class="keyword">go</span> a.Track.Event(<span class="string">&quot;this event&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>问题分析：</p>
+<p>上报事件的goroutine的生命周期没有被管理起来，因此，当应用的main goroutine因意外停止时，这些正在上报的goroutine可能会被强行直接退出，导致上报事件的丢失</p>
+<p>改进：</p>
+<ol>
+<li><p>使用WaitGroup，保证上报事件全部结束之后在关闭</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Tracker <span class="keyword">struct</span> &#123;</span><br><span class="line">    wg sync.WaitGroup</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *Tracker)</span></span> Event(data <span class="type">string</span>) &#123;</span><br><span class="line">    t.wg.Add(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">defer</span> t.wg.Done()</span><br><span class="line">        <span class="comment">// 上报事件逻辑</span></span><br><span class="line">    &#125;()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *Tracker)</span></span> Shutdown() &#123;</span><br><span class="line">    t.wg.Wait()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> a App</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 先等待应用服务全部终止</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 保证等待所有的上报事件的goroutine全部结束后再退出main goroutine</span></span><br><span class="line">    a.Track.Shutdown()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个做法可以保证所有上报事件都结束之后再退出进程，但还存在以下问题</p>
+<ul>
+<li>会大量创建goroutine，其实不是比较理想的工作模型</li>
+<li>其次，如果上报时间特别长，有可能会导致对外的服务虽然停止了，但是main函数却永远都无法退出</li>
+</ul>
+</li>
+<li><p>使用channel，只是启动少量的goroutine去消费channel里面的数据，并使用context的超时功能，解决方案1中可能无法退出main函数的问题</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Tracker <span class="keyword">struct</span> &#123;</span><br><span class="line">    ch <span class="keyword">chan</span> <span class="type">string</span></span><br><span class="line">    stop <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewTracker</span><span class="params">()</span></span> *Tracker &#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;Tracker&#123;</span><br><span class="line">        ch: <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">string</span>, <span class="number">10</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *Tracker)</span></span> Event(ctx context.Context, data <span class="type">string</span>) <span class="type">error</span> &#123;</span><br><span class="line">    <span class="keyword">select</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> t.ch &lt;- data:</span><br><span class="line">        	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        <span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">        	<span class="keyword">return</span> ctx.Err()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *Tracker)</span></span> Run() &#123;</span><br><span class="line">    <span class="keyword">for</span> data := <span class="keyword">range</span> t.ch &#123;</span><br><span class="line">        <span class="comment">// 上报逻辑</span></span><br><span class="line">	&#125;</span><br><span class="line">    t.stop &lt;- <span class="keyword">struct</span>&#123;&#125;&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *Tracker)</span></span> Shutdown(ctx context.Context) &#123;</span><br><span class="line">    <span class="built_in">close</span>(t.ch)</span><br><span class="line">    <span class="keyword">select</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> &lt;- t.stop:</span><br><span class="line">        <span class="keyword">case</span> &lt;- ctx.Done():</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    tr := NewTracker()</span><br><span class="line">    ctx := context.Background()</span><br><span class="line">    <span class="keyword">go</span> tr.Run()</span><br><span class="line">    <span class="comment">// 对外服务的上报事件</span></span><br><span class="line">    _ = tr.Event(ctx, <span class="string">&quot;test1&quot;</span>)</span><br><span class="line">    _ = tr.Event(ctx, <span class="string">&quot;test2&quot;</span>)</span><br><span class="line">    _ = tr.Event(ctx, <span class="string">&quot;test3&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    ctx, cancel := context.WithDeadline(ctx, time.Now().Add(<span class="number">5</span>*time.Second))</span><br><span class="line">    <span class="keyword">defer</span> cancel()</span><br><span class="line">    tr.Shutdown(ctx)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的改进方法，使用了两个channel：</p>
+<ul>
+<li><p>一个buffered channel来负责接受上报数据，然后启用一个goroutine不断消费该channel里面堆积的上报数据</p>
+</li>
+<li><p>一个unbuffered channel负责等待上报组件被停止与退出</p>
+<p>通过这两个channel，避免了每个上报事件都要单独创建goroutine这种大量创建goroutine的事件。同时主动管理了消费数据的goroutine，使得我们可以掌握该goroutine的生命周期</p>
+</li>
+<li><p>使用一个超时context来保证当对外服务停止时，上报事件的服务可以在指定时间内退出</p>
+</li>
+</ul>
+<p>流程分析：</p>
+<ul>
+<li>启动一个消费channel数据的goroutine(<code>go tr.Run()</code>)</li>
+<li>产生消费数据</li>
+<li>当应用停止时，创建一个超时context，使用该context来调用tracker的停止方法</li>
+<li>关闭tracker的方法中关闭channel通道，并向stop通道发送一个信号，此时，消费数据的方法已经被正常退出</li>
+<li>当收到stop通道的信号或者context超时，停止tracker的方法也可以被正常退出</li>
+<li>main函数退出</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="应用生命周期"><a href="#应用生命周期" class="headerlink" title="应用生命周期"></a>应用生命周期</h2><p>同时开启多个监听不同端口的应用时，我们应该做到，当一个应用因为意外退出时，其它应用应该同时被终止，以便开发者能及时知道应用出现问题</p>
+<p>对于应用级别的服务管理，一般会抽象一个application lifecycle的管理，方便服务启动与停止，一般包括如下内容：</p>
+<ul>
+<li>应用信息的注册</li>
+<li>服务的启动&#x2F;停止</li>
+<li>信号注册</li>
+<li>服务注册</li>
+</ul>
+<h1 id="Memory-Model"><a href="#Memory-Model" class="headerlink" title="Memory Model"></a>Memory Model</h1><p><a target="_blank" rel="noopener" href="https://go.dev/ref/mem">Go内存模型官方指南</a></p>
+<ul>
+<li><p>如何保证一个goroutine中看到另一个goroutine修改了变量的值？</p>
+<p>如果程序中修改数据时有其它的goroutine同时读取，那么必须将读取串行化，请使用channel或者其它的同步原语，如sync或者sync&#x2F;atomic来保护数据</p>
+</li>
+</ul>
+<h2 id="Happen-Before"><a href="#Happen-Before" class="headerlink" title="Happen-Before"></a>Happen-Before</h2><p>在一个goroutine中，读写一定是按照程序中的顺序来执行的。即编译器和处理器只有在不会改变这个goroutine的行为时才可以修改读写的执行顺序，这种现象称为重排（memory reordering）。</p>
+<p>  由于重排，不同的goroutine可能会看到不同的执行顺序，例如：</p>
+<blockquote>
+<p>goroutine 1: 执行了a &#x3D; 1; b &#x3D; 2</p>
+</blockquote>
+<p>  由于a和b之间没有相互影响，因此对于该goroutine来说，先执行b &#x3D; 2还是a &#x3D; 1都是被允许的，因此，我们无法预测它们的执行顺序</p>
+<p>  如果此时我们的goroutine b中有某些逻辑，是强依赖先更新a再更新b的这种逻辑的话，就有可能会出错，因为重排，它可能会看到b比a先更新</p>
+<blockquote>
+<p>定义一个变量v，一个读操作r，一个写操作w</p>
+<p>当下面条件满足时，对v的r是<em><strong>被允许</strong></em>看到对v的w：</p>
+<ul>
+<li><p>r不先行发生于w</p>
+</li>
+<li><p>在w后r前没有其它的对v的写操作</p>
+</li>
+</ul>
+<p>当下列条件满足时，<em><strong>保证</strong></em>v的r看到其w：</p>
+<ul>
+<li><p>w先行发生于r</p>
+</li>
+<li><p>其它对v的写操作一定要在w前，或者r后</p>
+</li>
+</ul>
+<p>对于变量v的零值初始化在内存模型中表现得与写操作相同</p>
+<p>对大于single machine word的变量的读写操作表现得像以<em><strong>不确定顺序对多个single machine word变量</strong></em>的操作</p>
+<blockquote>
+<p>什么是Single Machine World？<strong>中文翻译过来就是机器字。机器字的概念就是系统单次能处理的最小的数据容量。比如64位的操作系统，这就意味着我的机器字是8Byte,也就是说单次能处理的最大的数据容量是</strong>8Byte，可以利用这点来进行原子赋值操作。</p>
+</blockquote>
+</blockquote>
+<h2 id="Memory-Reordering"><a href="#Memory-Reordering" class="headerlink" title="Memory Reordering"></a>Memory Reordering</h2><p>在不改变用户语义的前提下，当高级语言被编译为汇编代码的时候，会进行各种各样的优化，有处理器重排和编译器重排等，比如</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> x <span class="type">int</span></span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">100</span>; i++ &#123;</span><br><span class="line">    x = <span class="number">1</span></span><br><span class="line">    <span class="built_in">println</span>(x)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面这段代码，按用户编写的逻辑需要做100次x的相同的赋值操作</p>
+<p>编译器有可能会将其优化成下面的样子</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">x := <span class="number">1</span></span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">100</span>; i++ &#123;</span><br><span class="line">    <span class="built_in">println</span>(x)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为x每次赋值都是相同的，因此编译器会处于性能优化的考虑将x的相同赋值行为从循环结构中提取出来，因为不会影响原语义。</p>
+<p>在多核心的场景下，我们是不能轻易判断两个程序是等价的</p>
+<ul>
+<li><p>每个CPU核心都有自己的不同级别的cache来抚平内存与磁盘读写效率的差异</p>
+<p>如果没有锁机制的保护的话，一个核心更新一个变量的时候，可能结果只是停留在某一个级别的缓存当中，当另一个核心需要使用到同一个变量的时候，可能会因赋值结果还在核心缓存中没有及时刷盘落入内存中，导致读不到最新的值，从而引发不可预期的结果</p>
+</li>
+</ul>
+<h1 id="Package-Sync"><a href="#Package-Sync" class="headerlink" title="Package Sync"></a>Package Sync</h1><h2 id="Data-Race"><a href="#Data-Race" class="headerlink" title="Data Race"></a>Data Race</h2><p>data race是两个及以上的goroutine访问同一个资源（变量或者数据结构），并尝试对该资源进行读写儿不考虑其它的goroutine</p>
+<blockquote>
+<p>go自带的data race检测方案：race detector</p>
+<p>go build -race</p>
+<p>go test -race</p>
+<p>注意，使用race detecto时，当出现了data race会让进程停止，不建议生产环境使用</p>
+</blockquote>
+<p>我们要尽量避免对go原生的一些数据结构（map, slice, interface）去做假设</p>
+<ul>
+<li><p>interface的底层由两个machine word的值组成：type和data</p>
+<p>当我们在data race的情况下给interface赋值，有可能会导致一种情况，type被更改了，但是里面指向的data还没有进行更改这种以外状况，甚至有可能引发panic</p>
+</li>
+</ul>
+<h2 id="sync-atomic"><a href="#sync-atomic" class="headerlink" title="sync.atomic"></a>sync.atomic</h2><p>在读多写少的场景，特别是读特别多的场景，atomic.Value的性能甚至比读写锁的性能更好</p>
+<p>不过主要还是需要进行benchmark进行测试来决定使用读写锁还是atomic.Value</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go <span class="built_in">test</span> -bench=.</span><br></pre></td></tr></table></figure>
+
+<p>atomic.Value的实现原理使用的是COW(copy-on-write)</p>
+<h3 id="COW"><a href="#COW" class="headerlink" title="COW"></a>COW</h3><p>copy-on-write，写时拷贝，是计算机程序设计领域的一种优化策略，其核心思想是，当有多个调用者都需要请求相同资源时，一开始资源只会有一份，多个调用者共同读取这一份资源，当某个调用者需要修改数据的时候，才会分配一块内存，将数据拷贝过去，供这个调用者使用，而其他调用者依然还是读取最原始的那份数据。每次有调用者需要修改数据时，就会重复一次拷贝流程，供调用者修改使用。</p>
+<p><a target="_blank" rel="noopener" href="https://cllc.fun/2020/03/16/linux-copy-on-write/">Copy-On-Write原理简述</a></p>
+<blockquote>
+<p>在fork()调用之后，只会给子进程分配虚拟内存地址，而父子进程的虚拟内存地址虽然不同，但是映射到物理内存上都是同一块区域，子进程的代码段、数据段、堆栈都是指向父进程的物理空间。</p>
+<p>并且此时父进程中所有对应的内存页都会被标记为只读，父子进程都可以正常读取内存数据，当其中某个进程需要更新数据时，检测到内存页是read-only的，内存管理单元（MMU）便会抛出一个页面异常中断，（page-fault），在处理异常时，内核便会把触发异常的内存页拷贝一份（其他内存页还是共享的一份），让父子进程各自持有一份。</p>
+<p>这样做的好处不言而喻，能极大的提高fork操作时的效率，但是坏处是，如果fork之后，两个进程各自频繁的更新数据，则会导致大量的分页错误，这样就得不偿失了。</p>
+</blockquote>
+<p>Copy-On-Write是redis的BGSAVE指令实现的基本原理</p>
+<p>Copy-On-Write在服务降级以及本地缓存的场景也会经常用到</p>
+<h2 id="Mutex"><a href="#Mutex" class="headerlink" title="Mutex"></a>Mutex</h2><p>在Go1.8版本之前</p>
+<blockquote>
+<p>假设有两个goroutine，分别成为g1和g2</p>
+<p>g1采取先上锁，然会休眠100毫秒，再释放锁的模式</p>
+<p>g2采取先休眠100毫秒，再上锁，然后马上释放锁的模式</p>
+<p>测是两个锁进行竞争的时候，g1获取到锁的概率，远远大于g2</p>
+</blockquote>
+<p>造成上面这个案例的结果的原因是：</p>
+<blockquote>
+<p>g1在获取到并持有锁时，g2会被放入等待队列中，等待g1释放锁后，go的scheduler将g2标记为可运行，然后再重新去竞争锁。但是，go的scheduler去标记（唤醒）g2的时候，很可能锁又再次被g1持有了，然后g2不得不再次回到等待队列等待scheduler再次唤醒，因此造成g2比g1难获得锁的情况</p>
+</blockquote>
+<h3 id="实现模型"><a href="#实现模型" class="headerlink" title="实现模型"></a>实现模型</h3><ul>
+<li><p>Barging</p>
+<p>这种模式吞吐会比较高，当锁被释放时，会唤醒第一个等待者，直接把锁给第一个等待者或者给第一个请求锁的人</p>
+</li>
+<li><p>Handsoff</p>
+<p>当锁释放的时候，锁会一直持有知道第一个等待者准备好获取锁。这种模式吞吐会下降，但是goroutine拿到锁的概率相对公平</p>
+</li>
+<li><p>Spinning</p>
+<p>自旋，再等待队列为空或者应用程重度使用锁的时候，效果较好</p>
+</li>
+<li><p>Go1.8以后采用的是Barging和Spining的结合实现</p>
+<ul>
+<li>当同时满足下列条件时，goroutine将自旋几次，自旋后，goroutine park<ul>
+<li>本地队列为空</li>
+<li>P的数量要大于1</li>
+</ul>
+</li>
+<li>在Go1.9后，添加了一个饥饿模式来解决获取锁的公平问题。所有等待锁时间超过一毫秒的goroutine会被标记为饥饿，当被标记为饥饿状态时，unlock方法会使用handsoff模式将锁直接交给第一个等待者。在饥饿模式下，自旋会被停用，因为传入的goroutines将没有机会获取为下一个等待者保留的锁</li>
+</ul>
+</li>
+</ul>
+<h2 id="errgroup"><a href="#errgroup" class="headerlink" title="errgroup"></a>errgroup</h2><p><a target="_blank" rel="noopener" href="https://pkg.go.dev/golang.org/x/sync/errgroup">errgroup</a>的核心原里是利用sync.Waitgroup管理并执行goroutine，非常适合以下场景</p>
+<ul>
+<li>并行工作流</li>
+<li>错误处理与优雅降级</li>
+<li>context传播与取消</li>
+<li>利用局部变量+闭包</li>
+</ul>
+<h3 id="sync-Pool"><a href="#sync-Pool" class="headerlink" title="sync.Pool"></a>sync.Pool</h3><p>sync.Pool的场景是用来保存和复用临时对象，以减少内存分配，降低GC压力，适合Request-Driven场景（指请求一个数据的时候，如果pool中没有数据，可以在获取或者计算完数据结果后放入pool中，下一次调用时，如果pool中的数据符合需求，可直接提出来使用，避免再次获取或者运算，提高性能）</p>
+<p>因为sync.Pool中防止的对象，会说不准什么时候被回收掉（1.13后引入victim cache，但是最多只会保留两轮GC）</p>
+<p>我们使用Pool的时候注意不应该放带状态的，可以被随时回收不造成不良影响的对象</p>
+<h1 id="Package-Channel"><a href="#Package-Channel" class="headerlink" title="Package Channel"></a>Package Channel</h1><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>channel是一种类型安全的消息队列，充当goroutine之间的管道，将通过它同步的进行任意资源的交换。</p>
+<p>channel分为：</p>
+<ul>
+<li><p>unbuffered channel</p>
+<ol>
+<li><p>无缓冲通道，发送者需要等接收者接受值才会解除阻塞，意味着发送者解除阻塞了，接收者就一定接收到了数据，但是可能会产生时间延迟的代价</p>
+</li>
+<li><p>receiver先于sender发生</p>
+</li>
+<li><p>适合同步通信的场景</p>
+</li>
+</ol>
+</li>
+<li><p>buffered channel</p>
+<ol>
+<li><p>发送者只有在通道被填满之后才会产生阻塞，但是不保证数据一定到达接收者。buffer越大，越难以保证数据到达</p>
+</li>
+<li><p>sender先于receiver发生</p>
+</li>
+<li><p>适合异步通信场景</p>
+</li>
+</ol>
+</li>
+</ul>
+<p>创建channel时定义缓冲区的大小会极大地影响程序性能</p>
+<p>我们要注意，一定要保证没有人往channel发送消息了才能close</p>
+<h2 id="常用的并发Pattern"><a href="#常用的并发Pattern" class="headerlink" title="常用的并发Pattern"></a>常用的并发Pattern</h2><ul>
+<li>Timing out</li>
+<li>Moving on</li>
+<li>Pipeline</li>
+<li>Fan-out, Fan-in</li>
+<li>Cancellation</li>
+<li>Context</li>
+</ul>
+<p>reference:</p>
+<p><a target="_blank" rel="noopener" href="https://go.dev/blog/concurrency-timeouts">Go Concurrency Patterns: Timing out, moving on</a></p>
+<p><a target="_blank" rel="noopener" href="https://go.dev/blog/pipelines">Go Concurrency Patterns: Pipelines and cancellation</a></p>
+<h2 id="Context"><a href="#Context" class="headerlink" title="Context"></a>Context</h2><p>可以使得跨API边界的请求范围元数据，取消信号和截至时间很容易传递到处理请求设计的所有goroutine中（显式传递）</p>
+<p>当一个请求被取消或者超时时，处理该请求的goroutine都可以被快速退出（fail fast）来迅速释放资源</p>
+<h3 id="集成context到API"><a href="#集成context到API" class="headerlink" title="集成context到API"></a>集成context到API</h3><p>将context集成到api时，要注意他的作用域应该是请求级别的</p>
+<ul>
+<li><p>首个参数为context</p>
+</li>
+<li><p>一个请求结构体中的一个可选的配置</p>
+<p>这里要注意的是，我们一定要明确某个结构体是与请求相关的时候，才将context作为其字段放入，如http的Request结构体。但如果一个结构体与请求无关时，我们要尽可能避免挂载context对象</p>
+</li>
+</ul>
+<p>目前比较好的实践是，context应该在整个应用程序中流动，贯穿所有代码</p>
+<h3 id="WithValue"><a href="#WithValue" class="headerlink" title="WithValue"></a>WithValue</h3><p>每次调用context.WithValue都会新创建一个context。当尝试从一个context中获取一个value时，会先判定该key在当前context的key是否相等，否在会递归调用父节点的context知道key匹配</p>
+<p>value context的定义如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> valueCtx <span class="keyword">struct</span> &#123;</span><br><span class="line">    Context</span><br><span class="line">    key, val <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是：valueCtx的key，我们应该使用一个自定义的类型去替代Go中的基本类型，如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 假设我们想使用string作为key的时候</span></span><br><span class="line"><span class="keyword">type</span> KeyString <span class="type">string</span></span><br><span class="line">ctx := context.WithValue(context.Background(), KeyString(<span class="string">&quot;myKey&quot;</span>), <span class="string">&quot;myValue&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以看到，每次产生的context是通过链表的形式管理起来的，因此，我们应该尽量避免在context中多次挂载value（链表查询的时间复杂度为O(n)），当要挂载较多的值时，尽可能一次性整合到一个数据结构中再挂载上去。</p>
+<p>挂载上去的应该是请求级别的一些元数据</p>
+<p>如果要修改context里面的value，一定要采取copy on write的思路，先深拷贝一份数据出来，再新生成一个context，再把新的value放入新的context，再传入下一个调用，下面是一个较好的实践</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> KeyString <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">changeCtx</span><span class="params">(ctx context.Context)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 假设原来的context是一个valueCtx，里面有一个kv是a=100</span></span><br><span class="line">    <span class="comment">// 现在我们想把a中的值加上100，然后再传递给下一个函数doSomething</span></span><br><span class="line">    key := KeyString(<span class="string">&quot;a&quot;</span>)</span><br><span class="line">    orginA := ctx.Value(key)</span><br><span class="line">    <span class="keyword">if</span> orginA != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> value, ok := orginA.(<span class="type">int</span>);ok &#123;</span><br><span class="line">        	ctx = context.WithValue(ctx, key, value + <span class="number">100</span>)</span><br><span class="line">            doSomething(ctx)</span><br><span class="line">		&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样子做的目的是，不会污染了同时调用了同一个context的其它函数，避免data race。context本质上只是用来传递信息的，它不应该被使用来作为控制流</p>
+<p>在替换context的时候，一定要用下面方法中的一种：</p>
+<ul>
+<li>WithCancel</li>
+<li>WithDeadline</li>
+<li>WithTimeout</li>
+<li>WithValue</li>
+</ul>
+<h3 id="context-cancel"><a href="#context-cancel" class="headerlink" title="context cancel"></a>context cancel</h3><p>当一个context被取消时，所有从他派生的context（链表上的context被递归取消）也会被取消，从而让整个调用链中所有监听cancel的goroutine推出</p>
+<p>所有被阻塞，或者长时间的操作，应该考虑可以被调用者随时cancel，实现超时控制，一个好的实践如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    ctx, cancel := context.WithDeadLine(context.Background(), time.Now().Add(time.Second))</span><br><span class="line">    <span class="comment">// 既是有超时控制，我们也应该记得在函数退出的时候调用这个cancel方法</span></span><br><span class="line">    <span class="keyword">defer</span> cancel()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">select</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> &lt;-time.After(<span class="number">2</span> * time.Second):</span><br><span class="line">        <span class="keyword">case</span> &lt;- ctx.Done():</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/Golang/" rel="tag"># Golang</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2022/01/12/%E5%A6%82%E4%BD%95%E5%8F%91%E5%B8%83Go-Module/" rel="prev" title="如何发布Go Module">
+      <i class="fa fa-chevron-left"></i> 如何发布Go Module
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2022/02/12/Go%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E7%AC%94%E8%AE%B0/" rel="next" title="Go错误处理笔记">
+      Go错误处理笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Goroutine"><span class="nav-number">1.</span> <span class="nav-text">Goroutine</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E5%88%99"><span class="nav-number">1.2.</span> <span class="nav-text">基本原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E4%BE%8B%E5%AD%90"><span class="nav-number">1.3.</span> <span class="nav-text">并发例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">1.4.</span> <span class="nav-text">应用生命周期</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Memory-Model"><span class="nav-number">2.</span> <span class="nav-text">Memory Model</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Happen-Before"><span class="nav-number">2.1.</span> <span class="nav-text">Happen-Before</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Memory-Reordering"><span class="nav-number">2.2.</span> <span class="nav-text">Memory Reordering</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Package-Sync"><span class="nav-number">3.</span> <span class="nav-text">Package Sync</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-Race"><span class="nav-number">3.1.</span> <span class="nav-text">Data Race</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sync-atomic"><span class="nav-number">3.2.</span> <span class="nav-text">sync.atomic</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#COW"><span class="nav-number">3.2.1.</span> <span class="nav-text">COW</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mutex"><span class="nav-number">3.3.</span> <span class="nav-text">Mutex</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.3.1.</span> <span class="nav-text">实现模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#errgroup"><span class="nav-number">3.4.</span> <span class="nav-text">errgroup</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sync-Pool"><span class="nav-number">3.4.1.</span> <span class="nav-text">sync.Pool</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Package-Channel"><span class="nav-number">4.</span> <span class="nav-text">Package Channel</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">4.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B9%B6%E5%8F%91Pattern"><span class="nav-number">4.2.</span> <span class="nav-text">常用的并发Pattern</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Context"><span class="nav-number">4.3.</span> <span class="nav-text">Context</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E6%88%90context%E5%88%B0API"><span class="nav-number">4.3.1.</span> <span class="nav-text">集成context到API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WithValue"><span class="nav-number">4.3.2.</span> <span class="nav-text">WithValue</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#context-cancel"><span class="nav-number">4.3.3.</span> <span class="nav-text">context cancel</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yuki"
+      src="/blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Yuki</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yuki</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/schemes/pisces.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/blog/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

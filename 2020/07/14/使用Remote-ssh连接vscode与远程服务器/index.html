@@ -20,15 +20,20 @@
     var CONFIG = {"hostname":"yukiouma.github.io","root":"/blog/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":5,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Meowthra@ᓚᘏᗢ">
-<meta property="og:url" content="https://yukiouma.github.io/blog/archives/2022/index.html">
+  <meta name="description" content="环境配置 宿主机：Windows10  服务器：CentOS 7  VsCode：1.47.0  Remote-ssh：0.51.0">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Remote-ssh连接vscode与远程服务器">
+<meta property="og:url" content="https://yukiouma.github.io/blog/2020/07/14/%E4%BD%BF%E7%94%A8Remote-ssh%E8%BF%9E%E6%8E%A5vscode%E4%B8%8E%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8/index.html">
 <meta property="og:site_name" content="Meowthra@ᓚᘏᗢ">
+<meta property="og:description" content="环境配置 宿主机：Windows10  服务器：CentOS 7  VsCode：1.47.0  Remote-ssh：0.51.0">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-07-14T22:42:40.000Z">
+<meta property="article:modified_time" content="2022-09-06T15:43:24.106Z">
 <meta property="article:author" content="Yuki">
+<meta property="article:tag" content="VS Code">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://yukiouma.github.io/blog/archives/2022/">
+<link rel="canonical" href="https://yukiouma.github.io/blog/2020/07/14/%E4%BD%BF%E7%94%A8Remote-ssh%E8%BF%9E%E6%8E%A5vscode%E4%B8%8E%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8/">
 
 
 <script id="page-configurations">
@@ -36,12 +41,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'en'
   };
 </script>
 
-  <title>Archive | Meowthra@ᓚᘏᗢ</title>
+  <title>使用Remote-ssh连接vscode与远程服务器 | Meowthra@ᓚᘏᗢ</title>
   
 
 
@@ -174,150 +179,135 @@
         <div class="content-wrap">
           
 
-          <div class="content archive">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">Um..! 30 posts in total. Keep on posting.</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://yukiouma.github.io/blog/2020/07/14/%E4%BD%BF%E7%94%A8Remote-ssh%E8%BF%9E%E6%8E%A5vscode%E4%B8%8E%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpg">
+      <meta itemprop="name" content="Yuki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Meowthra@ᓚᘏᗢ">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用Remote-ssh连接vscode与远程服务器
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-07-14 22:42:40" itemprop="dateCreated datePublished" datetime="2020-07-14T22:42:40+00:00">2020-07-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-09-06 15:43:24" itemprop="dateModified" datetime="2022-09-06T15:43:24+00:00">2022-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/%E5%85%B6%E5%AE%83/" itemprop="url" rel="index"><span itemprop="name">其它</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2022</span>
-    </div>
+        <h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><ul>
+<li><p>宿主机：Windows10</p>
+</li>
+<li><p>服务器：CentOS 7</p>
+</li>
+<li><p>VsCode：1.47.0</p>
+</li>
+<li><p>Remote-ssh：0.51.0</p>
+</li>
+</ul>
+<span id="more"></span>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+<h2 id="连接步骤"><a href="#连接步骤" class="headerlink" title="连接步骤"></a>连接步骤</h2><ol>
+<li><p>在宿主机上，安装OpenSSH</p>
+</li>
+<li><p>Git bash中运行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096 - &quot;xxxx&quot; # 请将xxxx替换成自己定义的内容，一般习惯为自己邮箱</span><br></pre></td></tr></table></figure>
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2022-05-24T21:24:47+00:00"
-              content="2022-05-24">
-          05-24
-        </time>
-      </div>
+<p>之后可以一路回车确定即可，完成后在宿主机的目录<code>C:\Users\username\.ssh</code>下会看到生成了<code>id_rsa</code>与<code>id_rsa.pub</code>两个文件</p>
+</li>
+<li><p>将<code>id_rsa.pub</code>上传至服务器的<code>~/.ssh/</code>目录下，并更名为<code>authorized_keys</code></p>
+</li>
+<li><p>在宿主机的<code>C:\Users\username\.ssh</code>中配置文件<code>config</code>，内容如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Host myServer	# 服务器名</span><br><span class="line">	HostName 192.168.1.233 #服务器ip</span><br><span class="line">	User root	# 登录用户名</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在VsCode中安装插件Remote-ssh</p>
+</li>
+<li><p>在VsCode的左侧图标中找到Remote Explore，点击后会看到我们刚刚在在文件<code>config</code>中配置的服务器名，右键选择连接至该服务器，在左下角看到SSH: &lt;服务器名称&gt;即表示连接成功</p>
+</li>
+</ol>
+<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><ol>
+<li><p>今天不知道为啥突然打开虚拟机之后VsCode突然远程连接不上了，但是Xshell是能正常连接的，然后具体报错的内容为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">failed to create hard link &#x27;/home/*/.vscode-server/bin/*/*&#x27; file exists</span><br></pre></td></tr></table></figure>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/blog/2022/05/24/Docker%E9%83%A8%E7%BD%B2RedisCluster/" itemprop="url">
-            <span itemprop="name">Docker部署RedisCluster</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2022-05-24T21:22:51+00:00"
-              content="2022-05-24">
-          05-24
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/blog/2022/05/24/Docker%E9%83%A8%E7%BD%B2Kafka%E9%9B%86%E7%BE%A4/" itemprop="url">
-            <span itemprop="name">Docker部署Kafka集群</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2022-04-01T07:44:39+00:00"
-              content="2022-04-01">
-          04-01
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/blog/2022/04/01/grpc%E7%9A%84%E5%9B%9B%E7%A7%8D%E9%80%9A%E4%BF%A1%E6%A8%A1%E5%BC%8F/" itemprop="url">
-            <span itemprop="name">gRPC的四种通信模式</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2022-02-12T10:48:58+00:00"
-              content="2022-02-12">
-          02-12
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/blog/2022/02/12/Go%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E7%AC%94%E8%AE%B0/" itemprop="url">
-            <span itemprop="name">Go错误处理笔记</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2022-02-11T22:24:47+00:00"
-              content="2022-02-11">
-          02-11
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/blog/2022/02/11/Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0/" itemprop="url">
-            <span itemprop="name">Go并发编程笔记</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2022-01-12T22:29:15+00:00"
-              content="2022-01-12">
-          01-12
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/blog/2022/01/12/%E5%A6%82%E4%BD%95%E5%8F%91%E5%B8%83Go-Module/" itemprop="url">
-            <span itemprop="name">如何发布Go Module</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
+<p>搜索了一下，发现以下方法可以解决：</p>
+<p>连接上服务器后，把服务器上的<code>/root/.vscode-server/bin/</code>的日期最新的文件夹中的名字带有<code>vscode-remote-lock.root</code>的两个文件删除，重新使用VsCode连接后成功。</p>
+</li>
+</ol>
 
     </div>
-  </div>
-  
-  
-  
 
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/VS-Code/" rel="tag"># VS Code</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2019/11/26/Go%E7%9A%84%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/" rel="prev" title="Go的入门笔记">
+      <i class="fa fa-chevron-left"></i> Go的入门笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/" rel="next" title="从零开始搭建一个自己的博客">
+      从零开始搭建一个自己的博客 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
   
 
 
@@ -370,6 +360,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">1.</span> <span class="nav-text">环境配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.</span> <span class="nav-text">连接步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">遇到的问题</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
