@@ -2849,6 +2849,45 @@
       </tags>
   </entry>
   <entry>
+    <title>部署局域网FTP</title>
+    <url>/blog/2019/10/30/%E9%83%A8%E7%BD%B2%E5%B1%80%E5%9F%9F%E7%BD%91FTP/</url>
+    <content><![CDATA[<ol>
+<li><p><code>控制面板 -&gt; 程序 -&gt; 启用或关闭windows功能</code></p>
+</li>
+<li><p>在<code>Internet information Services</code>中，勾选<code>FTP服务器</code>中的<code>FTP服务</code>，与<code>Web管理工具</code>中的<code>IIS管理控制台</code>，然后点击确定进行安装和配置，等待配置完成</p>
+</li>
+<li><p>打开<code>IIS管理器</code>，在<code>网站</code>中<code>添加FTP站点</code>，命名站点名称与设置内容目录</p>
+</li>
+<li><p>IP地址若为<code>全部未分配</code>，则使用时使用本机的ip即可</p>
+</li>
+<li><p>在SSL中勾选<code>无SSL</code></p>
+<span id="more"></span></li>
+<li><p>身份验证使用<code>基本</code>,选择授权用户，以及用户权限，然后点击完成</p>
+</li>
+<li><p><code>防火墙与网络保护 -&gt; 高级设置</code></p>
+</li>
+</ol>
+<blockquote>
+<ul>
+<li>入站规则：启动FTP相关的入站规则</li>
+<li>出站规则：启动FTP相关的出站规则</li>
+</ul>
+</blockquote>
+<ol start="8">
+<li><p>保存配置后，重启计算机</p>
+</li>
+<li><p>在另外一台计算机中的资源管理器中访问<code>ftp://&#123;&#123; 配置了ftp的计算机的ip地址 &#125;&#125;</code>，输入用户名与密码即可访问</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>其它</category>
+      </categories>
+      <tags>
+        <tag>FTP</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>记录使用hexo搭建个人博客</title>
     <url>/blog/2019/10/31/%E8%AE%B0%E5%BD%95%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
     <content><![CDATA[<h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><p>本文仅是对自己使用hexo+next搭建博客的一些步骤和遇到的一些“坑”，整个搭建过程几乎都是参考了崔大大（公众号：进击的Coder）的<a href="https://mp.weixin.qq.com/s/qWMsCUjbmD1tocNEt23qVw">利用 GitHub 从零开始搭建一个博客</a>这篇文章，有兴趣的同学可以关注崔大的公众号进行阅读。本文对Node.js的安装，Git安装与环境变量的配置与Gitee账号申请等步骤不作叙述。</p>
@@ -2923,45 +2962,6 @@
       </categories>
       <tags>
         <tag>hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>部署局域网FTP</title>
-    <url>/blog/2019/10/30/%E9%83%A8%E7%BD%B2%E5%B1%80%E5%9F%9F%E7%BD%91FTP/</url>
-    <content><![CDATA[<ol>
-<li><p><code>控制面板 -&gt; 程序 -&gt; 启用或关闭windows功能</code></p>
-</li>
-<li><p>在<code>Internet information Services</code>中，勾选<code>FTP服务器</code>中的<code>FTP服务</code>，与<code>Web管理工具</code>中的<code>IIS管理控制台</code>，然后点击确定进行安装和配置，等待配置完成</p>
-</li>
-<li><p>打开<code>IIS管理器</code>，在<code>网站</code>中<code>添加FTP站点</code>，命名站点名称与设置内容目录</p>
-</li>
-<li><p>IP地址若为<code>全部未分配</code>，则使用时使用本机的ip即可</p>
-</li>
-<li><p>在SSL中勾选<code>无SSL</code></p>
-<span id="more"></span></li>
-<li><p>身份验证使用<code>基本</code>,选择授权用户，以及用户权限，然后点击完成</p>
-</li>
-<li><p><code>防火墙与网络保护 -&gt; 高级设置</code></p>
-</li>
-</ol>
-<blockquote>
-<ul>
-<li>入站规则：启动FTP相关的入站规则</li>
-<li>出站规则：启动FTP相关的出站规则</li>
-</ul>
-</blockquote>
-<ol start="8">
-<li><p>保存配置后，重启计算机</p>
-</li>
-<li><p>在另外一台计算机中的资源管理器中访问<code>ftp://&#123;&#123; 配置了ftp的计算机的ip地址 &#125;&#125;</code>，输入用户名与密码即可访问</p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>其它</category>
-      </categories>
-      <tags>
-        <tag>FTP</tag>
       </tags>
   </entry>
   <entry>
