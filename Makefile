@@ -7,3 +7,12 @@ deploy:
 
 serve:
 	$(HEXO_PATH) serve
+
+new:
+	$(HEXO_PATH) new $(name)
+
+tag:
+	$(HEXO_PATH) new page tags
+
+cat:
+	$(HEXO_PATH) new page categories
