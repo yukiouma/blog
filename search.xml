@@ -121,6 +121,55 @@
       </tags>
   </entry>
   <entry>
+    <title>Git安装</title>
+    <url>/blog/2021/06/07/Git%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<h1 id="Git安装"><a href="#Git安装" class="headerlink" title="Git安装"></a>Git安装</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
+<li>VMware® Workstation 15 Pro - 15.5.0 build-14665864</li>
+<li>宿主机： Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
+<li>CentOS Linux release 7.9.2009 (Core)</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="安装wget"><a href="#安装wget" class="headerlink" title="安装wget"></a>安装wget</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y wget</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="安装编译组件"><a href="#安装编译组件" class="headerlink" title="安装编译组件"></a>安装编译组件</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y curl-devel</span><br><span class="line">yum install -y gcc-c++</span><br><span class="line">yum install -y zlib-devel perl-ExtUtils-MakeMaker</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="下载解压git"><a href="#下载解压git" class="headerlink" title="下载解压git"></a>下载解压git</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/packages</span><br><span class="line">wget https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.9.0.tar.gz</span><br><span class="line">cd /opt/modules</span><br><span class="line">tar -C . -zxvf ../packages/git-2.9.0.tar.gz</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="编译部署"><a href="#编译部署" class="headerlink" title="编译部署"></a>编译部署</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/modules/git-2.9.0/</span><br><span class="line">./configure --prefix=/usr/local</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vi /etc/profile</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export PATH=$PATH:/usr/local/bin</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git --version</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git version 2.9.0</span><br></pre></td></tr></table></figure>
+
+
+
+
+]]></content>
+      <categories>
+        <category>其它</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Golang安装</title>
     <url>/blog/2021/05/23/Golang%E5%AE%89%E8%A3%85/</url>
     <content><![CDATA[<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>在CentOS7中部署Golang开发环境</p>
@@ -173,55 +222,6 @@
       </categories>
       <tags>
         <tag>Golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Git安装</title>
-    <url>/blog/2021/06/07/Git%E5%AE%89%E8%A3%85/</url>
-    <content><![CDATA[<h1 id="Git安装"><a href="#Git安装" class="headerlink" title="Git安装"></a>Git安装</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
-<li>VMware® Workstation 15 Pro - 15.5.0 build-14665864</li>
-<li>宿主机： Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
-<li>CentOS Linux release 7.9.2009 (Core)</li>
-</ul>
-<span id="more"></span>
-
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="安装wget"><a href="#安装wget" class="headerlink" title="安装wget"></a>安装wget</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y wget</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="安装编译组件"><a href="#安装编译组件" class="headerlink" title="安装编译组件"></a>安装编译组件</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y curl-devel</span><br><span class="line">yum install -y gcc-c++</span><br><span class="line">yum install -y zlib-devel perl-ExtUtils-MakeMaker</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="下载解压git"><a href="#下载解压git" class="headerlink" title="下载解压git"></a>下载解压git</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/packages</span><br><span class="line">wget https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.9.0.tar.gz</span><br><span class="line">cd /opt/modules</span><br><span class="line">tar -C . -zxvf ../packages/git-2.9.0.tar.gz</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="编译部署"><a href="#编译部署" class="headerlink" title="编译部署"></a>编译部署</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/modules/git-2.9.0/</span><br><span class="line">./configure --prefix=/usr/local</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vi /etc/profile</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export PATH=$PATH:/usr/local/bin</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git --version</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git version 2.9.0</span><br></pre></td></tr></table></figure>
-
-
-
-
-]]></content>
-      <categories>
-        <category>其它</category>
-      </categories>
-      <tags>
-        <tag>git</tag>
       </tags>
   </entry>
   <entry>
@@ -303,6 +303,65 @@
 <p>被删除的最后一个元素依然被引用, 可能导致GC操作被阻碍，我们可以在完成操前，将需要移除的尾部元素设置为nil，然后再执行操作，这样可以保证GC发现需要回收的对象</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> a []*<span class="type">int</span>&#123; ... &#125;</span><br><span class="line">a[<span class="built_in">len</span>(a)<span class="number">-1</span>] = <span class="literal">nil</span> <span class="comment">// GC回收最后一个元素内存</span></span><br><span class="line">a = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]  <span class="comment">// 从切片删除最后一个元素</span></span><br></pre></td></tr></table></figure></li>
 </ol>
+]]></content>
+      <categories>
+        <category>Web开发</category>
+      </categories>
+      <tags>
+        <tag>Golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Go的入门笔记</title>
+    <url>/blog/2019/11/26/Go%E7%9A%84%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h2 id="切片"><a href="#切片" class="headerlink" title="切片"></a>切片</h2><p>Go的切片操作和之前的使用的切片会有些不一样，专门写个笔记记录一下</p>
+<p>总的来说移除切片有两种方法，<strong>移动指针</strong>或者<strong>原地操作</strong></p>
+<span id="more"></span>
+<ul>
+<li><p>移除切片的第一个元素</p>
+<p>移动指针：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = a[<span class="number">1</span>:]</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [2 3 4 5 6], 0xc00000c398</span></span><br></pre></td></tr></table></figure>
+
+<p>原地操作：</p>
+<ul>
+<li>使用append</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = <span class="built_in">append</span>(a[:<span class="number">0</span>], a[<span class="number">1</span>:]...)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [2 3 4 5 6], 0xc00000c390</span></span><br></pre></td></tr></table></figure>
+
+<p>思路分析：</p>
+<ol>
+<li><p>append函数第一个参数指定了追加部分的起始位置，并把起始位置之后的内容舍弃（起始位置为0，即把切片中原本所有的元素舍弃）</p>
+</li>
+<li><p>函数第二个参数传入了要追加的内容，为原本a的第1位以后的所有元素，从a的第0位开始追加，达到舍弃原本的第0位的效果</p>
+</li>
+</ol>
+<ul>
+<li>使用copy</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">    a = a[:<span class="built_in">copy</span>(a[<span class="number">0</span>:], a[<span class="number">1</span>:])]</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [2 3 4 5 6], 0xc00000c390</span></span><br></pre></td></tr></table></figure>
+
+<p>思路分析：</p>
+<ol>
+<li><p>copy函数第一个参数指定了覆盖的位置为原始a的第0为，第二个参数指定了覆盖的内容为原始a的第1位开始之后的所有元素（2 - 5共5位，从第0位就开始覆盖到第4位），并且copy返回覆盖的元素的个数（5）</p>
+</li>
+<li><p>执行完copy函数后此时a的值为[2, 3, 4, 5, 6, 6]，此时使用切片从a[0: 5]，把最后的多余的6去除</p>
+</li>
+</ol>
+</li>
+<li><p>移除切片的第n个元素</p>
+<p>根据上面的移除第一个元素的做法，我们可以推广到移除第n个元素的操作</p>
+<p>使用append：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">const</span> i = <span class="number">2</span></span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = <span class="built_in">append</span>(a[: i], a[i + <span class="number">1</span>:]...)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [1 2 4 5 6], 0xc00000c390</span></span><br></pre></td></tr></table></figure>
+
+<p>使用copy：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">const</span> i = <span class="number">2</span></span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = a[:i + <span class="built_in">copy</span>(a[i : ], a[i + <span class="number">1</span>:])]</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [1 2 4 5 6], 0xc00000c390</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>移除切片的最后一个元素</p>
+<p>移除最后一个元素则比较简单，由于都是从原始切片的首位开始切，所以直接切即可…..</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = a[:<span class="built_in">len</span>(a) - <span class="number">1</span>]</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5], 0xc00000c390</span></span><br></pre></td></tr></table></figure></li>
+</ul>
 ]]></content>
       <categories>
         <category>Web开发</category>
@@ -609,65 +668,6 @@
 
 
 
-]]></content>
-      <categories>
-        <category>Web开发</category>
-      </categories>
-      <tags>
-        <tag>Golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Go的入门笔记</title>
-    <url>/blog/2019/11/26/Go%E7%9A%84%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<h2 id="切片"><a href="#切片" class="headerlink" title="切片"></a>切片</h2><p>Go的切片操作和之前的使用的切片会有些不一样，专门写个笔记记录一下</p>
-<p>总的来说移除切片有两种方法，<strong>移动指针</strong>或者<strong>原地操作</strong></p>
-<span id="more"></span>
-<ul>
-<li><p>移除切片的第一个元素</p>
-<p>移动指针：</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = a[<span class="number">1</span>:]</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [2 3 4 5 6], 0xc00000c398</span></span><br></pre></td></tr></table></figure>
-
-<p>原地操作：</p>
-<ul>
-<li>使用append</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = <span class="built_in">append</span>(a[:<span class="number">0</span>], a[<span class="number">1</span>:]...)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [2 3 4 5 6], 0xc00000c390</span></span><br></pre></td></tr></table></figure>
-
-<p>思路分析：</p>
-<ol>
-<li><p>append函数第一个参数指定了追加部分的起始位置，并把起始位置之后的内容舍弃（起始位置为0，即把切片中原本所有的元素舍弃）</p>
-</li>
-<li><p>函数第二个参数传入了要追加的内容，为原本a的第1位以后的所有元素，从a的第0位开始追加，达到舍弃原本的第0位的效果</p>
-</li>
-</ol>
-<ul>
-<li>使用copy</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">    a = a[:<span class="built_in">copy</span>(a[<span class="number">0</span>:], a[<span class="number">1</span>:])]</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [2 3 4 5 6], 0xc00000c390</span></span><br></pre></td></tr></table></figure>
-
-<p>思路分析：</p>
-<ol>
-<li><p>copy函数第一个参数指定了覆盖的位置为原始a的第0为，第二个参数指定了覆盖的内容为原始a的第1位开始之后的所有元素（2 - 5共5位，从第0位就开始覆盖到第4位），并且copy返回覆盖的元素的个数（5）</p>
-</li>
-<li><p>执行完copy函数后此时a的值为[2, 3, 4, 5, 6, 6]，此时使用切片从a[0: 5]，把最后的多余的6去除</p>
-</li>
-</ol>
-</li>
-<li><p>移除切片的第n个元素</p>
-<p>根据上面的移除第一个元素的做法，我们可以推广到移除第n个元素的操作</p>
-<p>使用append：</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">const</span> i = <span class="number">2</span></span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = <span class="built_in">append</span>(a[: i], a[i + <span class="number">1</span>:]...)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [1 2 4 5 6], 0xc00000c390</span></span><br></pre></td></tr></table></figure>
-
-<p>使用copy：</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">const</span> i = <span class="number">2</span></span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = a[:i + <span class="built_in">copy</span>(a[i : ], a[i + <span class="number">1</span>:])]</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [1 2 4 5 6], 0xc00000c390</span></span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>移除切片的最后一个元素</p>
-<p>移除最后一个元素则比较简单，由于都是从原始切片的首位开始切，所以直接切即可…..</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = a[:<span class="built_in">len</span>(a) - <span class="number">1</span>]</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5], 0xc00000c390</span></span><br></pre></td></tr></table></figure></li>
-</ul>
 ]]></content>
       <categories>
         <category>Web开发</category>
@@ -1503,6 +1503,134 @@
       </tags>
   </entry>
   <entry>
+    <title>Nginx实现反向代理</title>
+    <url>/blog/2021/05/23/Nginx%E5%AE%9E%E7%8E%B0%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/</url>
+    <content><![CDATA[<p>在虚拟机中部署Nginx，并使用Nginx为虚拟机中运行的项目分配反向代理的域名</p>
+<h2 id="背景说明"><a href="#背景说明" class="headerlink" title="背景说明"></a>背景说明</h2><p>在windows宿主机中存在一台运行着CentOS7的虚拟机，ip为192.168.1.200</p>
+<p>在虚拟机中存在一个web服务的项目，运行在虚拟机的端口8080上</p>
+<p>希望在宿主机中能通过自定义的域名app01.com来访问该项目的接口服务</p>
+<span id="more"></span>
+
+<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
+<li>CentOS Linux release 7.7.1908 (Core)</li>
+<li>VMWare 15.5.0 build-14665864</li>
+<li>Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
+</ul>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="修改windows宿主机中的hosts文件"><a href="#修改windows宿主机中的hosts文件" class="headerlink" title="修改windows宿主机中的hosts文件"></a>修改windows宿主机中的hosts文件</h3><p>hosts文件位于：<code>C:\Windows\System32\drivers\etc\hosts</code></p>
+<p>在hosts文件中添加自定义的域名-ip映射关系</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">192.168.1.200 app01.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="部署Nginx"><a href="#部署Nginx" class="headerlink" title="部署Nginx"></a>部署Nginx</h3><h4 id="通过yum安装"><a href="#通过yum安装" class="headerlink" title="通过yum安装"></a>通过yum安装</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y nginx</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@playground nginx]# nginx -v</span><br><span class="line">nginx version: nginx/1.16.1</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="配置反向代理"><a href="#配置反向代理" class="headerlink" title="配置反向代理"></a>配置反向代理</h3><h4 id="添加自定义反向代理配置"><a href="#添加自定义反向代理配置" class="headerlink" title="添加自定义反向代理配置"></a>添加自定义反向代理配置</h4><p>通过<code>yum</code>进行安装时，<code>Nginx</code>的配置文件的路径会位于<code>/etc/nginx</code>下</p>
+<p>配置文件是<code>/etc/nginx/nginx.conf</code></p>
+<p>我们在更改该文件之前先对其进行一下备份</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup</span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后添加我们自定义的服务配置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  app01.com;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass   http://127.0.0.1:8080;</span><br><span class="line">        proxy_set_header Host $host;</span><br><span class="line">        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="启动Nginx"><a href="#启动Nginx" class="headerlink" title="启动Nginx"></a>启动Nginx</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx</span><br></pre></td></tr></table></figure>
+
+<p>停止nginx</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx -s stop</span><br></pre></td></tr></table></figure>
+
+<p>修改配置后重启Nginx</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx -s reload</span><br></pre></td></tr></table></figure>
+
+<p>让Nginx开机自启动</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl enable nginx</span><br></pre></td></tr></table></figure>
+
+
+
+<p>自此，运行在虚拟机中端口为8080的项目已经成功被Nginx反向代理</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>在windows宿主机的cmd中尝试请求</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">C:\Users\xxx&gt;curl http://app01.com/api/organization</span><br><span class="line">&#123;&quot;code&quot;:200,&quot;data&quot;:[&#123;&quot;id&quot;:1,&quot;name&quot;:&quot;Oppose Militancy \u0026 Neutralize Invasion&quot;,&quot;alias&quot;:&quot;O.M.N.I&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:6,&quot;name&quot;:&quot;Stellar Loussier&quot;,&quot;organizationId&quot;:1,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;,&#123;&quot;id&quot;:2,&quot;name&quot;:&quot;Zodiac Alliance of Freedom Treaty&quot;,&quot;alias&quot;:&quot;Z.A.F.T&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:1,&quot;name&quot;:&quot;Shinn Asuka&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:4,&quot;name&quot;:&quot;Rau Le Crueset&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:5,&quot;name&quot;:&quot;Rey Za Burrel&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;,&#123;&quot;id&quot;:3,&quot;name&quot;:&quot;Orb Union&quot;,&quot;alias&quot;:&quot;O.R.B&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:2,&quot;name&quot;:&quot;Kira Yamato&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:3,&quot;name&quot;:&quot;Athrun Zala&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:7,&quot;name&quot;:&quot;Mu La Flaga&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;],&quot;message&quot;:&quot;Get organization successfully.&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>发现能成功通过我们配置的域名app01.com来请求到数据</p>
+]]></content>
+      <categories>
+        <category>Web开发</category>
+      </categories>
+      <tags>
+        <tag>Nginx</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Nodejs安装</title>
+    <url>/blog/2021/06/09/Nodejs%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<h1 id="Nodejs安装"><a href="#Nodejs安装" class="headerlink" title="Nodejs安装"></a>Nodejs安装</h1><h2 id="环境与配置"><a href="#环境与配置" class="headerlink" title="环境与配置"></a>环境与配置</h2><ul>
+<li>VMware® Workstation 15 Pro - 15.5.0 build-14665864</li>
+<li>宿主机： Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
+<li>CentOS Linux release 7.9.2009 (Core)</li>
+</ul>
+<h2 id="资源清单"><a href="#资源清单" class="headerlink" title="资源清单"></a>资源清单</h2><ul>
+<li>node-v12.16.1-linux-x64</li>
+<li>n 7.3.0</li>
+</ul>
+<span id="more"></span>
+
+
+<h2 id="下载安装包"><a href="#下载安装包" class="headerlink" title="下载安装包"></a>下载安装包</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/packages</span><br><span class="line">wget https://npm.taobao.org/mirrors/node/v12.16.1/node-v12.16.1-linux-x64.tar.gz</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="解压与安装"><a href="#解压与安装" class="headerlink" title="解压与安装"></a>解压与安装</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/modules</span><br><span class="line">tar -C . -zxvf /opt/packages/node-v12.16.1-linux-x64.tar.gz</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="设置软连接"><a href="#设置软连接" class="headerlink" title="设置软连接"></a>设置软连接</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ln -s /opt/modules/node-v12.16.1-linux-x64/bin/node /usr/bin/node</span><br><span class="line">ln -s /opt/modules/node-v12.16.1-linux-x64/bin/npm /usr/bin/npm</span><br><span class="line">ln -s /opt/modules/node-v12.16.1-linux-x64/bin/npx /usr/bin/npx</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="安装node版本管理器n"><a href="#安装node版本管理器n" class="headerlink" title="安装node版本管理器n"></a>安装node版本管理器n</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm i -g n</span><br></pre></td></tr></table></figure>
+
+<h3 id="设置软连接-1"><a href="#设置软连接-1" class="headerlink" title="设置软连接"></a>设置软连接</h3><p>ps：不知道为啥全局安装之后n没有自己创建个软连接啥的….总觉得以前不用做这一步….</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ln -s /opt/modules/node-v12.16.1-linux-x64/lib/node_modules/n/bin/n /usr/bin/n</span><br></pre></td></tr></table></figure>
+
+<h3 id="设置N-PREFIX"><a href="#设置N-PREFIX" class="headerlink" title="设置N_PREFIX"></a>设置N_PREFIX</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vi /etc/profile</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export N_PREFIX=/usr/local/bin/node</span><br><span class="line">export PATH=$N_PREFIX/bin:$PATH</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="测试n是否安装成功"><a href="#测试n是否安装成功" class="headerlink" title="测试n是否安装成功"></a>测试n是否安装成功</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">n --version</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">7.3.0</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="安装生产环境版本node"><a href="#安装生产环境版本node" class="headerlink" title="安装生产环境版本node"></a>安装生产环境版本node</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">n 12.2.0</span><br></pre></td></tr></table></figure>
+
+<p>切换node</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">n</span><br></pre></td></tr></table></figure>
+
+<p>然后选择需要的版本，enter</p>
+<h2 id="npm换源"><a href="#npm换源" class="headerlink" title="npm换源"></a>npm换源</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm config set registry https://registry.npm.taobao.org/</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Web开发</category>
+      </categories>
+      <tags>
+        <tag>Nodejs</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Kubernetes集群搭建实录</title>
     <url>/blog/2021/06/05/Kubernetes%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA%E5%AE%9E%E5%BD%95/</url>
     <content><![CDATA[<h1 id="Kubernetes集群搭建实录"><a href="#Kubernetes集群搭建实录" class="headerlink" title="Kubernetes集群搭建实录"></a>Kubernetes集群搭建实录</h1><h2 id="环境与配置"><a href="#环境与配置" class="headerlink" title="环境与配置"></a>环境与配置</h2><ul>
@@ -1762,134 +1890,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Nginx实现反向代理</title>
-    <url>/blog/2021/05/23/Nginx%E5%AE%9E%E7%8E%B0%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/</url>
-    <content><![CDATA[<p>在虚拟机中部署Nginx，并使用Nginx为虚拟机中运行的项目分配反向代理的域名</p>
-<h2 id="背景说明"><a href="#背景说明" class="headerlink" title="背景说明"></a>背景说明</h2><p>在windows宿主机中存在一台运行着CentOS7的虚拟机，ip为192.168.1.200</p>
-<p>在虚拟机中存在一个web服务的项目，运行在虚拟机的端口8080上</p>
-<p>希望在宿主机中能通过自定义的域名app01.com来访问该项目的接口服务</p>
-<span id="more"></span>
-
-<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
-<li>CentOS Linux release 7.7.1908 (Core)</li>
-<li>VMWare 15.5.0 build-14665864</li>
-<li>Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
-</ul>
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="修改windows宿主机中的hosts文件"><a href="#修改windows宿主机中的hosts文件" class="headerlink" title="修改windows宿主机中的hosts文件"></a>修改windows宿主机中的hosts文件</h3><p>hosts文件位于：<code>C:\Windows\System32\drivers\etc\hosts</code></p>
-<p>在hosts文件中添加自定义的域名-ip映射关系</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">192.168.1.200 app01.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="部署Nginx"><a href="#部署Nginx" class="headerlink" title="部署Nginx"></a>部署Nginx</h3><h4 id="通过yum安装"><a href="#通过yum安装" class="headerlink" title="通过yum安装"></a>通过yum安装</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y nginx</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@playground nginx]# nginx -v</span><br><span class="line">nginx version: nginx/1.16.1</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="配置反向代理"><a href="#配置反向代理" class="headerlink" title="配置反向代理"></a>配置反向代理</h3><h4 id="添加自定义反向代理配置"><a href="#添加自定义反向代理配置" class="headerlink" title="添加自定义反向代理配置"></a>添加自定义反向代理配置</h4><p>通过<code>yum</code>进行安装时，<code>Nginx</code>的配置文件的路径会位于<code>/etc/nginx</code>下</p>
-<p>配置文件是<code>/etc/nginx/nginx.conf</code></p>
-<p>我们在更改该文件之前先对其进行一下备份</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup</span><br></pre></td></tr></table></figure>
-
-
-
-<p>然后添加我们自定义的服务配置</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  app01.com;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass   http://127.0.0.1:8080;</span><br><span class="line">        proxy_set_header Host $host;</span><br><span class="line">        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="启动Nginx"><a href="#启动Nginx" class="headerlink" title="启动Nginx"></a>启动Nginx</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx</span><br></pre></td></tr></table></figure>
-
-<p>停止nginx</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx -s stop</span><br></pre></td></tr></table></figure>
-
-<p>修改配置后重启Nginx</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx -s reload</span><br></pre></td></tr></table></figure>
-
-<p>让Nginx开机自启动</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl enable nginx</span><br></pre></td></tr></table></figure>
-
-
-
-<p>自此，运行在虚拟机中端口为8080的项目已经成功被Nginx反向代理</p>
-<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>在windows宿主机的cmd中尝试请求</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">C:\Users\xxx&gt;curl http://app01.com/api/organization</span><br><span class="line">&#123;&quot;code&quot;:200,&quot;data&quot;:[&#123;&quot;id&quot;:1,&quot;name&quot;:&quot;Oppose Militancy \u0026 Neutralize Invasion&quot;,&quot;alias&quot;:&quot;O.M.N.I&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:6,&quot;name&quot;:&quot;Stellar Loussier&quot;,&quot;organizationId&quot;:1,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;,&#123;&quot;id&quot;:2,&quot;name&quot;:&quot;Zodiac Alliance of Freedom Treaty&quot;,&quot;alias&quot;:&quot;Z.A.F.T&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:1,&quot;name&quot;:&quot;Shinn Asuka&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:4,&quot;name&quot;:&quot;Rau Le Crueset&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:5,&quot;name&quot;:&quot;Rey Za Burrel&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;,&#123;&quot;id&quot;:3,&quot;name&quot;:&quot;Orb Union&quot;,&quot;alias&quot;:&quot;O.R.B&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:2,&quot;name&quot;:&quot;Kira Yamato&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:3,&quot;name&quot;:&quot;Athrun Zala&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:7,&quot;name&quot;:&quot;Mu La Flaga&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;],&quot;message&quot;:&quot;Get organization successfully.&quot;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>发现能成功通过我们配置的域名app01.com来请求到数据</p>
-]]></content>
-      <categories>
-        <category>Web开发</category>
-      </categories>
-      <tags>
-        <tag>Nginx</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Nodejs安装</title>
-    <url>/blog/2021/06/09/Nodejs%E5%AE%89%E8%A3%85/</url>
-    <content><![CDATA[<h1 id="Nodejs安装"><a href="#Nodejs安装" class="headerlink" title="Nodejs安装"></a>Nodejs安装</h1><h2 id="环境与配置"><a href="#环境与配置" class="headerlink" title="环境与配置"></a>环境与配置</h2><ul>
-<li>VMware® Workstation 15 Pro - 15.5.0 build-14665864</li>
-<li>宿主机： Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
-<li>CentOS Linux release 7.9.2009 (Core)</li>
-</ul>
-<h2 id="资源清单"><a href="#资源清单" class="headerlink" title="资源清单"></a>资源清单</h2><ul>
-<li>node-v12.16.1-linux-x64</li>
-<li>n 7.3.0</li>
-</ul>
-<span id="more"></span>
-
-
-<h2 id="下载安装包"><a href="#下载安装包" class="headerlink" title="下载安装包"></a>下载安装包</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/packages</span><br><span class="line">wget https://npm.taobao.org/mirrors/node/v12.16.1/node-v12.16.1-linux-x64.tar.gz</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="解压与安装"><a href="#解压与安装" class="headerlink" title="解压与安装"></a>解压与安装</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/modules</span><br><span class="line">tar -C . -zxvf /opt/packages/node-v12.16.1-linux-x64.tar.gz</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="设置软连接"><a href="#设置软连接" class="headerlink" title="设置软连接"></a>设置软连接</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ln -s /opt/modules/node-v12.16.1-linux-x64/bin/node /usr/bin/node</span><br><span class="line">ln -s /opt/modules/node-v12.16.1-linux-x64/bin/npm /usr/bin/npm</span><br><span class="line">ln -s /opt/modules/node-v12.16.1-linux-x64/bin/npx /usr/bin/npx</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="安装node版本管理器n"><a href="#安装node版本管理器n" class="headerlink" title="安装node版本管理器n"></a>安装node版本管理器n</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm i -g n</span><br></pre></td></tr></table></figure>
-
-<h3 id="设置软连接-1"><a href="#设置软连接-1" class="headerlink" title="设置软连接"></a>设置软连接</h3><p>ps：不知道为啥全局安装之后n没有自己创建个软连接啥的….总觉得以前不用做这一步….</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ln -s /opt/modules/node-v12.16.1-linux-x64/lib/node_modules/n/bin/n /usr/bin/n</span><br></pre></td></tr></table></figure>
-
-<h3 id="设置N-PREFIX"><a href="#设置N-PREFIX" class="headerlink" title="设置N_PREFIX"></a>设置N_PREFIX</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vi /etc/profile</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export N_PREFIX=/usr/local/bin/node</span><br><span class="line">export PATH=$N_PREFIX/bin:$PATH</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="测试n是否安装成功"><a href="#测试n是否安装成功" class="headerlink" title="测试n是否安装成功"></a>测试n是否安装成功</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">n --version</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">7.3.0</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="安装生产环境版本node"><a href="#安装生产环境版本node" class="headerlink" title="安装生产环境版本node"></a>安装生产环境版本node</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">n 12.2.0</span><br></pre></td></tr></table></figure>
-
-<p>切换node</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">n</span><br></pre></td></tr></table></figure>
-
-<p>然后选择需要的版本，enter</p>
-<h2 id="npm换源"><a href="#npm换源" class="headerlink" title="npm换源"></a>npm换源</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm config set registry https://registry.npm.taobao.org/</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>Web开发</category>
-      </categories>
-      <tags>
-        <tag>Nodejs</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Node模块机制</title>
     <url>/blog/2020/07/25/Node%E6%A8%A1%E5%9D%97%E6%9C%BA%E5%88%B6/</url>
     <content><![CDATA[<h2 id="模块机制"><a href="#模块机制" class="headerlink" title="模块机制"></a>模块机制</h2><p>Node的模块是在<a href="http://www.commonjs.org/">CommonJs</a>的基础上对模块的规范进行了一定的取舍，再结合自身特性的需求去实现的。</p>
@@ -1911,7 +1911,7 @@
 <h4 id="非路径的文件模块的查找顺序"><a href="#非路径的文件模块的查找顺序" class="headerlink" title="非路径的文件模块的查找顺序"></a>非路径的文件模块的查找顺序</h4><blockquote>
 <p>下面的流程假定我们想导入的模块名称叫md</p>
 </blockquote>
-<p><img src="/blog/image-20200803230816443.png" alt="image-20200803230816443"></p>
+<p><img src="/blog/2020/07/25/Node%E6%A8%A1%E5%9D%97%E6%9C%BA%E5%88%B6/image-20200803230816443.png" alt="image-20200803230816443"></p>
 <h4 id="exports和module-exports的区别"><a href="#exports和module-exports的区别" class="headerlink" title="exports和module.exports的区别"></a>exports和module.exports的区别</h4><p>在Node中，每个文件模块都是一个对象，每个文件本身都带有一个Module对象，Module对象的内容如下：</p>
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// myModule.js</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">module</span>);</span><br></pre></td></tr></table></figure>
 
@@ -2142,305 +2142,6 @@
       </tags>
   </entry>
   <entry>
-    <title>从零开始搭建一个自己的博客</title>
-    <url>/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>本文记录一下用hexo这个框架从零搭建自己的博客的全过程。因为只是想体验一下hexo这个框架，平时做做学习笔记啥的，偶尔喂自己一点鸡汤╮(╯▽╰)╭，所以像评论这些扩展组件就没有搞，等哪天我想搞了再写上吧→_→…..</p>
-<p>hexo是一个强大的使用Node.js驱动的博客框架，虽然说是用Node.js搭建的，但是使用下来感觉也不需要JavaScript的语法…..然后文章主体是使用markdown作为书写语言，需要对markdown做一些简单的了解哈，语法传送门在<a href="https://www.runoob.com/markdown/md-tutorial.html">这里</a>，相信你半个小时就能大致上手啦~</p>
-<span id="more"></span>
-
-<h2 id="搭建环境"><a href="#搭建环境" class="headerlink" title="搭建环境"></a>搭建环境</h2><ul>
-<li>Windows 10 1903(18362.900)</li>
-<li>Visual Studio Code 1.47.1</li>
-<li>Node v12.13.0</li>
-<li>Git 2.23.0.windows.1</li>
-<li>hexo 4.0.0</li>
-</ul>
-<h2 id="搭建步骤"><a href="#搭建步骤" class="headerlink" title="搭建步骤"></a>搭建步骤</h2><h3 id="安装Node-js"><a href="#安装Node-js" class="headerlink" title="安装Node.js"></a>安装Node.js</h3><h4 id="下载与安装"><a href="#下载与安装" class="headerlink" title="下载与安装"></a>下载与安装</h4><p>到<a href="https://nodejs.org/en/">Node官网</a>下载Node.js安装包，选择LST(稳定版本)即可，如下图：</p>
-<p><img src="/blog/image-20200716213925124.png" alt="image-20200716213925124"></p>
-<p>下载后以管理员身份运行安装包，全程点击接受协议和下一步一直到结束就可以啦~</p>
-<p>安装完之后查看是否安装成功的方法：</p>
-<p>打开CMD（win键 + R，然后在弹出的输入框中输出CMD然后回车即可），执行<code>node -v</code>，如果出现以下内容就说明安装成功啦~</p>
-<p><img src="/blog/image-20200716214334747.png" alt="image-20200716214334747"></p>
-<h4 id="更换npm镜像源"><a href="#更换npm镜像源" class="headerlink" title="更换npm镜像源"></a>更换npm镜像源</h4><p>默认的Node中的npm镜像源是直接指向国外的镜像源的，我们在国内下载起来速度你懂的…..所以我们要更换一下国内的镜像源以提高安装包的下载速度。我们这里选择的是淘宝的镜像源哈，打开CMD（话说刚刚打开的CMD你还没关掉吧……），运行以下命令：</p>
-<figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">npm config <span class="built_in">set</span> registry https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
-
-<p>回车运行就可以啦</p>
-<h3 id="安装Git"><a href="#安装Git" class="headerlink" title="安装Git"></a>安装Git</h3><p>下载<a href="https://git-scm.com/downloads">Git</a>，选择window版的安装包，然后一路点击接受和确认即可……</p>
-<p><img src="/blog/image-20200716235259477.png" alt="image-20200716235259477"></p>
-<p>然后我们对着文件夹右键一下，Git Bash这个选项就代表安装好啦</p>
-<h3 id="安装Visual-Studio-Code"><a href="#安装Visual-Studio-Code" class="headerlink" title="安装Visual Studio Code"></a>安装Visual Studio Code</h3><p>这步是可选的…..可以换成自己熟悉的编辑器呢，因为我自己平时就是用VsCode进行开发的所以…..</p>
-<p>下载<a href="https://code.visualstudio.com/download#">VsCode</a>，选下图这个按钮，然后一直点同意和下一步到安装完成就可以啦……</p>
-<p><img src="/blog/image-20200716220221761.png" alt="image-20200716220221761"></p>
-<p>安装完能正常打开就可以啦</p>
-<h3 id="安装hexo-cli"><a href="#安装hexo-cli" class="headerlink" title="安装hexo-cli"></a>安装hexo-cli</h3><p>还是刚刚的CMD…..运行下面指令：</p>
-<figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
-
-<p>等待安装完成后，检查hexo-cli是否已经全局安装成功运行以下指令：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm list -g --depth 0</span><br></pre></td></tr></table></figure>
-
-<p>若看到了hexo-cli就表示已经安装成功啦</p>
-<p><img src="/blog/image-20200716220929499.png" alt="image-20200716220929499"></p>
-<h3 id="初始化博客项目"><a href="#初始化博客项目" class="headerlink" title="初始化博客项目"></a>初始化博客项目</h3><h4 id="初始化项目框架"><a href="#初始化项目框架" class="headerlink" title="初始化项目框架"></a>初始化项目框架</h4><p>找一个你喜欢的文件夹，在地址栏上输入CMD然后回车（哈哈哈哈没想到吧还是CMD……然后上面步骤的CMD可以关掉啦……），出现当前文件夹路径的CMD，然后运行以下命令：</p>
-<figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">hexo init blogdemo</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>解析：blogdemo是项目哈，这部分你可以换成自己喜欢的名字</p>
-</blockquote>
-<p>执行这个命令后hexo将会帮我们下载这个博客项目所需要的文件与依赖（下载过程可能会要一会儿….看网络….），下载好的提示如下图</p>
-<p><img src="/blog/image-20200716230102850.png" alt="image-20200716230102850"></p>
-<p>弱弱说一下装好之后CMD就能关掉了…..</p>
-<p>然后在当前文件夹下面生成一个叫blogdemo的文件夹，这个时候我们选择右键blogdemo，选择“通过Code打开”，打开后能看到hexo-cli已经帮我们生成了整个项目的文件</p>
-<p><img src="/blog/image-20200716230506308.png" alt="image-20200716230506308"></p>
-<p>打开VsCode按下快捷键Ctrl + `，就可以打开终端啦（就把它当CMD吧….），默认来说的是powershell，但是可以通过更改成别的呢，比如我个人就习惯用bash作为默认的终端….按下快捷键Ctrl + `后在VsCode底部出现刚刚类似CMD的界面如下图：</p>
-<p><img src="/blog/image-20200716231242476.png" alt="image-20200716231242476"></p>
-<h4 id="生成网页文件"><a href="#生成网页文件" class="headerlink" title="生成网页文件"></a>生成网页文件</h4><p>我们在终端中执行以下命令：</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure>
-
-<p><img src="/blog/image-20200716231405203.png" alt="image-20200716231405203"></p>
-<p>上图表示执行完成，hexo g中的g是generate的简写，表示生成网页内容，这个我们下面再介绍</p>
-<h4 id="在本地启动hexo"><a href="#在本地启动hexo" class="headerlink" title="在本地启动hexo"></a>在本地启动hexo</h4><p>我们在终端执行：</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure>
-
-<p><img src="/blog/image-20200716231604653.png" alt="image-20200716231604653"></p>
-<p>这个命令表示在本地启动hexo的博客项目，命令中的s是serve的简写，上图表示已经启动成功了，我们可以在浏览器中输入<a href="http://localhost:4000/">http://localhost:4000</a>来访问到我们刚启动的博客项目~</p>
-<p><img src="/blog/image-20200716231746490.png" alt="image-20200716231746490"></p>
-<p>成功看到这个页面说明我们初始化就成功啦~</p>
-<h4 id="停止hexo"><a href="#停止hexo" class="headerlink" title="停止hexo"></a>停止hexo</h4><p>在终端中直接按下Ctrl + C即可停止hexo运行，停止后<a href="http://localhost:4000/">http://localhost:4000</a>就访问不到内容了</p>
-<h3 id="将博客部署到Gitee-Pages上"><a href="#将博客部署到Gitee-Pages上" class="headerlink" title="将博客部署到Gitee Pages上"></a>将博客部署到Gitee Pages上</h3><p>其实这步也可以选择部署到GitHub Pages上，但是由于Github的服务器是在国外，可能平时访问的速度就会有些波动，为了能稳定访问我们选择部署到国内的Gitee（码云）上。</p>
-<h4 id="注册Gitee账号"><a href="#注册Gitee账号" class="headerlink" title="注册Gitee账号"></a>注册Gitee账号</h4><p>这个……我应该不用展开说吧_(:з)∠)_……</p>
-<h4 id="新建一个代码仓库"><a href="#新建一个代码仓库" class="headerlink" title="新建一个代码仓库"></a>新建一个代码仓库</h4><p>注册完成后进入个人主页，然后如下图点击新建仓库：</p>
-<p><img src="/blog/image-20200716233345634.png" alt="image-20200716233345634"></p>
-<p>填写仓库基本信息，这里Name和Path保持一致就好，Description这个随意…..Property选Public，license选MIT就可以…..（其实不太懂这个….但是MIT见得比较多…..），其他可以不填或不选，然后点底部New按钮创建仓库</p>
-<p><img src="/blog/image-20200716234310455.png" alt="image-20200716234310455"></p>
-<p>下图就是我们刚刚创建好的代码仓库啦</p>
-<p><img src="/blog/image-20200716234621276.png" alt="image-20200716234621276"></p>
-<h4 id="修改hexo项目文件夹中的部署配置"><a href="#修改hexo项目文件夹中的部署配置" class="headerlink" title="修改hexo项目文件夹中的部署配置"></a>修改hexo项目文件夹中的部署配置</h4><p>我们回到VsCode中，在左侧的文件目录中找到_config.yml这个文件，单击打开它，直接到最后，看到下面这段代码：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Deployment</span></span><br><span class="line"><span class="comment">## Docs: https://hexo.io/docs/deployment.html</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> </span><br></pre></td></tr></table></figure>
-
-
-
-<p>我们把这段代码改成如下内容，保存</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># Deployment</span></span><br><span class="line"><span class="comment">## Docs: https://hexo.io/docs/deployment.html</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">https://gitee.com/yukiouma/MyBlog.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>type和branch后面的内容可以不用理会，我们重点看看repo后面的这个值是怎么来的，我们回到刚刚新建的代码仓库的页面，然后点击下图中的Clone or Download，然后点击弹窗中的Copy，就获得了仓库的地址，我们直接把这个值粘贴到repo: 的后面就OK啦</p>
-<p><img src="/blog/image-20200716235933025.png" alt="image-20200716235933025"></p>
-<h4 id="安装-Git-的部署插件"><a href="#安装-Git-的部署插件" class="headerlink" title="安装 Git 的部署插件"></a>安装 Git 的部署插件</h4><p>在终端中运行以下命令：</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">npm install hexo<span class="literal">-deployer-git</span> <span class="literal">--save</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="部署到代码仓库中"><a href="#部署到代码仓库中" class="headerlink" title="部署到代码仓库中"></a>部署到代码仓库中</h4><p>在终端中执行：</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure>
-
-<p>d是deploy的缩写，这行命令表示将刚刚执行的<code>hexo g</code>生成的网页文件发布到我们刚刚新建的代码仓库里面。如果是第一次往上面发布东西的话会要求你输入刚刚在Gitee注册的账号密码，之后电脑中会留有记录，以后就不用输入密码就可以直接发布上去了</p>
-<p>我们回到刚创建的代码仓库，就可以看到我们刚刚发布上去的编译后的代码啦</p>
-<p><img src="/blog/image-20200717001308044.png" alt="image-20200717001308044"></p>
-<h4 id="创建Gitee-Pages服务"><a href="#创建Gitee-Pages服务" class="headerlink" title="创建Gitee Pages服务"></a>创建Gitee Pages服务</h4><p>点击Service，然后选择Gitee Pages</p>
-<p><img src="/blog/image-20200717001407927.png" alt="image-20200717001407927"></p>
-<p>进入到如下页面，勾选Enforce HTTPS后，点击Create，然就创建好Gitee Pages服务了，稍等片刻整个博客就部署好啦，部署好之后页面会提示你访问的地址的~</p>
-<p><img src="/blog/image-20200717002810532.png" alt="image-20200717002810532"></p>
-<p>然后我们点击这个地址访问一下，出现下图，样式全部都挂了…..跟刚刚本地启动的时候完全不一样…(╯‵□′)╯︵┻━┻</p>
-<p><img src="/blog/image-20200717002907784.png" alt="image-20200717002907784"></p>
-<h4 id="第二次修改部署配置"><a href="#第二次修改部署配置" class="headerlink" title="第二次修改部署配置"></a>第二次修改部署配置</h4><p>还是刚刚的_config.yml这个文件，找到下面这段代码</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># URL</span></span><br><span class="line"><span class="comment">## If your site is put in a subdirectory, set url as &#x27;http://yoursite.com/child&#x27; and root as &#x27;/child/&#x27;</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">http://yoursite.com</span></span><br><span class="line"><span class="attr">root:</span> <span class="string">/</span></span><br><span class="line"><span class="attr">permalink:</span> <span class="string">:year/:month/:day/:title/</span></span><br><span class="line"><span class="attr">permalink_defaults:</span></span><br><span class="line"><span class="attr">pretty_urls:</span></span><br><span class="line">  <span class="attr">trailing_index:</span> <span class="literal">true</span> <span class="comment"># Set to false to remove trailing &#x27;index.html&#x27; from permalinks</span></span><br><span class="line">  <span class="attr">trailing_html:</span> <span class="literal">true</span> <span class="comment"># Set to false to remove trailing &#x27;.html&#x27; from permalinks</span></span><br></pre></td></tr></table></figure>
-
-<p>我们把url: 后面的那个地址改成我们代码仓库的地址（注意，代码仓库的地址和博客访问的地址是不一样的），查看代码仓库的地址如下图：</p>
-<p>第一步，点击Settings，进入设置页面</p>
-<p><img src="/blog/image-20200717010008376.png" alt="image-20200717010008376"></p>
-<p>第二步，查看仓库地址，红框的内容才是仓库地址</p>
-<p><img src="/blog/image-20200717010109312.png" alt="image-20200717010109312"></p>
-<p>然后我们把这个地址写到url后面，然后把地址最后的部分写到root后面，保存即可，如下所示</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># URL</span></span><br><span class="line"><span class="comment">## If your site is put in a subdirectory, set url as &#x27;http://yoursite.com/child&#x27; and root as &#x27;/child/&#x27;</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">https://gitee.com/yukiouma/MyBlog/</span></span><br><span class="line"><span class="attr">root:</span> <span class="string">/MyBlog</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="再次发布到仓库中"><a href="#再次发布到仓库中" class="headerlink" title="再次发布到仓库中"></a>再次发布到仓库中</h4><p>我们刚刚修改了配置，所以之前生成的网页文件需要清空然后重新生成，我们先执行</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br></pre></td></tr></table></figure>
-
-<p>这个命令表示情清空之前生成好的网页文件</p>
-<p>然后执行依次执行下面的内容：</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
-
-<p>具体解析到上面找一下哈，就不重复说啦</p>
-<p>我们每次更新了博客内容的时候都需要重复上述的三个步骤去部署到代码仓库里面，每次都需要执行三个命令感觉挺麻烦的……所以我们搞一个脚本让他们按顺序一起执行。</p>
-<p>在博客项目的根目录中创建一个叫deploy.sh的文件，里面写入以下内容，然后保存</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>以后我们只要在终端执行<code>sh deploy.sh</code>就可以一次性执行这三个指令啦</p>
-<p>然后我们回到刚刚的Gitee Pages服务页面</p>
-<p><img src="/blog/image-20200717001407927.png" alt="image-20200717001407927"></p>
-<p><img src="/blog/image-20200717004128744.png" alt="image-20200717004128744"></p>
-<p>原本的Create变成了Update，点击它，稍等片刻部署就完成了</p>
-<p>我们再访问一次：</p>
-<p><img src="/blog/image-20200717005530618.png" alt="image-20200717005530618"></p>
-<p>部署成功啦~~~</p>
-<h2 id="配置博客站点信息"><a href="#配置博客站点信息" class="headerlink" title="配置博客站点信息"></a>配置博客站点信息</h2><p>我们刚搭建好的博客的站点信息全部都是默认的内容，我们需要改成我们自己的信息，要不咋叫自己的博客呢……</p>
-<p>还是_config.yml这个文件，我们来修改以下下面这部分的内容：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Site</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">随便起的名字....</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">喵喵喵喵喵？</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">我也不知道说点啥好.....</span></span><br><span class="line"><span class="attr">keywords:</span> <span class="string">&quot;demo&quot;</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">Yuki</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p>保存之后我们在本地启动项目（终端运行<code>hexo s</code>），访问<a href="http://localhost:4000/"> http://localhost:4000/ </a>，看到和之前原始的页面相比发生了变化</p>
-<p><img src="/blog/image-20200717013432466.png" alt="image-20200717013432466"></p>
-<h2 id="更换博客主题"><a href="#更换博客主题" class="headerlink" title="更换博客主题"></a>更换博客主题</h2><p>说实话，我觉得这个默认的主题有点一言难尽…….我们还是换个别的主题吧。换主题这个事情用不同的组件用法是不一样的，我们简单介绍一个相对热门的主题，名字叫Next，主打黑白的熊猫风格的界面</p>
-<h3 id="下载主题文件"><a href="#下载主题文件" class="headerlink" title="下载主题文件"></a>下载主题文件</h3><p>在VsCode终端执行以下命令：</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/theme<span class="literal">-next</span>/hexo<span class="literal">-theme-next</span> themes/next</span><br></pre></td></tr></table></figure>
-
-<p>执行完成后，我们返现在themes这个文件夹下面多了个名字为next的文件夹，这就是我们准备要使用的next主题的文件。</p>
-<h3 id="切换主题"><a href="#切换主题" class="headerlink" title="切换主题"></a>切换主题</h3><p>还是_config.yml这个文件，找到以下代码：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Extensions</span></span><br><span class="line"><span class="comment">## Plugins: https://hexo.io/plugins/</span></span><br><span class="line"><span class="comment">## Themes: https://hexo.io/themes/</span></span><br><span class="line"><span class="attr">theme:</span> <span class="string">landscape</span></span><br></pre></td></tr></table></figure>
-
-<p>将landscape替换成 next 即可。然后我们重新启动以下本地的服务，继续访问<a href="http://localhost:4000/"> http://localhost:4000/ </a>就会发现主题发生变化了</p>
-<p><img src="/blog/image-20200717014450057.png" alt="image-20200717014450057"></p>
-<h3 id="配置主题"><a href="#配置主题" class="headerlink" title="配置主题"></a>配置主题</h3><p>切换好主题了，我们可以对默认的配置进行一些列的修改。注意，以下说的配置文件_config.yml不是根目录下的_config.yml，而指的是 themes\next\_config.yml </p>
-<h4 id="排版样式"><a href="#排版样式" class="headerlink" title="排版样式"></a>排版样式</h4><p>排版样式在themes\next\_config.yml的以下内容中配置，将喜欢的样式的注释（开头的#号）拿掉即可，我现在选了Pisces</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ---------------------------------------------------------------</span></span><br><span class="line"><span class="comment"># Scheme Settings</span></span><br><span class="line"><span class="comment"># ---------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Schemes</span></span><br><span class="line"><span class="comment">#scheme: Muse</span></span><br><span class="line"><span class="comment">#scheme: Mist</span></span><br><span class="line"><span class="attr">scheme:</span> <span class="string">Pisces</span></span><br><span class="line"><span class="comment">#scheme: Gemini</span></span><br></pre></td></tr></table></figure>
-
-<p>然后我们重启下本地的服务，刷新页面就能看到排版变成我们常见的那种样子啦</p>
-<p><img src="/blog/image-20200717015158251.png" alt="image-20200717015158251"></p>
-<h4 id="配置一个头像"><a href="#配置一个头像" class="headerlink" title="配置一个头像"></a>配置一个头像</h4><p>在themes\next\_config.yml的找到以下内容，进行以下修改</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Sidebar Avatar</span><br><span class="line">avatar:</span><br><span class="line">  # Replace the default image and set the url here.</span><br><span class="line">  url: /images/avatar.png</span><br><span class="line">  # If true, the avatar will be dispalyed in circle.</span><br><span class="line">  rounded: true</span><br><span class="line">  # If true, the avatar will be rotated with the cursor.</span><br><span class="line">  rotated: true</span><br></pre></td></tr></table></figure>
-
-<p>我这边的头像文件时png格式的，并且我将它命名为avatar.png了，所以url的值是&#x2F;images&#x2F;avatar.png，然后把头像文件放到 themes\next\source\images目录下，rounder和rotated分别是头像的样式是否是圆框以及是否会随着鼠标旋转…..挺炫酷的我就把它们都设置为true打开了…..</p>
-<p>我们重启以下服务，看看效果，发现头像已经出来啦</p>
-<p><img src="/blog/image-20200717020431809.png" alt="image-20200717020431809"></p>
-<h4 id="配置代码块的颜色"><a href="#配置代码块的颜色" class="headerlink" title="配置代码块的颜色"></a>配置代码块的颜色</h4><p>在Next主题中代码块默认的样式是：</p>
-<p><img src="/blog/image-20200717231236079.png" alt="image-20200717231236079"></p>
-<p>emmm……极度依赖黑暗模式的我修改成了MacOS风格的样子…….右上角还多了个一键粘贴代码的小按钮，很愉悦…..</p>
-<p><img src="/blog/image-20200717231529603.png" alt="image-20200717231529603"></p>
-<p>在themes\next\_config.yml的找到以下内容，进行以下修改即可</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">codeblock:</span></span><br><span class="line">  <span class="comment"># Code Highlight theme</span></span><br><span class="line">  <span class="comment"># Available values: normal | night | night eighties | night blue | night bright</span></span><br><span class="line">  <span class="comment"># See: https://github.com/chriskempson/tomorrow-theme</span></span><br><span class="line">  <span class="attr">highlight_theme:</span> <span class="string">night</span> <span class="string">bright</span></span><br><span class="line">  <span class="comment"># Add copy button on codeblock</span></span><br><span class="line">  <span class="attr">copy_button:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Show text copy result.</span></span><br><span class="line">    <span class="attr">show_result:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Available values: default | flat | mac</span></span><br><span class="line">    <span class="attr">style:</span> <span class="string">mac</span></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h4 id="快速返回顶端按钮"><a href="#快速返回顶端按钮" class="headerlink" title="快速返回顶端按钮"></a>快速返回顶端按钮</h4><p>在themes\next\_config.yml的找到以下内容，根据喜好进行修改（下面是我自己的值……_(:з)∠)_）</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">back2top:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Back to top in sidebar.</span></span><br><span class="line">  <span class="attr">sidebar:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Scroll percent label in b2t button.</span></span><br><span class="line">  <span class="attr">scrollpercent:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<p>enable表示是否打开快速返回顶端按钮的功能，默认为true</p>
-<p>sidebar表示快速返回功能是否展示在左侧的目录下方，默认是false</p>
-<p>scrollpercent表示是否展示当前已阅读整篇文章的百分数，默认为false</p>
-<p>以下是点进去某篇文章时的快速返回顶端按钮的位置</p>
-<p><img src="/blog/image-20200717215757841.png" alt="image-20200717215757841"></p>
-<h4 id="展示当前阅读进度"><a href="#展示当前阅读进度" class="headerlink" title="展示当前阅读进度"></a>展示当前阅读进度</h4><p>在themes\next\_config.yml的找到以下内容，根据喜好进行修改…..</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Reading progress bar</span></span><br><span class="line"><span class="attr">reading_progress:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Available values: top | bottom</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">top</span></span><br><span class="line">  <span class="attr">color:</span> <span class="string">&quot;#FF0000&quot;</span></span><br><span class="line">  <span class="attr">height:</span> <span class="string">3px</span></span><br></pre></td></tr></table></figure>
-
-<p>enable表示是否打开阅读进度的功能</p>
-<p>position表示进度条的位置位于页面顶部或者页面底部（只能填top或者bottom两个值）</p>
-<p>color表示进度条的颜色，使用是6位十六进制颜色值，快速查询颜色对应的值在<a href="https://www.runoob.com/html/html-colornames.html">这里</a>，上面的那个参数是表示红色</p>
-<p>height表示进度条的厚度，单位是像素px，可以自己设置然后预览来体会一下这个单位哈_(:з)∠)_……</p>
-<p>我们来看一下按照上面的参数设置开启后的效果：</p>
-<p><img src="/blog/image-20200717221340233.png" alt="image-20200717221340233"></p>
-<p>好了，主题配置就举上面这些栗子啦，想了解更多的主题设置我们可以到themes\next\_config.yml这个文件下随便改改调调来看看效果就知道啦，或者可以直接参考<a href="https://theme-next.org/docs/">官方文档</a>噢，上面都有详细的说明的</p>
-<p>至此，我们搭建的步骤就全部完成啦，其实还有一些其它的内容可以玩的，比如搞一个评论模块，开启RSS订阅和引流Github主页等，这些部分的详细的内容可以去参考崔大大的<a href="https://mp.weixin.qq.com/s/qWMsCUjbmD1tocNEt23qVw">这篇文章</a>，我懒癌发作懒得配置其它内容了…….</p>
-<h2 id="创建与发布文章"><a href="#创建与发布文章" class="headerlink" title="创建与发布文章"></a>创建与发布文章</h2><p>好了，上面搞了这么久，终于到了将怎么发布文章啦。网站搭建起来其实基本就不用怎么管了…..主要就是平时使用markdown写文章，然后编译发布到Gitee仓库里就可以啦</p>
-<p>markdown的书写裂墙推荐神器<a href="https://typora.io/">typora</a>，超一流的markdown书写体验2333</p>
-<h3 id="新建文章"><a href="#新建文章" class="headerlink" title="新建文章"></a>新建文章</h3><p>我们使用快捷键Ctrl + `快速切换到VsCode的终端，运行以下命令：</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo new 喵喵喵喵喵</span><br></pre></td></tr></table></figure>
-
-<p>然后在 source&#x2F;_posts 下面就会出现一个叫<code>喵喵喵喵喵.md</code>的markdown文件，下我们可以在开头添加一些标签和分类的信息</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">title: 喵喵喵喵喵</span><br><span class="line">date: 2020-07-17 22:25:51</span><br><span class="line">tags:</span><br><span class="line"><span class="bullet">-</span> 喵标签1</span><br><span class="line"><span class="bullet">-</span> 喵标签2</span><br><span class="line">categories:</span><br><span class="line"><span class="bullet">-</span> 喵分类1</span><br><span class="line"><span class="section">- 喵分类2</span></span><br><span class="line"><span class="section">---</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>可以添加多个标签和分类，格式参考上面的内容哈。然后接下来我们就可以用markdown语法来书写正文了，下面是随便写的一点东西……</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="section"># 一级标题</span></span><br><span class="line"><span class="section">## 二级标题</span></span><br><span class="line"><span class="section">### 三级标题</span></span><br><span class="line"><span class="section">#### 四级标题</span></span><br><span class="line"><span class="section">##### 五级标题</span></span><br><span class="line"><span class="section">###### 六级标题</span></span><br><span class="line"></span><br><span class="line"><span class="quote">&gt; 应用1</span></span><br><span class="line"><span class="quote">&gt; 应用2</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">1.</span> 有序列表1</span><br><span class="line"><span class="bullet">2.</span> 有序列表2</span><br><span class="line"></span><br><span class="line"><span class="bullet">*</span> 无序列表1</span><br><span class="line"><span class="bullet">*</span> 无序列表2</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">下面是一个表格</span><br><span class="line"></span><br><span class="line">| 列1  | 列2  | 列3  |</span><br><span class="line">| ---- | ---- | ---- |</span><br><span class="line">| a    | b    | c    |</span><br><span class="line">| 1    | 2    | 3    |</span><br><span class="line"></span><br><span class="line">下面是一个连接</span><br><span class="line">[<span class="string">一个链接</span>](<span class="link">https://yukiouma.gitee.io/blog/</span>)</span><br></pre></td></tr></table></figure>
-
-
-
-<p>然后我们本地重启一下服务（复习一下哈，本地启动项目是的命令是<code>hexo s</code>，停止是快捷键Ctrl + C），预览一下效果</p>
-<p><img src="/blog/image-20200717224726231.png" alt="image-20200717224726231"></p>
-<p>我们发现，在首页展示完整的一篇文章实在是太过占篇幅了……我们可以添加<code>&lt;!-- more --&gt;</code>标签到markdown中达到首页仅展示文章部分内容的效果</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="section"># 一级标题</span></span><br><span class="line"><span class="section">## 二级标题</span></span><br><span class="line"><span class="section">### 三级标题</span></span><br><span class="line"><span class="section">#### 四级标题</span></span><br><span class="line"><span class="section">##### 五级标题</span></span><br><span class="line"><span class="section">###### 六级标题</span></span><br><span class="line"></span><br><span class="line">&lt;!-- more --&gt;</span><br><span class="line"></span><br><span class="line"><span class="quote">&gt; 应用1</span></span><br><span class="line"><span class="quote">&gt; 应用2</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>重启服务预览：</p>
-<p><img src="/blog/image-20200717225144722.png" alt="image-20200717225144722"></p>
-<p>看，现在这样是不是好多了~</p>
-<h3 id="在文章中插入图片"><a href="#在文章中插入图片" class="headerlink" title="在文章中插入图片"></a>在文章中插入图片</h3><p>在markdown中，图片本身是一个引用的链接，具体代码如下</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">![image-20200717225144722](C:\Users\Yuki\AppData\Roaming\Typora\typora-user-images\image-20200717225144722.png)</span><br></pre></td></tr></table></figure>
-
-<p>中括号里面的是照片名称，后面的小括号表示图片的路径，可以是绝对或者是相对路径。</p>
-<p>我们要在博客的文章中加入图片，首先我们要去到根目录下的_config.yml（注意是根目录下那个哈，别和主题里的那个搞混了…..）去配置如下内容：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">post_asset_folder:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>然后要在路径source&#x2F;_posts下新建一个文件夹，名称需要和对应的文章的文件名一样，如下图，然后该篇文章的所有图片需要放如到这个文件夹中</p>
-<p><img src="/blog/image-20200717225838220.png" alt="image-20200717225838220"></p>
-<p><img src="/blog/image-20200717225938442.png" alt="image-20200717225938442"></p>
-<p>然后在markdown中的写法是：</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">![<span class="string">avatar</span>](<span class="link">avatar.png</span>)</span><br></pre></td></tr></table></figure>
-
-
-
-<p>重启服务预览：</p>
-<p><img src="/blog/image-20200717230859309.png" alt="image-20200717230859309"></p>
-<p>刚刚的图片就出来啦~</p>
-<h3 id="为博客添加标签页，分类页"><a href="#为博客添加标签页，分类页" class="headerlink" title="为博客添加标签页，分类页"></a>为博客添加标签页，分类页</h3><p>回到VsCode终端（快捷键 Ctrl + `），执行以下命令：</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo new page tags</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo new page categories</span><br></pre></td></tr></table></figure>
-
-
-
-<p>执行完毕后会生成下面两个文件</p>
-<blockquote>
-<p> source&#x2F;tags&#x2F;index.md</p>
-<p> source&#x2F;categories&#x2F;index.md </p>
-</blockquote>
-<p>然后我们将source&#x2F;tags&#x2F;index.md更改为下述内容</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">title: tags</span><br><span class="line">date: 2019-10-30 22:46:50</span><br><span class="line">type: tags</span><br><span class="line"><span class="section">comments: false</span></span><br><span class="line"><span class="section">---</span></span><br></pre></td></tr></table></figure>
-
-<p>将source&#x2F;categories&#x2F;index.md更改为下述内容</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">title: categories</span><br><span class="line">date: 2019-10-30 22:49:33</span><br><span class="line">type: categories</span><br><span class="line"><span class="section">comments: false</span></span><br><span class="line"><span class="section">---</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>在themes\next\_config.yml（注意啦，这个是主题Next下面的_config.yml，不是根目录下面的那个）的找到以下内容，进行以下修改</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">menu:</span></span><br><span class="line">  <span class="attr">home:</span> <span class="string">/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-home</span></span><br><span class="line">  <span class="comment">#about: /about/ || user</span></span><br><span class="line">  <span class="attr">tags:</span> <span class="string">/tags/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-tags</span></span><br><span class="line">  <span class="attr">categories:</span> <span class="string">/categories/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-th</span></span><br><span class="line">  <span class="attr">archives:</span> <span class="string">/archives/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-archive</span></span><br><span class="line">  <span class="comment"># schedule: /schedule/ || calendar</span></span><br><span class="line">  <span class="comment">#sitemap: /sitemap.xml || sitemap</span></span><br><span class="line">  <span class="comment">#commonweal: /404/ || heartbeat</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>重启服务预览：</p>
-<p><img src="/blog/image-20200717234856243.png" alt="image-20200717234856243"></p>
-<p>我们看到左侧的栏目里面已经出现标签和分类啦，分别点进去就能看到我们的博客里面所有的标签与分类啦</p>
-<p><img src="/blog/image-20200717235445805.png" alt="image-20200717235445805"></p>
-<p><img src="/blog/image-20200717235522879.png" alt="image-20200717235522879"></p>
-<h3 id="创建搜索页"><a href="#创建搜索页" class="headerlink" title="创建搜索页"></a>创建搜索页</h3><p>如果发布了很多文章之后我们想找到某篇文章，这个时候搜索页就非常有用呢，具体安装如下：</p>
-<p>打开VsCode终端（快捷键Ctrl + `），运行以下命令来安装搜索插件：</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">npm install hexo<span class="literal">-generator-searchdb</span> <span class="literal">--save</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>安装完成后，在根目录下的_config.yml文件的最后添加以下内容：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">search:</span></span><br><span class="line">  <span class="attr">path:</span> <span class="string">search.xml</span></span><br><span class="line">  <span class="attr">field:</span> <span class="string">post</span></span><br><span class="line">  <span class="attr">format:</span> <span class="string">html</span></span><br><span class="line">  <span class="attr">limit:</span> <span class="number">10000</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>然后在themes\next\_config.yml文件找到以下内容，并进行以下修改：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local search</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/wzpan/hexo-generator-search</span></span><br><span class="line"><span class="attr">local_search:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># If auto, trigger search by changing input.</span></span><br><span class="line">  <span class="comment"># If manual, trigger search by pressing enter key or search button.</span></span><br><span class="line">  <span class="attr">trigger:</span> <span class="string">auto</span></span><br><span class="line">  <span class="comment"># Show top n results per article, show all results by setting to -1</span></span><br><span class="line">  <span class="attr">top_n_per_article:</span> <span class="number">5</span></span><br><span class="line">  <span class="comment"># Unescape html strings to the readable one.</span></span><br><span class="line">  <span class="attr">unescape:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Preload the search data when the page loads.</span></span><br><span class="line">  <span class="attr">preload:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>保存后重启服务预览：</p>
-<p><img src="/blog/image-20200718003146711.png" alt="image-20200718003146711"></p>
-<p>看，搜索栏已经出现了，我们试一下使用它：</p>
-<p><img src="/blog/image-20200718003235809.png" alt="image-20200718003235809"></p>
-<p>看来能检索到我们想要的内容呢~</p>
-<h3 id="将更改的内容发布到代码仓库中"><a href="#将更改的内容发布到代码仓库中" class="headerlink" title="将更改的内容发布到代码仓库中"></a>将更改的内容发布到代码仓库中</h3><p>这是一个<a href="#%E5%86%8D%E6%AC%A1%E5%8F%91%E5%B8%83%E5%88%B0%E4%BB%93%E5%BA%93%E4%B8%AD">传送门</a>，方法与之前提到的发布到代码仓库的一样哈，点击传送门回去喵一下啦</p>
-<h2 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h2><p>这个从零开始搭建自己的博客的小攻略就写到这里啦，如果按上面的步骤一步步走的话，你应该能搭建一个和我这个<a href="https://yukiouma.gitee.io/myblog/">demo</a>一样的博客网站呢，如果中间有发现哪里我没有说清楚的欢迎联系呢，也可以找我要一下本地部署的现成的源码…..但是还是建议自己动手搞一下哈，毕竟乐趣还是在自己动手的过程中才能体会到呢~</p>
-]]></content>
-      <categories>
-        <category>其他</category>
-      </categories>
-      <tags>
-        <tag>hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>使用Remote-ssh连接vscode与远程服务器</title>
     <url>/blog/2020/07/14/%E4%BD%BF%E7%94%A8Remote-ssh%E8%BF%9E%E6%8E%A5vscode%E4%B8%8E%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
     <content><![CDATA[<h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><ul>
@@ -2525,7 +2226,7 @@
 
 <h3 id="web服务访问"><a href="#web服务访问" class="headerlink" title="web服务访问"></a>web服务访问</h3><p>浏览器输入<code>&lt;主机ip&gt;:15672</code></p>
 <p>默认创建的账号密码均为guest</p>
-<p><img src="/blog/1634441126.jpg" alt="1634441126.jpg"></p>
+<p><img src="/blog/2021/10/17/%E4%BD%BF%E7%94%A8docker%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85RabbitMQ/1634441126.jpg" alt="1634441126.jpg"></p>
 <p>如果能正常登录并看到该页面，表示web服务正常运行</p>
 <h3 id="创建用户"><a href="#创建用户" class="headerlink" title="创建用户"></a>创建用户</h3><p> 默认的<code>guest</code> 账户有访问限制，默认只能通过本地网络(如 localhost) 访问，远程网络访问受限，我们添加一个root用户以满足远程网络访问的需求</p>
 <p>进入容器内</p>
@@ -2613,6 +2314,305 @@
       </categories>
       <tags>
         <tag>Golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>从零开始搭建一个自己的博客</title>
+    <url>/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>本文记录一下用hexo这个框架从零搭建自己的博客的全过程。因为只是想体验一下hexo这个框架，平时做做学习笔记啥的，偶尔喂自己一点鸡汤╮(╯▽╰)╭，所以像评论这些扩展组件就没有搞，等哪天我想搞了再写上吧→_→…..</p>
+<p>hexo是一个强大的使用Node.js驱动的博客框架，虽然说是用Node.js搭建的，但是使用下来感觉也不需要JavaScript的语法…..然后文章主体是使用markdown作为书写语言，需要对markdown做一些简单的了解哈，语法传送门在<a href="https://www.runoob.com/markdown/md-tutorial.html">这里</a>，相信你半个小时就能大致上手啦~</p>
+<span id="more"></span>
+
+<h2 id="搭建环境"><a href="#搭建环境" class="headerlink" title="搭建环境"></a>搭建环境</h2><ul>
+<li>Windows 10 1903(18362.900)</li>
+<li>Visual Studio Code 1.47.1</li>
+<li>Node v12.13.0</li>
+<li>Git 2.23.0.windows.1</li>
+<li>hexo 4.0.0</li>
+</ul>
+<h2 id="搭建步骤"><a href="#搭建步骤" class="headerlink" title="搭建步骤"></a>搭建步骤</h2><h3 id="安装Node-js"><a href="#安装Node-js" class="headerlink" title="安装Node.js"></a>安装Node.js</h3><h4 id="下载与安装"><a href="#下载与安装" class="headerlink" title="下载与安装"></a>下载与安装</h4><p>到<a href="https://nodejs.org/en/">Node官网</a>下载Node.js安装包，选择LST(稳定版本)即可，如下图：</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200716213925124.png" alt="image-20200716213925124"></p>
+<p>下载后以管理员身份运行安装包，全程点击接受协议和下一步一直到结束就可以啦~</p>
+<p>安装完之后查看是否安装成功的方法：</p>
+<p>打开CMD（win键 + R，然后在弹出的输入框中输出CMD然后回车即可），执行<code>node -v</code>，如果出现以下内容就说明安装成功啦~</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200716214334747.png" alt="image-20200716214334747"></p>
+<h4 id="更换npm镜像源"><a href="#更换npm镜像源" class="headerlink" title="更换npm镜像源"></a>更换npm镜像源</h4><p>默认的Node中的npm镜像源是直接指向国外的镜像源的，我们在国内下载起来速度你懂的…..所以我们要更换一下国内的镜像源以提高安装包的下载速度。我们这里选择的是淘宝的镜像源哈，打开CMD（话说刚刚打开的CMD你还没关掉吧……），运行以下命令：</p>
+<figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">npm config <span class="built_in">set</span> registry https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
+
+<p>回车运行就可以啦</p>
+<h3 id="安装Git"><a href="#安装Git" class="headerlink" title="安装Git"></a>安装Git</h3><p>下载<a href="https://git-scm.com/downloads">Git</a>，选择window版的安装包，然后一路点击接受和确认即可……</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200716235259477.png" alt="image-20200716235259477"></p>
+<p>然后我们对着文件夹右键一下，Git Bash这个选项就代表安装好啦</p>
+<h3 id="安装Visual-Studio-Code"><a href="#安装Visual-Studio-Code" class="headerlink" title="安装Visual Studio Code"></a>安装Visual Studio Code</h3><p>这步是可选的…..可以换成自己熟悉的编辑器呢，因为我自己平时就是用VsCode进行开发的所以…..</p>
+<p>下载<a href="https://code.visualstudio.com/download#">VsCode</a>，选下图这个按钮，然后一直点同意和下一步到安装完成就可以啦……</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200716220221761.png" alt="image-20200716220221761"></p>
+<p>安装完能正常打开就可以啦</p>
+<h3 id="安装hexo-cli"><a href="#安装hexo-cli" class="headerlink" title="安装hexo-cli"></a>安装hexo-cli</h3><p>还是刚刚的CMD…..运行下面指令：</p>
+<figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
+
+<p>等待安装完成后，检查hexo-cli是否已经全局安装成功运行以下指令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm list -g --depth 0</span><br></pre></td></tr></table></figure>
+
+<p>若看到了hexo-cli就表示已经安装成功啦</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200716220929499.png" alt="image-20200716220929499"></p>
+<h3 id="初始化博客项目"><a href="#初始化博客项目" class="headerlink" title="初始化博客项目"></a>初始化博客项目</h3><h4 id="初始化项目框架"><a href="#初始化项目框架" class="headerlink" title="初始化项目框架"></a>初始化项目框架</h4><p>找一个你喜欢的文件夹，在地址栏上输入CMD然后回车（哈哈哈哈没想到吧还是CMD……然后上面步骤的CMD可以关掉啦……），出现当前文件夹路径的CMD，然后运行以下命令：</p>
+<figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">hexo init blogdemo</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>解析：blogdemo是项目哈，这部分你可以换成自己喜欢的名字</p>
+</blockquote>
+<p>执行这个命令后hexo将会帮我们下载这个博客项目所需要的文件与依赖（下载过程可能会要一会儿….看网络….），下载好的提示如下图</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200716230102850.png" alt="image-20200716230102850"></p>
+<p>弱弱说一下装好之后CMD就能关掉了…..</p>
+<p>然后在当前文件夹下面生成一个叫blogdemo的文件夹，这个时候我们选择右键blogdemo，选择“通过Code打开”，打开后能看到hexo-cli已经帮我们生成了整个项目的文件</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200716230506308.png" alt="image-20200716230506308"></p>
+<p>打开VsCode按下快捷键Ctrl + `，就可以打开终端啦（就把它当CMD吧….），默认来说的是powershell，但是可以通过更改成别的呢，比如我个人就习惯用bash作为默认的终端….按下快捷键Ctrl + `后在VsCode底部出现刚刚类似CMD的界面如下图：</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200716231242476.png" alt="image-20200716231242476"></p>
+<h4 id="生成网页文件"><a href="#生成网页文件" class="headerlink" title="生成网页文件"></a>生成网页文件</h4><p>我们在终端中执行以下命令：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure>
+
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200716231405203.png" alt="image-20200716231405203"></p>
+<p>上图表示执行完成，hexo g中的g是generate的简写，表示生成网页内容，这个我们下面再介绍</p>
+<h4 id="在本地启动hexo"><a href="#在本地启动hexo" class="headerlink" title="在本地启动hexo"></a>在本地启动hexo</h4><p>我们在终端执行：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure>
+
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200716231604653.png" alt="image-20200716231604653"></p>
+<p>这个命令表示在本地启动hexo的博客项目，命令中的s是serve的简写，上图表示已经启动成功了，我们可以在浏览器中输入<a href="http://localhost:4000/">http://localhost:4000</a>来访问到我们刚启动的博客项目~</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200716231746490.png" alt="image-20200716231746490"></p>
+<p>成功看到这个页面说明我们初始化就成功啦~</p>
+<h4 id="停止hexo"><a href="#停止hexo" class="headerlink" title="停止hexo"></a>停止hexo</h4><p>在终端中直接按下Ctrl + C即可停止hexo运行，停止后<a href="http://localhost:4000/">http://localhost:4000</a>就访问不到内容了</p>
+<h3 id="将博客部署到Gitee-Pages上"><a href="#将博客部署到Gitee-Pages上" class="headerlink" title="将博客部署到Gitee Pages上"></a>将博客部署到Gitee Pages上</h3><p>其实这步也可以选择部署到GitHub Pages上，但是由于Github的服务器是在国外，可能平时访问的速度就会有些波动，为了能稳定访问我们选择部署到国内的Gitee（码云）上。</p>
+<h4 id="注册Gitee账号"><a href="#注册Gitee账号" class="headerlink" title="注册Gitee账号"></a>注册Gitee账号</h4><p>这个……我应该不用展开说吧_(:з)∠)_……</p>
+<h4 id="新建一个代码仓库"><a href="#新建一个代码仓库" class="headerlink" title="新建一个代码仓库"></a>新建一个代码仓库</h4><p>注册完成后进入个人主页，然后如下图点击新建仓库：</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200716233345634.png" alt="image-20200716233345634"></p>
+<p>填写仓库基本信息，这里Name和Path保持一致就好，Description这个随意…..Property选Public，license选MIT就可以…..（其实不太懂这个….但是MIT见得比较多…..），其他可以不填或不选，然后点底部New按钮创建仓库</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200716234310455.png" alt="image-20200716234310455"></p>
+<p>下图就是我们刚刚创建好的代码仓库啦</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200716234621276.png" alt="image-20200716234621276"></p>
+<h4 id="修改hexo项目文件夹中的部署配置"><a href="#修改hexo项目文件夹中的部署配置" class="headerlink" title="修改hexo项目文件夹中的部署配置"></a>修改hexo项目文件夹中的部署配置</h4><p>我们回到VsCode中，在左侧的文件目录中找到_config.yml这个文件，单击打开它，直接到最后，看到下面这段代码：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Deployment</span></span><br><span class="line"><span class="comment">## Docs: https://hexo.io/docs/deployment.html</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> </span><br></pre></td></tr></table></figure>
+
+
+
+<p>我们把这段代码改成如下内容，保存</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># Deployment</span></span><br><span class="line"><span class="comment">## Docs: https://hexo.io/docs/deployment.html</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">https://gitee.com/yukiouma/MyBlog.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>type和branch后面的内容可以不用理会，我们重点看看repo后面的这个值是怎么来的，我们回到刚刚新建的代码仓库的页面，然后点击下图中的Clone or Download，然后点击弹窗中的Copy，就获得了仓库的地址，我们直接把这个值粘贴到repo: 的后面就OK啦</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200716235933025.png" alt="image-20200716235933025"></p>
+<h4 id="安装-Git-的部署插件"><a href="#安装-Git-的部署插件" class="headerlink" title="安装 Git 的部署插件"></a>安装 Git 的部署插件</h4><p>在终端中运行以下命令：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">npm install hexo<span class="literal">-deployer-git</span> <span class="literal">--save</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="部署到代码仓库中"><a href="#部署到代码仓库中" class="headerlink" title="部署到代码仓库中"></a>部署到代码仓库中</h4><p>在终端中执行：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+
+<p>d是deploy的缩写，这行命令表示将刚刚执行的<code>hexo g</code>生成的网页文件发布到我们刚刚新建的代码仓库里面。如果是第一次往上面发布东西的话会要求你输入刚刚在Gitee注册的账号密码，之后电脑中会留有记录，以后就不用输入密码就可以直接发布上去了</p>
+<p>我们回到刚创建的代码仓库，就可以看到我们刚刚发布上去的编译后的代码啦</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717001308044.png" alt="image-20200717001308044"></p>
+<h4 id="创建Gitee-Pages服务"><a href="#创建Gitee-Pages服务" class="headerlink" title="创建Gitee Pages服务"></a>创建Gitee Pages服务</h4><p>点击Service，然后选择Gitee Pages</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717001407927.png" alt="image-20200717001407927"></p>
+<p>进入到如下页面，勾选Enforce HTTPS后，点击Create，然就创建好Gitee Pages服务了，稍等片刻整个博客就部署好啦，部署好之后页面会提示你访问的地址的~</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717002810532.png" alt="image-20200717002810532"></p>
+<p>然后我们点击这个地址访问一下，出现下图，样式全部都挂了…..跟刚刚本地启动的时候完全不一样…(╯‵□′)╯︵┻━┻</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717002907784.png" alt="image-20200717002907784"></p>
+<h4 id="第二次修改部署配置"><a href="#第二次修改部署配置" class="headerlink" title="第二次修改部署配置"></a>第二次修改部署配置</h4><p>还是刚刚的_config.yml这个文件，找到下面这段代码</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># URL</span></span><br><span class="line"><span class="comment">## If your site is put in a subdirectory, set url as &#x27;http://yoursite.com/child&#x27; and root as &#x27;/child/&#x27;</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">http://yoursite.com</span></span><br><span class="line"><span class="attr">root:</span> <span class="string">/</span></span><br><span class="line"><span class="attr">permalink:</span> <span class="string">:year/:month/:day/:title/</span></span><br><span class="line"><span class="attr">permalink_defaults:</span></span><br><span class="line"><span class="attr">pretty_urls:</span></span><br><span class="line">  <span class="attr">trailing_index:</span> <span class="literal">true</span> <span class="comment"># Set to false to remove trailing &#x27;index.html&#x27; from permalinks</span></span><br><span class="line">  <span class="attr">trailing_html:</span> <span class="literal">true</span> <span class="comment"># Set to false to remove trailing &#x27;.html&#x27; from permalinks</span></span><br></pre></td></tr></table></figure>
+
+<p>我们把url: 后面的那个地址改成我们代码仓库的地址（注意，代码仓库的地址和博客访问的地址是不一样的），查看代码仓库的地址如下图：</p>
+<p>第一步，点击Settings，进入设置页面</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717010008376.png" alt="image-20200717010008376"></p>
+<p>第二步，查看仓库地址，红框的内容才是仓库地址</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717010109312.png" alt="image-20200717010109312"></p>
+<p>然后我们把这个地址写到url后面，然后把地址最后的部分写到root后面，保存即可，如下所示</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># URL</span></span><br><span class="line"><span class="comment">## If your site is put in a subdirectory, set url as &#x27;http://yoursite.com/child&#x27; and root as &#x27;/child/&#x27;</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">https://gitee.com/yukiouma/MyBlog/</span></span><br><span class="line"><span class="attr">root:</span> <span class="string">/MyBlog</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="再次发布到仓库中"><a href="#再次发布到仓库中" class="headerlink" title="再次发布到仓库中"></a>再次发布到仓库中</h4><p>我们刚刚修改了配置，所以之前生成的网页文件需要清空然后重新生成，我们先执行</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br></pre></td></tr></table></figure>
+
+<p>这个命令表示情清空之前生成好的网页文件</p>
+<p>然后执行依次执行下面的内容：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+
+<p>具体解析到上面找一下哈，就不重复说啦</p>
+<p>我们每次更新了博客内容的时候都需要重复上述的三个步骤去部署到代码仓库里面，每次都需要执行三个命令感觉挺麻烦的……所以我们搞一个脚本让他们按顺序一起执行。</p>
+<p>在博客项目的根目录中创建一个叫deploy.sh的文件，里面写入以下内容，然后保存</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>以后我们只要在终端执行<code>sh deploy.sh</code>就可以一次性执行这三个指令啦</p>
+<p>然后我们回到刚刚的Gitee Pages服务页面</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717001407927.png" alt="image-20200717001407927"></p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717004128744.png" alt="image-20200717004128744"></p>
+<p>原本的Create变成了Update，点击它，稍等片刻部署就完成了</p>
+<p>我们再访问一次：</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717005530618.png" alt="image-20200717005530618"></p>
+<p>部署成功啦~~~</p>
+<h2 id="配置博客站点信息"><a href="#配置博客站点信息" class="headerlink" title="配置博客站点信息"></a>配置博客站点信息</h2><p>我们刚搭建好的博客的站点信息全部都是默认的内容，我们需要改成我们自己的信息，要不咋叫自己的博客呢……</p>
+<p>还是_config.yml这个文件，我们来修改以下下面这部分的内容：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Site</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">随便起的名字....</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">喵喵喵喵喵？</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">我也不知道说点啥好.....</span></span><br><span class="line"><span class="attr">keywords:</span> <span class="string">&quot;demo&quot;</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">Yuki</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>保存之后我们在本地启动项目（终端运行<code>hexo s</code>），访问<a href="http://localhost:4000/"> http://localhost:4000/ </a>，看到和之前原始的页面相比发生了变化</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717013432466.png" alt="image-20200717013432466"></p>
+<h2 id="更换博客主题"><a href="#更换博客主题" class="headerlink" title="更换博客主题"></a>更换博客主题</h2><p>说实话，我觉得这个默认的主题有点一言难尽…….我们还是换个别的主题吧。换主题这个事情用不同的组件用法是不一样的，我们简单介绍一个相对热门的主题，名字叫Next，主打黑白的熊猫风格的界面</p>
+<h3 id="下载主题文件"><a href="#下载主题文件" class="headerlink" title="下载主题文件"></a>下载主题文件</h3><p>在VsCode终端执行以下命令：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/theme<span class="literal">-next</span>/hexo<span class="literal">-theme-next</span> themes/next</span><br></pre></td></tr></table></figure>
+
+<p>执行完成后，我们返现在themes这个文件夹下面多了个名字为next的文件夹，这就是我们准备要使用的next主题的文件。</p>
+<h3 id="切换主题"><a href="#切换主题" class="headerlink" title="切换主题"></a>切换主题</h3><p>还是_config.yml这个文件，找到以下代码：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Extensions</span></span><br><span class="line"><span class="comment">## Plugins: https://hexo.io/plugins/</span></span><br><span class="line"><span class="comment">## Themes: https://hexo.io/themes/</span></span><br><span class="line"><span class="attr">theme:</span> <span class="string">landscape</span></span><br></pre></td></tr></table></figure>
+
+<p>将landscape替换成 next 即可。然后我们重新启动以下本地的服务，继续访问<a href="http://localhost:4000/"> http://localhost:4000/ </a>就会发现主题发生变化了</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717014450057.png" alt="image-20200717014450057"></p>
+<h3 id="配置主题"><a href="#配置主题" class="headerlink" title="配置主题"></a>配置主题</h3><p>切换好主题了，我们可以对默认的配置进行一些列的修改。注意，以下说的配置文件_config.yml不是根目录下的_config.yml，而指的是 themes\next\_config.yml </p>
+<h4 id="排版样式"><a href="#排版样式" class="headerlink" title="排版样式"></a>排版样式</h4><p>排版样式在themes\next\_config.yml的以下内容中配置，将喜欢的样式的注释（开头的#号）拿掉即可，我现在选了Pisces</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ---------------------------------------------------------------</span></span><br><span class="line"><span class="comment"># Scheme Settings</span></span><br><span class="line"><span class="comment"># ---------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Schemes</span></span><br><span class="line"><span class="comment">#scheme: Muse</span></span><br><span class="line"><span class="comment">#scheme: Mist</span></span><br><span class="line"><span class="attr">scheme:</span> <span class="string">Pisces</span></span><br><span class="line"><span class="comment">#scheme: Gemini</span></span><br></pre></td></tr></table></figure>
+
+<p>然后我们重启下本地的服务，刷新页面就能看到排版变成我们常见的那种样子啦</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717015158251.png" alt="image-20200717015158251"></p>
+<h4 id="配置一个头像"><a href="#配置一个头像" class="headerlink" title="配置一个头像"></a>配置一个头像</h4><p>在themes\next\_config.yml的找到以下内容，进行以下修改</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Sidebar Avatar</span><br><span class="line">avatar:</span><br><span class="line">  # Replace the default image and set the url here.</span><br><span class="line">  url: /images/avatar.png</span><br><span class="line">  # If true, the avatar will be dispalyed in circle.</span><br><span class="line">  rounded: true</span><br><span class="line">  # If true, the avatar will be rotated with the cursor.</span><br><span class="line">  rotated: true</span><br></pre></td></tr></table></figure>
+
+<p>我这边的头像文件时png格式的，并且我将它命名为avatar.png了，所以url的值是&#x2F;images&#x2F;avatar.png，然后把头像文件放到 themes\next\source\images目录下，rounder和rotated分别是头像的样式是否是圆框以及是否会随着鼠标旋转…..挺炫酷的我就把它们都设置为true打开了…..</p>
+<p>我们重启以下服务，看看效果，发现头像已经出来啦</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717020431809.png" alt="image-20200717020431809"></p>
+<h4 id="配置代码块的颜色"><a href="#配置代码块的颜色" class="headerlink" title="配置代码块的颜色"></a>配置代码块的颜色</h4><p>在Next主题中代码块默认的样式是：</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717231236079.png" alt="image-20200717231236079"></p>
+<p>emmm……极度依赖黑暗模式的我修改成了MacOS风格的样子…….右上角还多了个一键粘贴代码的小按钮，很愉悦…..</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717231529603.png" alt="image-20200717231529603"></p>
+<p>在themes\next\_config.yml的找到以下内容，进行以下修改即可</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">codeblock:</span></span><br><span class="line">  <span class="comment"># Code Highlight theme</span></span><br><span class="line">  <span class="comment"># Available values: normal | night | night eighties | night blue | night bright</span></span><br><span class="line">  <span class="comment"># See: https://github.com/chriskempson/tomorrow-theme</span></span><br><span class="line">  <span class="attr">highlight_theme:</span> <span class="string">night</span> <span class="string">bright</span></span><br><span class="line">  <span class="comment"># Add copy button on codeblock</span></span><br><span class="line">  <span class="attr">copy_button:</span></span><br><span class="line">    <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Show text copy result.</span></span><br><span class="line">    <span class="attr">show_result:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Available values: default | flat | mac</span></span><br><span class="line">    <span class="attr">style:</span> <span class="string">mac</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h4 id="快速返回顶端按钮"><a href="#快速返回顶端按钮" class="headerlink" title="快速返回顶端按钮"></a>快速返回顶端按钮</h4><p>在themes\next\_config.yml的找到以下内容，根据喜好进行修改（下面是我自己的值……_(:з)∠)_）</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">back2top:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Back to top in sidebar.</span></span><br><span class="line">  <span class="attr">sidebar:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Scroll percent label in b2t button.</span></span><br><span class="line">  <span class="attr">scrollpercent:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<p>enable表示是否打开快速返回顶端按钮的功能，默认为true</p>
+<p>sidebar表示快速返回功能是否展示在左侧的目录下方，默认是false</p>
+<p>scrollpercent表示是否展示当前已阅读整篇文章的百分数，默认为false</p>
+<p>以下是点进去某篇文章时的快速返回顶端按钮的位置</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717215757841.png" alt="image-20200717215757841"></p>
+<h4 id="展示当前阅读进度"><a href="#展示当前阅读进度" class="headerlink" title="展示当前阅读进度"></a>展示当前阅读进度</h4><p>在themes\next\_config.yml的找到以下内容，根据喜好进行修改…..</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Reading progress bar</span></span><br><span class="line"><span class="attr">reading_progress:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Available values: top | bottom</span></span><br><span class="line">  <span class="attr">position:</span> <span class="string">top</span></span><br><span class="line">  <span class="attr">color:</span> <span class="string">&quot;#FF0000&quot;</span></span><br><span class="line">  <span class="attr">height:</span> <span class="string">3px</span></span><br></pre></td></tr></table></figure>
+
+<p>enable表示是否打开阅读进度的功能</p>
+<p>position表示进度条的位置位于页面顶部或者页面底部（只能填top或者bottom两个值）</p>
+<p>color表示进度条的颜色，使用是6位十六进制颜色值，快速查询颜色对应的值在<a href="https://www.runoob.com/html/html-colornames.html">这里</a>，上面的那个参数是表示红色</p>
+<p>height表示进度条的厚度，单位是像素px，可以自己设置然后预览来体会一下这个单位哈_(:з)∠)_……</p>
+<p>我们来看一下按照上面的参数设置开启后的效果：</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717221340233.png" alt="image-20200717221340233"></p>
+<p>好了，主题配置就举上面这些栗子啦，想了解更多的主题设置我们可以到themes\next\_config.yml这个文件下随便改改调调来看看效果就知道啦，或者可以直接参考<a href="https://theme-next.org/docs/">官方文档</a>噢，上面都有详细的说明的</p>
+<p>至此，我们搭建的步骤就全部完成啦，其实还有一些其它的内容可以玩的，比如搞一个评论模块，开启RSS订阅和引流Github主页等，这些部分的详细的内容可以去参考崔大大的<a href="https://mp.weixin.qq.com/s/qWMsCUjbmD1tocNEt23qVw">这篇文章</a>，我懒癌发作懒得配置其它内容了…….</p>
+<h2 id="创建与发布文章"><a href="#创建与发布文章" class="headerlink" title="创建与发布文章"></a>创建与发布文章</h2><p>好了，上面搞了这么久，终于到了将怎么发布文章啦。网站搭建起来其实基本就不用怎么管了…..主要就是平时使用markdown写文章，然后编译发布到Gitee仓库里就可以啦</p>
+<p>markdown的书写裂墙推荐神器<a href="https://typora.io/">typora</a>，超一流的markdown书写体验2333</p>
+<h3 id="新建文章"><a href="#新建文章" class="headerlink" title="新建文章"></a>新建文章</h3><p>我们使用快捷键Ctrl + `快速切换到VsCode的终端，运行以下命令：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo new 喵喵喵喵喵</span><br></pre></td></tr></table></figure>
+
+<p>然后在 source&#x2F;_posts 下面就会出现一个叫<code>喵喵喵喵喵.md</code>的markdown文件，下我们可以在开头添加一些标签和分类的信息</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">title: 喵喵喵喵喵</span><br><span class="line">date: 2020-07-17 22:25:51</span><br><span class="line">tags:</span><br><span class="line"><span class="bullet">-</span> 喵标签1</span><br><span class="line"><span class="bullet">-</span> 喵标签2</span><br><span class="line">categories:</span><br><span class="line"><span class="bullet">-</span> 喵分类1</span><br><span class="line"><span class="section">- 喵分类2</span></span><br><span class="line"><span class="section">---</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以添加多个标签和分类，格式参考上面的内容哈。然后接下来我们就可以用markdown语法来书写正文了，下面是随便写的一点东西……</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="section"># 一级标题</span></span><br><span class="line"><span class="section">## 二级标题</span></span><br><span class="line"><span class="section">### 三级标题</span></span><br><span class="line"><span class="section">#### 四级标题</span></span><br><span class="line"><span class="section">##### 五级标题</span></span><br><span class="line"><span class="section">###### 六级标题</span></span><br><span class="line"></span><br><span class="line"><span class="quote">&gt; 应用1</span></span><br><span class="line"><span class="quote">&gt; 应用2</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">1.</span> 有序列表1</span><br><span class="line"><span class="bullet">2.</span> 有序列表2</span><br><span class="line"></span><br><span class="line"><span class="bullet">*</span> 无序列表1</span><br><span class="line"><span class="bullet">*</span> 无序列表2</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">下面是一个表格</span><br><span class="line"></span><br><span class="line">| 列1  | 列2  | 列3  |</span><br><span class="line">| ---- | ---- | ---- |</span><br><span class="line">| a    | b    | c    |</span><br><span class="line">| 1    | 2    | 3    |</span><br><span class="line"></span><br><span class="line">下面是一个连接</span><br><span class="line">[<span class="string">一个链接</span>](<span class="link">https://yukiouma.gitee.io/blog/</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后我们本地重启一下服务（复习一下哈，本地启动项目是的命令是<code>hexo s</code>，停止是快捷键Ctrl + C），预览一下效果</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717224726231.png" alt="image-20200717224726231"></p>
+<p>我们发现，在首页展示完整的一篇文章实在是太过占篇幅了……我们可以添加<code>&lt;!-- more --&gt;</code>标签到markdown中达到首页仅展示文章部分内容的效果</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="section"># 一级标题</span></span><br><span class="line"><span class="section">## 二级标题</span></span><br><span class="line"><span class="section">### 三级标题</span></span><br><span class="line"><span class="section">#### 四级标题</span></span><br><span class="line"><span class="section">##### 五级标题</span></span><br><span class="line"><span class="section">###### 六级标题</span></span><br><span class="line"></span><br><span class="line">&lt;!-- more --&gt;</span><br><span class="line"></span><br><span class="line"><span class="quote">&gt; 应用1</span></span><br><span class="line"><span class="quote">&gt; 应用2</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>重启服务预览：</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717225144722.png" alt="image-20200717225144722"></p>
+<p>看，现在这样是不是好多了~</p>
+<h3 id="在文章中插入图片"><a href="#在文章中插入图片" class="headerlink" title="在文章中插入图片"></a>在文章中插入图片</h3><p>在markdown中，图片本身是一个引用的链接，具体代码如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">![image-20200717225144722](C:\Users\Yuki\AppData\Roaming\Typora\typora-user-images\image-20200717225144722.png)</span><br></pre></td></tr></table></figure>
+
+<p>中括号里面的是照片名称，后面的小括号表示图片的路径，可以是绝对或者是相对路径。</p>
+<p>我们要在博客的文章中加入图片，首先我们要去到根目录下的_config.yml（注意是根目录下那个哈，别和主题里的那个搞混了…..）去配置如下内容：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">post_asset_folder:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后要在路径source&#x2F;_posts下新建一个文件夹，名称需要和对应的文章的文件名一样，如下图，然后该篇文章的所有图片需要放如到这个文件夹中</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717225838220.png" alt="image-20200717225838220"></p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717225938442.png" alt="image-20200717225938442"></p>
+<p>然后在markdown中的写法是：</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">![<span class="string">avatar</span>](<span class="link">avatar.png</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>重启服务预览：</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717230859309.png" alt="image-20200717230859309"></p>
+<p>刚刚的图片就出来啦~</p>
+<h3 id="为博客添加标签页，分类页"><a href="#为博客添加标签页，分类页" class="headerlink" title="为博客添加标签页，分类页"></a>为博客添加标签页，分类页</h3><p>回到VsCode终端（快捷键 Ctrl + `），执行以下命令：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo new page tags</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo new page categories</span><br></pre></td></tr></table></figure>
+
+
+
+<p>执行完毕后会生成下面两个文件</p>
+<blockquote>
+<p> source&#x2F;tags&#x2F;index.md</p>
+<p> source&#x2F;categories&#x2F;index.md </p>
+</blockquote>
+<p>然后我们将source&#x2F;tags&#x2F;index.md更改为下述内容</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">title: tags</span><br><span class="line">date: 2019-10-30 22:46:50</span><br><span class="line">type: tags</span><br><span class="line"><span class="section">comments: false</span></span><br><span class="line"><span class="section">---</span></span><br></pre></td></tr></table></figure>
+
+<p>将source&#x2F;categories&#x2F;index.md更改为下述内容</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">title: categories</span><br><span class="line">date: 2019-10-30 22:49:33</span><br><span class="line">type: categories</span><br><span class="line"><span class="section">comments: false</span></span><br><span class="line"><span class="section">---</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>在themes\next\_config.yml（注意啦，这个是主题Next下面的_config.yml，不是根目录下面的那个）的找到以下内容，进行以下修改</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">menu:</span></span><br><span class="line">  <span class="attr">home:</span> <span class="string">/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-home</span></span><br><span class="line">  <span class="comment">#about: /about/ || user</span></span><br><span class="line">  <span class="attr">tags:</span> <span class="string">/tags/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-tags</span></span><br><span class="line">  <span class="attr">categories:</span> <span class="string">/categories/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-th</span></span><br><span class="line">  <span class="attr">archives:</span> <span class="string">/archives/</span> <span class="string">||</span> <span class="string">fa</span> <span class="string">fa-archive</span></span><br><span class="line">  <span class="comment"># schedule: /schedule/ || calendar</span></span><br><span class="line">  <span class="comment">#sitemap: /sitemap.xml || sitemap</span></span><br><span class="line">  <span class="comment">#commonweal: /404/ || heartbeat</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>重启服务预览：</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717234856243.png" alt="image-20200717234856243"></p>
+<p>我们看到左侧的栏目里面已经出现标签和分类啦，分别点进去就能看到我们的博客里面所有的标签与分类啦</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717235445805.png" alt="image-20200717235445805"></p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200717235522879.png" alt="image-20200717235522879"></p>
+<h3 id="创建搜索页"><a href="#创建搜索页" class="headerlink" title="创建搜索页"></a>创建搜索页</h3><p>如果发布了很多文章之后我们想找到某篇文章，这个时候搜索页就非常有用呢，具体安装如下：</p>
+<p>打开VsCode终端（快捷键Ctrl + `），运行以下命令来安装搜索插件：</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">npm install hexo<span class="literal">-generator-searchdb</span> <span class="literal">--save</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>安装完成后，在根目录下的_config.yml文件的最后添加以下内容：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">search:</span></span><br><span class="line">  <span class="attr">path:</span> <span class="string">search.xml</span></span><br><span class="line">  <span class="attr">field:</span> <span class="string">post</span></span><br><span class="line">  <span class="attr">format:</span> <span class="string">html</span></span><br><span class="line">  <span class="attr">limit:</span> <span class="number">10000</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后在themes\next\_config.yml文件找到以下内容，并进行以下修改：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Local search</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/wzpan/hexo-generator-search</span></span><br><span class="line"><span class="attr">local_search:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># If auto, trigger search by changing input.</span></span><br><span class="line">  <span class="comment"># If manual, trigger search by pressing enter key or search button.</span></span><br><span class="line">  <span class="attr">trigger:</span> <span class="string">auto</span></span><br><span class="line">  <span class="comment"># Show top n results per article, show all results by setting to -1</span></span><br><span class="line">  <span class="attr">top_n_per_article:</span> <span class="number">5</span></span><br><span class="line">  <span class="comment"># Unescape html strings to the readable one.</span></span><br><span class="line">  <span class="attr">unescape:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Preload the search data when the page loads.</span></span><br><span class="line">  <span class="attr">preload:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>保存后重启服务预览：</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200718003146711.png" alt="image-20200718003146711"></p>
+<p>看，搜索栏已经出现了，我们试一下使用它：</p>
+<p><img src="/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/image-20200718003235809.png" alt="image-20200718003235809"></p>
+<p>看来能检索到我们想要的内容呢~</p>
+<h3 id="将更改的内容发布到代码仓库中"><a href="#将更改的内容发布到代码仓库中" class="headerlink" title="将更改的内容发布到代码仓库中"></a>将更改的内容发布到代码仓库中</h3><p>这是一个<a href="#%E5%86%8D%E6%AC%A1%E5%8F%91%E5%B8%83%E5%88%B0%E4%BB%93%E5%BA%93%E4%B8%AD">传送门</a>，方法与之前提到的发布到代码仓库的一样哈，点击传送门回去喵一下啦</p>
+<h2 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h2><p>这个从零开始搭建自己的博客的小攻略就写到这里啦，如果按上面的步骤一步步走的话，你应该能搭建一个和我这个<a href="https://yukiouma.gitee.io/myblog/">demo</a>一样的博客网站呢，如果中间有发现哪里我没有说清楚的欢迎联系呢，也可以找我要一下本地部署的现成的源码…..但是还是建议自己动手搞一下哈，毕竟乐趣还是在自己动手的过程中才能体会到呢~</p>
+]]></content>
+      <categories>
+        <category>其他</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -2926,45 +2926,6 @@
       </tags>
   </entry>
   <entry>
-    <title>部署局域网FTP</title>
-    <url>/blog/2019/10/30/%E9%83%A8%E7%BD%B2%E5%B1%80%E5%9F%9F%E7%BD%91FTP/</url>
-    <content><![CDATA[<ol>
-<li><p><code>控制面板 -&gt; 程序 -&gt; 启用或关闭windows功能</code></p>
-</li>
-<li><p>在<code>Internet information Services</code>中，勾选<code>FTP服务器</code>中的<code>FTP服务</code>，与<code>Web管理工具</code>中的<code>IIS管理控制台</code>，然后点击确定进行安装和配置，等待配置完成</p>
-</li>
-<li><p>打开<code>IIS管理器</code>，在<code>网站</code>中<code>添加FTP站点</code>，命名站点名称与设置内容目录</p>
-</li>
-<li><p>IP地址若为<code>全部未分配</code>，则使用时使用本机的ip即可</p>
-</li>
-<li><p>在SSL中勾选<code>无SSL</code></p>
-<span id="more"></span></li>
-<li><p>身份验证使用<code>基本</code>,选择授权用户，以及用户权限，然后点击完成</p>
-</li>
-<li><p><code>防火墙与网络保护 -&gt; 高级设置</code></p>
-</li>
-</ol>
-<blockquote>
-<ul>
-<li>入站规则：启动FTP相关的入站规则</li>
-<li>出站规则：启动FTP相关的出站规则</li>
-</ul>
-</blockquote>
-<ol start="8">
-<li><p>保存配置后，重启计算机</p>
-</li>
-<li><p>在另外一台计算机中的资源管理器中访问<code>ftp://&#123;&#123; 配置了ftp的计算机的ip地址 &#125;&#125;</code>，输入用户名与密码即可访问</p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>其它</category>
-      </categories>
-      <tags>
-        <tag>FTP</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>搭建HADOOP完全分布式</title>
     <url>/blog/2019/10/30/%E9%85%8D%E7%BD%AEHADOOP%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F/</url>
     <content><![CDATA[<h2 id="配置环境说明"><a href="#配置环境说明" class="headerlink" title="配置环境说明"></a>配置环境说明</h2><p>   win10下使用vmware-workstation15 搭建 centOS 7 虚拟环境</p>
@@ -3144,6 +3105,45 @@
       </categories>
       <tags>
         <tag>HADOOP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>部署局域网FTP</title>
+    <url>/blog/2019/10/30/%E9%83%A8%E7%BD%B2%E5%B1%80%E5%9F%9F%E7%BD%91FTP/</url>
+    <content><![CDATA[<ol>
+<li><p><code>控制面板 -&gt; 程序 -&gt; 启用或关闭windows功能</code></p>
+</li>
+<li><p>在<code>Internet information Services</code>中，勾选<code>FTP服务器</code>中的<code>FTP服务</code>，与<code>Web管理工具</code>中的<code>IIS管理控制台</code>，然后点击确定进行安装和配置，等待配置完成</p>
+</li>
+<li><p>打开<code>IIS管理器</code>，在<code>网站</code>中<code>添加FTP站点</code>，命名站点名称与设置内容目录</p>
+</li>
+<li><p>IP地址若为<code>全部未分配</code>，则使用时使用本机的ip即可</p>
+</li>
+<li><p>在SSL中勾选<code>无SSL</code></p>
+<span id="more"></span></li>
+<li><p>身份验证使用<code>基本</code>,选择授权用户，以及用户权限，然后点击完成</p>
+</li>
+<li><p><code>防火墙与网络保护 -&gt; 高级设置</code></p>
+</li>
+</ol>
+<blockquote>
+<ul>
+<li>入站规则：启动FTP相关的入站规则</li>
+<li>出站规则：启动FTP相关的出站规则</li>
+</ul>
+</blockquote>
+<ol start="8">
+<li><p>保存配置后，重启计算机</p>
+</li>
+<li><p>在另外一台计算机中的资源管理器中访问<code>ftp://&#123;&#123; 配置了ftp的计算机的ip地址 &#125;&#125;</code>，输入用户名与密码即可访问</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>其它</category>
+      </categories>
+      <tags>
+        <tag>FTP</tag>
       </tags>
   </entry>
   <entry>
