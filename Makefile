@@ -13,7 +13,7 @@ serve:
 	$(HEXO_PATH) serve
 
 new:
-	$(HEXO_PATH) new $(name)
+	$(HEXO_PATH) new "$(name)"
 
 tag:
 	$(HEXO_PATH) new page tags
