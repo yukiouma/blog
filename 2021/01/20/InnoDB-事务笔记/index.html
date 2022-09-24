@@ -28,7 +28,7 @@
 <meta property="og:description" content="概述MySQL中仅innoDB支持事务">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-01-20T17:55:11.000Z">
-<meta property="article:modified_time" content="2022-09-24T04:12:11.812Z">
+<meta property="article:modified_time" content="2022-09-24T04:29:58.282Z">
 <meta property="article:author" content="Yuki">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -216,7 +216,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-09-24 04:12:11" itemprop="dateModified" datetime="2022-09-24T04:12:11+00:00">2022-09-24</time>
+                <time title="Modified: 2022-09-24 04:29:58" itemprop="dateModified" datetime="2022-09-24T04:29:58+00:00">2022-09-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -259,11 +259,11 @@
 <h2 id="隔离级别"><a href="#隔离级别" class="headerlink" title="隔离级别"></a>隔离级别</h2><h3 id="并发问题"><a href="#并发问题" class="headerlink" title="并发问题"></a>并发问题</h3><ul>
 <li><p>脏写：事务A修改了未提交的事务B修改过的数据，所有隔离级别都不允许出现</p>
 </li>
-<li><p>脏读：事务A读到事务B&#x3D;&#x3D;未提交&#x3D;&#x3D;的数据</p>
+<li><p>脏读：事务A读到事务B未提交的数据</p>
 </li>
-<li><p>不可重复读：事务A每次都读到事务B&#x3D;&#x3D;已经提交&#x3D;&#x3D;的最新数据</p>
+<li><p>不可重复读：事务A每次都读到事务B已经提交的最新数据</p>
 </li>
-<li><p>幻读：事务A在进行&#x3D;&#x3D;范围读取&#x3D;&#x3D;的时候能读到事务B&#x3D;&#x3D;已经提交&#x3D;&#x3D;的&#x3D;&#x3D;新插入&#x3D;&#x3D;的符合该范围的数据</p>
+<li><p>幻读：事务A在进行范围读取的时候能读到事务B已经提交的新插入的符合该范围的数据</p>
 <p>（注意：先前读到后面读不到的情况属于不可重复读）</p>
 </li>
 </ul>
