@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yukiouma.github.io","root":"/blog/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":5,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="概述MySQL中仅innoDB支持事务">
+<meta property="og:type" content="article">
+<meta property="og:title" content="InnoDB 事务笔记">
+<meta property="og:url" content="https://yukiouma.github.io/blog/2021/01/20/InnoDB-%E4%BA%8B%E5%8A%A1%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Meowthra@ᓚᘏᗢ">
+<meta property="og:description" content="概述MySQL中仅innoDB支持事务">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-01-20T17:55:11.000Z">
+<meta property="article:modified_time" content="2022-09-24T04:09:04.702Z">
+<meta property="article:author" content="Yuki">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://yukiouma.github.io/blog/2021/01/20/InnoDB-%E4%BA%8B%E5%8A%A1%E7%AC%94%E8%AE%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>InnoDB 事务笔记 | Meowthra@ᓚᘏᗢ</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Meowthra@ᓚᘏᗢ</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://yukiouma.github.io/blog/2021/01/20/InnoDB-%E4%BA%8B%E5%8A%A1%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpg">
+      <meta itemprop="name" content="Yuki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Meowthra@ᓚᘏᗢ">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          InnoDB 事务笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-01-20 17:55:11" itemprop="dateCreated datePublished" datetime="2021-01-20T17:55:11+00:00">2021-01-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-09-24 04:09:04" itemprop="dateModified" datetime="2022-09-24T04:09:04+00:00">2022-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Database/" itemprop="url" rel="index"><span itemprop="name">Database</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>MySQL中仅<code>innoDB</code>支持事务</p>
+<span id="more"></span>
+
+<h2 id="事务特性"><a href="#事务特性" class="headerlink" title="事务特性"></a>事务特性</h2><ul>
+<li><p>原子性：事务是不可分割的工作单位，全部提交&#x2F;失败回滚，不存在中间状态</p>
+<p>undo log保证</p>
+</li>
+<li><p>一致性：事务执行前后数据从一个合法状态变换到另一个合法状态</p>
+<p>undo log保证</p>
+</li>
+<li><p>隔离性：事物的执行不能被其它事务干扰</p>
+<p>锁机制实现</p>
+</li>
+<li><p>持久性：事务被提交后对数据改变是永久的</p>
+<p>redo log保证</p>
+</li>
+</ul>
+<h2 id="隔离级别"><a href="#隔离级别" class="headerlink" title="隔离级别"></a>隔离级别</h2><h3 id="并发问题"><a href="#并发问题" class="headerlink" title="并发问题"></a>并发问题</h3><ul>
+<li><p>脏写：事务A修改了未提交的事务B修改过的数据，所有隔离级别都不允许出现</p>
+</li>
+<li><p>脏读：事务A读到事务B&#x3D;&#x3D;未提交&#x3D;&#x3D;的数据</p>
+</li>
+<li><p>不可重复读：事务A每次都读到事务B&#x3D;&#x3D;已经提交&#x3D;&#x3D;的最新数据</p>
+</li>
+<li><p>幻读：事务A在进行&#x3D;&#x3D;范围读取&#x3D;&#x3D;的时候能读到事务B&#x3D;&#x3D;已经提交&#x3D;&#x3D;的&#x3D;&#x3D;新插入&#x3D;&#x3D;的符合该范围的数据</p>
+<p>（注意：先前读到后面读不到的情况属于不可重复读）</p>
+</li>
+</ul>
+<h3 id="级别"><a href="#级别" class="headerlink" title="级别"></a>级别</h3><blockquote>
+<p>并发能力从高到低，解决的并发问题从少到多</p>
+</blockquote>
+<ul>
+<li><p>读未提交</p>
+<p>不加读锁，解决脏写</p>
+</li>
+<li><p>读已提交</p>
+<p>不加读锁，解决脏写，脏读</p>
+</li>
+<li><p>可重复读</p>
+<p>不加读锁，解决脏写，脏读，不可重复读</p>
+<p>（在<code>innoDB</code>的可重复读级别解决了幻读）</p>
+</li>
+<li><p>可串行化</p>
+<p>加读锁，并发问题全部解决</p>
+</li>
+</ul>
+<h2 id="事务日志"><a href="#事务日志" class="headerlink" title="事务日志"></a>事务日志</h2><h3 id="redo-log"><a href="#redo-log" class="headerlink" title="redo log"></a>redo log</h3><ul>
+<li><p>记录物理级别的页修改，由存储引擎层产生</p>
+</li>
+<li><p>内存中的数据在写入磁盘之前先写redo log(WAL, write ahead logging，日志写入成功事务才算提交成功)，意味着事务一旦提交成功就保证它存在于redo log</p>
+</li>
+</ul>
+<p>特点：</p>
+<ol>
+<li>顺序IO，相比数据页的写入的随机IO，性能大幅提高</li>
+</ol>
+<p>组成：</p>
+<ol>
+<li>redo log buffer – default：16mb</li>
+<li>redo file</li>
+</ol>
+<p>运转流程：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    Data file--&gt;&gt;Buffer pool: find update rows</span><br><span class="line">    Update tx-&gt;&gt;Buffer pool: update data in buffer</span><br><span class="line">    Buffer pool -&gt;&gt; Redo log buffer: write redo log in buffer</span><br><span class="line">    Redo log buffer -&gt;&gt; Redo log file: write redo log in file</span><br><span class="line">    Buffer pool--&gt;&gt;Data file: update data file</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+
+<p>redo log刷盘策略</p>
+<ol>
+<li>每次事务提交不做任何动作，交给后台master thread每隔1s进行一次redo log同步</li>
+<li>每次事务提交都buffer内容写入page cache并同步刷盘（default）</li>
+<li>每次事务提交只把buffer内容写入page cache，不同步，让OS决定同步刷盘时间</li>
+</ol>
+<p>用途</p>
+<ol>
+<li>数据库恢复的时候使用，保证持久性</li>
+</ol>
+<h3 id="undo-log"><a href="#undo-log" class="headerlink" title="undo log"></a>undo log</h3><ul>
+<li><p>记录的是逻辑操作的日志（记录SQL语句）</p>
+</li>
+<li><p>事务更新操作的之前会预先写入一个undo log</p>
+</li>
+<li><p>undo log会产生redo log</p>
+</li>
+</ul>
+<p>生命周期：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    Data file--&gt;&gt;Buffer pool: find update rows stores in buffer</span><br><span class="line">    Update tx-&gt;&gt;Buffer pool: update data in buffer</span><br><span class="line">    Buffer pool -&gt;&gt; Undo log: write undo log</span><br><span class="line">    Executor -&gt;&gt; Buffer pool: update data in data buffer</span><br><span class="line">    Executor -&gt;&gt; Redo log buffer: write into redo log buffer</span><br><span class="line">    Redo log buffer -&gt;&gt; Redo log file: write redo log in file</span><br><span class="line">    Buffer pool--&gt;&gt;Data file: update data file</span><br></pre></td></tr></table></figure>
+
+<p>生成过程：</p>
+<ul>
+<li><p>行记录隐藏列</p>
+<ol>
+<li>DB_ROW_ID：行id</li>
+<li>DB_TRX_ID：事务id</li>
+<li>DB_ROLL_PTR：回滚指针，指向上一个undo log</li>
+</ol>
+</li>
+<li><p>insert时</p>
+<p>生成一条insert undo log，记录undo log序号，主键和列值。</p>
+<p>进行回滚值需把逐渐对应数据删除即可</p>
+</li>
+<li><p>update时</p>
+<p>不更新主键：</p>
+<ol>
+<li><p>生成一个新的undo log（log A），记录列信息</p>
+</li>
+<li><p>log A指向记录的回滚指针指向的undo log（log B）</p>
+</li>
+<li><p>记录的回滚指针指向log A</p>
+</li>
+</ol>
+<p>更新主键：</p>
+<ol>
+<li>将原纪录（record A）<code>deletemark</code> &#x3D; 1</li>
+<li>record A的回滚指针指向记录<code>deletemark</code> &#x3D; 1的过程的undo log</li>
+<li>生成一条新纪录（record B）</li>
+<li>record B的回滚指针指向记录更改主键的过程的undo log</li>
+</ol>
+</li>
+</ul>
+<p>undo log删除</p>
+<ul>
+<li><p>insert undo log</p>
+<p>事务提交后可以直接删除</p>
+</li>
+<li><p>update undo log</p>
+<p>需要提供MVCC机制的支持，事务提交时需要放入undo log链表等待purse线程去删除</p>
+</li>
+</ul>
+<p>用途：</p>
+<ol>
+<li>事务回滚</li>
+<li>MVCC</li>
+</ol>
+<h2 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h2><h3 id="内存结构"><a href="#内存结构" class="headerlink" title="内存结构"></a>内存结构</h3><ul>
+<li>锁所在事务信息</li>
+<li>索引信息</li>
+<li>表锁&#x2F;行锁信息</li>
+<li>type_mode</li>
+<li>其它信息</li>
+<li>比特位</li>
+</ul>
+<h3 id="共享锁"><a href="#共享锁" class="headerlink" title="共享锁"></a>共享锁</h3><p>S锁</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM your_table LOCK IN SHARE MODE;</span><br><span class="line"># &gt;= 8.0</span><br><span class="line">SELECT * FROM your_table FOR SHARE;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="排他锁"><a href="#排他锁" class="headerlink" title="排他锁"></a>排他锁</h3><p>X锁</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM your_table FOR UPDATE;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="表锁"><a href="#表锁" class="headerlink" title="表锁"></a>表锁</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># S LOCK</span><br><span class="line">LOCK TABLES your_table READ;</span><br><span class="line"># X LOCK</span><br><span class="line">LOCK TABLES your_table WRITE</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>自己可读</th>
+<th>自己可写</th>
+<th>自己可操作其他表</th>
+<th>他人可读</th>
+<th>他人可写</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>S</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+<td>False, Block</td>
+</tr>
+<tr>
+<td>X</td>
+<td>True</td>
+<td>True</td>
+<td>False</td>
+<td>False, Block</td>
+<td>False, Block</td>
+</tr>
+</tbody></table>
+<p>意向锁</p>
+<ul>
+<li>事务获取某些记录的共享锁时需要给当前表添加意向共享锁(IS)</li>
+<li>事务获取某些记录的排他锁时需要给当前表添加意向排他锁(IX)</li>
+<li>IS和IX均互相兼容，IS和S兼容，其余情况均互斥</li>
+</ul>
+<p>自增锁 - AUTO-INC</p>
+<h3 id="行锁"><a href="#行锁" class="headerlink" title="行锁"></a>行锁</h3><p>存储引擎层实现</p>
+<ol>
+<li><p>记录锁</p>
+</li>
+<li><p>间隙锁</p>
+<ul>
+<li><p>对某行记录加上间隙锁，表示不允许对该记录前面的间隙（开区间）插入新的记录</p>
+</li>
+<li><p>在为了防止插入幻影记录提出</p>
+</li>
+<li><p>可重入</p>
+</li>
+<li><p>间隙锁会导致死锁</p>
+<p>比如两个事务先分别锁了同一个范围，两边都成功上间隙锁后，再尝试向该范围插入记录，此时就会导致死锁</p>
+</li>
+</ul>
+</li>
+<li><p>临键锁</p>
+<p>下边界闭区间间隙锁</p>
+</li>
+<li><p>插入意向锁</p>
+<p>插入位置被其它事务加入了间隙锁或者临键锁，此时本事务等待的时候生成一个插入意向锁</p>
+</li>
+</ol>
+<h3 id="页锁"><a href="#页锁" class="headerlink" title="页锁"></a>页锁</h3><p>锁升级：行锁到一定空间会升级为页锁，页锁到一定空间升级为表锁</p>
+<h3 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h3><p>基于数据库的锁机制来实现，适合写多读少的较短的事务场景</p>
+<p>注意，使用悲观锁的时候一定要确保使用了索引而不是全表扫描。否在会把扫描过的记录全部锁住</p>
+<h3 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h3><p>基于程序设计实现，适用于多读的应用场景，提高吞吐</p>
+<ul>
+<li><p>基于版本号机制，CAS机制</p>
+<p>设计一个版本字段version，修改的时候执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE ... SET version=version+1 WHERE version=`current_version`</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>每次修改数据的时候version都会加1</li>
+<li>当进行修改的时候发现version被更新了，修改会因为定位失败而不成功</li>
+</ol>
+</li>
+<li><p>基于时间戳机制</p>
+<p>将版本号换成时间戳进行比较</p>
+</li>
+</ul>
+<blockquote>
+<p>注意，在独写分离的场景下要强制读取master表中的数据，防止主从由于同步时间造成的不一致</p>
+</blockquote>
+<h3 id="显式锁"><a href="#显式锁" class="headerlink" title="显式锁"></a>显式锁</h3><p>显式声明的锁</p>
+<h3 id="隐式锁"><a href="#隐式锁" class="headerlink" title="隐式锁"></a>隐式锁</h3><p>insert事务在执行前<code>innoDB</code>会为准备插入的新纪录隐式添加一个X锁</p>
+<h3 id="全局锁"><a href="#全局锁" class="headerlink" title="全局锁"></a>全局锁</h3><p>锁住整个库</p>
+<h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h3><p>两个事务都在等待对方释放锁才可以继续执行，并且双方都不会释放自己的锁</p>
+<p>死锁处理：</p>
+<ol>
+<li><p>超时：default 50s</p>
+</li>
+<li><p>死锁检测</p>
+<p>主动回滚undo log数量最小的事务</p>
+<p>wait-for graph算法主动检测死锁</p>
+</li>
+</ol>
+<p>解决死锁：</p>
+<p>造成死锁的原因是两个以上的事务加锁的记录的顺序不一致，因此解决关键是调整语句让加锁的记录的顺序一致即可</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/MySQL/" rel="tag"># MySQL</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2020/12/16/%E9%A6%96%E6%AC%A1%E5%B0%86%E6%9C%AC%E5%9C%B0%E4%BB%A3%E7%A0%81%E4%B8%8A%E4%BC%A0%E8%87%B3GitHub%E7%A9%BA%E4%BB%93/" rel="prev" title="首次将本地代码上传至GitHub空仓">
+      <i class="fa fa-chevron-left"></i> 首次将本地代码上传至GitHub空仓
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2021/01/25/InnoDB-MVCC%E7%AC%94%E8%AE%B0/" rel="next" title="InnoDB MVCC笔记">
+      InnoDB MVCC笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%89%B9%E6%80%A7"><span class="nav-number">2.</span> <span class="nav-text">事务特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-number">3.</span> <span class="nav-text">隔离级别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98"><span class="nav-number">3.1.</span> <span class="nav-text">并发问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%A7%E5%88%AB"><span class="nav-number">3.2.</span> <span class="nav-text">级别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97"><span class="nav-number">4.</span> <span class="nav-text">事务日志</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#redo-log"><span class="nav-number">4.1.</span> <span class="nav-text">redo log</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#undo-log"><span class="nav-number">4.2.</span> <span class="nav-text">undo log</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%81"><span class="nav-number">5.</span> <span class="nav-text">锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84"><span class="nav-number">5.1.</span> <span class="nav-text">内存结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E9%94%81"><span class="nav-number">5.2.</span> <span class="nav-text">共享锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%92%E4%BB%96%E9%94%81"><span class="nav-number">5.3.</span> <span class="nav-text">排他锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A8%E9%94%81"><span class="nav-number">5.4.</span> <span class="nav-text">表锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E9%94%81"><span class="nav-number">5.5.</span> <span class="nav-text">行锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B5%E9%94%81"><span class="nav-number">5.6.</span> <span class="nav-text">页锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%82%B2%E8%A7%82%E9%94%81"><span class="nav-number">5.7.</span> <span class="nav-text">悲观锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%90%E8%A7%82%E9%94%81"><span class="nav-number">5.8.</span> <span class="nav-text">乐观锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%BE%E5%BC%8F%E9%94%81"><span class="nav-number">5.9.</span> <span class="nav-text">显式锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%90%E5%BC%8F%E9%94%81"><span class="nav-number">5.10.</span> <span class="nav-text">隐式锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E9%94%81"><span class="nav-number">5.11.</span> <span class="nav-text">全局锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E9%94%81"><span class="nav-number">5.12.</span> <span class="nav-text">死锁</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yuki"
+      src="/blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Yuki</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yuki</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/schemes/pisces.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/blog/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

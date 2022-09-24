@@ -312,65 +312,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Go的入门笔记</title>
-    <url>/blog/2019/11/26/Go%E7%9A%84%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<h2 id="切片"><a href="#切片" class="headerlink" title="切片"></a>切片</h2><p>Go的切片操作和之前的使用的切片会有些不一样，专门写个笔记记录一下</p>
-<p>总的来说移除切片有两种方法，<strong>移动指针</strong>或者<strong>原地操作</strong></p>
-<span id="more"></span>
-<ul>
-<li><p>移除切片的第一个元素</p>
-<p>移动指针：</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = a[<span class="number">1</span>:]</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [2 3 4 5 6], 0xc00000c398</span></span><br></pre></td></tr></table></figure>
-
-<p>原地操作：</p>
-<ul>
-<li>使用append</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = <span class="built_in">append</span>(a[:<span class="number">0</span>], a[<span class="number">1</span>:]...)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [2 3 4 5 6], 0xc00000c390</span></span><br></pre></td></tr></table></figure>
-
-<p>思路分析：</p>
-<ol>
-<li><p>append函数第一个参数指定了追加部分的起始位置，并把起始位置之后的内容舍弃（起始位置为0，即把切片中原本所有的元素舍弃）</p>
-</li>
-<li><p>函数第二个参数传入了要追加的内容，为原本a的第1位以后的所有元素，从a的第0位开始追加，达到舍弃原本的第0位的效果</p>
-</li>
-</ol>
-<ul>
-<li>使用copy</li>
-</ul>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">    a = a[:<span class="built_in">copy</span>(a[<span class="number">0</span>:], a[<span class="number">1</span>:])]</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [2 3 4 5 6], 0xc00000c390</span></span><br></pre></td></tr></table></figure>
-
-<p>思路分析：</p>
-<ol>
-<li><p>copy函数第一个参数指定了覆盖的位置为原始a的第0为，第二个参数指定了覆盖的内容为原始a的第1位开始之后的所有元素（2 - 5共5位，从第0位就开始覆盖到第4位），并且copy返回覆盖的元素的个数（5）</p>
-</li>
-<li><p>执行完copy函数后此时a的值为[2, 3, 4, 5, 6, 6]，此时使用切片从a[0: 5]，把最后的多余的6去除</p>
-</li>
-</ol>
-</li>
-<li><p>移除切片的第n个元素</p>
-<p>根据上面的移除第一个元素的做法，我们可以推广到移除第n个元素的操作</p>
-<p>使用append：</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">const</span> i = <span class="number">2</span></span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = <span class="built_in">append</span>(a[: i], a[i + <span class="number">1</span>:]...)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [1 2 4 5 6], 0xc00000c390</span></span><br></pre></td></tr></table></figure>
-
-<p>使用copy：</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">const</span> i = <span class="number">2</span></span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = a[:i + <span class="built_in">copy</span>(a[i : ], a[i + <span class="number">1</span>:])]</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [1 2 4 5 6], 0xc00000c390</span></span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>移除切片的最后一个元素</p>
-<p>移除最后一个元素则比较简单，由于都是从原始切片的首位开始切，所以直接切即可…..</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = a[:<span class="built_in">len</span>(a) - <span class="number">1</span>]</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5], 0xc00000c390</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-]]></content>
-      <categories>
-        <category>Web开发</category>
-      </categories>
-      <tags>
-        <tag>Golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Go并发编程笔记</title>
     <url>/blog/2022/02/11/Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<h1 id="Goroutine"><a href="#Goroutine" class="headerlink" title="Goroutine"></a>Goroutine</h1><h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><ul>
@@ -677,6 +618,65 @@
       </tags>
   </entry>
   <entry>
+    <title>Go的入门笔记</title>
+    <url>/blog/2019/11/26/Go%E7%9A%84%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h2 id="切片"><a href="#切片" class="headerlink" title="切片"></a>切片</h2><p>Go的切片操作和之前的使用的切片会有些不一样，专门写个笔记记录一下</p>
+<p>总的来说移除切片有两种方法，<strong>移动指针</strong>或者<strong>原地操作</strong></p>
+<span id="more"></span>
+<ul>
+<li><p>移除切片的第一个元素</p>
+<p>移动指针：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = a[<span class="number">1</span>:]</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [2 3 4 5 6], 0xc00000c398</span></span><br></pre></td></tr></table></figure>
+
+<p>原地操作：</p>
+<ul>
+<li>使用append</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = <span class="built_in">append</span>(a[:<span class="number">0</span>], a[<span class="number">1</span>:]...)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [2 3 4 5 6], 0xc00000c390</span></span><br></pre></td></tr></table></figure>
+
+<p>思路分析：</p>
+<ol>
+<li><p>append函数第一个参数指定了追加部分的起始位置，并把起始位置之后的内容舍弃（起始位置为0，即把切片中原本所有的元素舍弃）</p>
+</li>
+<li><p>函数第二个参数传入了要追加的内容，为原本a的第1位以后的所有元素，从a的第0位开始追加，达到舍弃原本的第0位的效果</p>
+</li>
+</ol>
+<ul>
+<li>使用copy</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">    a = a[:<span class="built_in">copy</span>(a[<span class="number">0</span>:], a[<span class="number">1</span>:])]</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [2 3 4 5 6], 0xc00000c390</span></span><br></pre></td></tr></table></figure>
+
+<p>思路分析：</p>
+<ol>
+<li><p>copy函数第一个参数指定了覆盖的位置为原始a的第0为，第二个参数指定了覆盖的内容为原始a的第1位开始之后的所有元素（2 - 5共5位，从第0位就开始覆盖到第4位），并且copy返回覆盖的元素的个数（5）</p>
+</li>
+<li><p>执行完copy函数后此时a的值为[2, 3, 4, 5, 6, 6]，此时使用切片从a[0: 5]，把最后的多余的6去除</p>
+</li>
+</ol>
+</li>
+<li><p>移除切片的第n个元素</p>
+<p>根据上面的移除第一个元素的做法，我们可以推广到移除第n个元素的操作</p>
+<p>使用append：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">const</span> i = <span class="number">2</span></span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = <span class="built_in">append</span>(a[: i], a[i + <span class="number">1</span>:]...)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [1 2 4 5 6], 0xc00000c390</span></span><br></pre></td></tr></table></figure>
+
+<p>使用copy：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">const</span> i = <span class="number">2</span></span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = a[:i + <span class="built_in">copy</span>(a[i : ], a[i + <span class="number">1</span>:])]</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [1 2 4 5 6], 0xc00000c390</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>移除切片的最后一个元素</p>
+<p>移除最后一个元素则比较简单，由于都是从原始切片的首位开始切，所以直接切即可…..</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := []<span class="type">int</span> &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">	a = a[:<span class="built_in">len</span>(a) - <span class="number">1</span>]</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v, %p\n&quot;</span>, a, a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果：</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5 6], 0xc00000c390</span></span><br><span class="line"><span class="comment">// [1 2 3 4 5], 0xc00000c390</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Web开发</category>
+      </categories>
+      <tags>
+        <tag>Golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Go错误处理笔记</title>
     <url>/blog/2022/02/12/Go%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<h1 id="Error"><a href="#Error" class="headerlink" title="Error"></a>Error</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>error在go中是一个接口，定义如下</p>
@@ -786,50 +786,6 @@
       </categories>
       <tags>
         <tag>Golang</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Installing multiple Go versions</title>
-    <url>/blog/2022/09/07/Installing-multiple-Go-versions/</url>
-    <content><![CDATA[<h2 id="Foreword"><a href="#Foreword" class="headerlink" title="Foreword"></a>Foreword</h2><p>Usually, we install a specified version of golang sdk (such as go1.18.4). But we might want to install the other version for study or work purposes, and keep all the sdk versions in our computer.</p>
-<span id="more"></span>
-
-<h2 id="Assumption"><a href="#Assumption" class="headerlink" title="Assumption"></a>Assumption</h2><p>We have already installed go 1.18.4 in our computer, and we want to install 1.18.6 in the same time</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go version</span><br><span class="line">go version go1.18.4 linux/amd64</span><br></pre></td></tr></table></figure>
-
-<p>Current GOROOT and GOPATH</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go <span class="built_in">env</span> GOROOT</span><br><span class="line">/usr/local/go</span><br><span class="line">$ go <span class="built_in">env</span> GOPATH</span><br><span class="line">/root/go</span><br></pre></td></tr></table></figure>
-
-<h2 id="Steps"><a href="#Steps" class="headerlink" title="Steps"></a>Steps</h2><h3 id="install-the-binary-file"><a href="#install-the-binary-file" class="headerlink" title="install the binary file"></a>install the binary file</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go install golang.org/dl/go1.18.6@latest</span><br><span class="line">go: downloading golang.org/dl v0.0.0-20220907140016-191c3420d549</span><br></pre></td></tr></table></figure>
-
-<p>Try to call go1.18.6 by check its version:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go1.18.6 version</span><br><span class="line">go1.18.6: not downloaded. Run <span class="string">&#x27;go1.18.6 download&#x27;</span> to install to /root/sdk/go1.18.6</span><br></pre></td></tr></table></figure>
-
-<p>Failed to check the version, but we can see go1.18.6 executable binary file has been download in our computer, let’s find out where it is:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">which</span> go1.18.6</span><br><span class="line">/root/go/bin/go1.18.6</span><br></pre></td></tr></table></figure>
-
-<h3 id="Download-the-libaray"><a href="#Download-the-libaray" class="headerlink" title="Download the libaray"></a>Download the libaray</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go1.18.6 download</span><br><span class="line">Downloaded   0.0% (    16384 / 141879729 bytes) ...</span><br><span class="line">Downloaded   1.7% (  2375664 / 141879729 bytes) ...</span><br><span class="line">Downloaded   2.7% (  3817456 / 141879729 bytes) ...</span><br><span class="line">Downloaded   7.4% ( 10469376 / 141879729 bytes) ...</span><br><span class="line">Downloaded  16.7% ( 23658416 / 141879729 bytes) ...</span><br><span class="line">Downloaded  22.6% ( 32128880 / 141879729 bytes) ...</span><br><span class="line">Downloaded  23.4% ( 33144624 / 141879729 bytes) ...</span><br><span class="line">Downloaded  24.9% ( 35323648 / 141879729 bytes) ...</span><br><span class="line">Downloaded  29.9% ( 42368736 / 141879729 bytes) ...</span><br><span class="line">Downloaded  33.0% ( 46874304 / 141879729 bytes) ...</span><br><span class="line">Downloaded  35.5% ( 50364032 / 141879729 bytes) ...</span><br><span class="line">Downloaded  36.6% ( 51871424 / 141879729 bytes) ...</span><br><span class="line">Downloaded  38.2% ( 54148784 / 141879729 bytes) ...</span><br><span class="line">Downloaded  39.6% ( 56196800 / 141879729 bytes) ...</span><br><span class="line">Downloaded  42.9% ( 60849712 / 141879729 bytes) ...</span><br><span class="line">Downloaded  44.6% ( 63258144 / 141879729 bytes) ...</span><br><span class="line">Downloaded  47.1% ( 66895376 / 141879729 bytes) ...</span><br><span class="line">Downloaded  53.9% ( 76529088 / 141879729 bytes) ...</span><br><span class="line">Downloaded  56.4% ( 79953344 / 141879729 bytes) ...</span><br><span class="line">Downloaded  60.1% ( 85327232 / 141879729 bytes) ...</span><br><span class="line">Downloaded  62.0% ( 87981424 / 141879729 bytes) ...</span><br><span class="line">Downloaded  63.8% ( 90471760 / 141879729 bytes) ...</span><br><span class="line">Downloaded  64.6% ( 91684240 / 141879729 bytes) ...</span><br><span class="line">Downloaded  69.7% ( 98860304 / 141879729 bytes) ...</span><br><span class="line">Downloaded  77.7% (110263488 / 141879729 bytes) ...</span><br><span class="line">Downloaded  79.9% (113310928 / 141879729 bytes) ...</span><br><span class="line">Downloaded  81.4% (115457168 / 141879729 bytes) ...</span><br><span class="line">Downloaded  83.0% (117800128 / 141879729 bytes) ...</span><br><span class="line">Downloaded  83.5% (118488224 / 141879729 bytes) ...</span><br><span class="line">Downloaded  84.8% (120257680 / 141879729 bytes) ...</span><br><span class="line">Downloaded  87.9% (124697744 / 141879729 bytes) ...</span><br><span class="line">Downloaded  90.0% (127695936 / 141879729 bytes) ...</span><br><span class="line">Downloaded  95.4% (135412736 / 141879729 bytes) ...</span><br><span class="line">Downloaded  98.4% (139557856 / 141879729 bytes) ...</span><br><span class="line">Downloaded 100.0% (141879729 / 141879729 bytes)</span><br><span class="line">Unpacking /root/sdk/go1.18.6/go1.18.6.linux-amd64.tar.gz ...</span><br><span class="line">Success. You may now run <span class="string">&#x27;go1.18.6&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p>Now we have downloaded the library of go1.18.6 completely, let’s try to check its version again:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go1.18.6 version</span><br><span class="line">go version go1.18.6 linux/amd64</span><br></pre></td></tr></table></figure>
-<p>And it works.</p>
-<h3 id="Checkout-GOPATH-and-GOROOT"><a href="#Checkout-GOPATH-and-GOROOT" class="headerlink" title="Checkout GOPATH and GOROOT"></a>Checkout GOPATH and GOROOT</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go1.18.6 <span class="built_in">env</span> GOPATH</span><br><span class="line">/root/go</span><br><span class="line">$ go1.18.6 <span class="built_in">env</span> GOROOT</span><br><span class="line">/root/sdk/go1.18.6</span><br></pre></td></tr></table></figure>
-
-<p>We can see GOPATH is the same as the go1.18.4, but GOROOT has changed to another place</p>
-<h2 id="Uninstall-Addtional-Versions"><a href="#Uninstall-Addtional-Versions" class="headerlink" title="Uninstall Addtional Versions"></a>Uninstall Addtional Versions</h2><ol>
-<li><p>Remove libaray</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf /root/sdk/go1.18.6</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Remove the binary file</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf /root/go/bin/go1.18.6</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a href="https://go.dev/doc/manage-install">Managing Go installations</a></p>
-]]></content>
-      <categories>
-        <category>Golang</category>
-      </categories>
-      <tags>
-        <tag>installation</tag>
       </tags>
   </entry>
   <entry>
@@ -1547,131 +1503,373 @@
       </tags>
   </entry>
   <entry>
-    <title>Nginx实现反向代理</title>
-    <url>/blog/2021/05/23/Nginx%E5%AE%9E%E7%8E%B0%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/</url>
-    <content><![CDATA[<p>在虚拟机中部署Nginx，并使用Nginx为虚拟机中运行的项目分配反向代理的域名</p>
-<h2 id="背景说明"><a href="#背景说明" class="headerlink" title="背景说明"></a>背景说明</h2><p>在windows宿主机中存在一台运行着CentOS7的虚拟机，ip为192.168.1.200</p>
-<p>在虚拟机中存在一个web服务的项目，运行在虚拟机的端口8080上</p>
-<p>希望在宿主机中能通过自定义的域名app01.com来访问该项目的接口服务</p>
+    <title>InnoDB MVCC笔记</title>
+    <url>/blog/2021/01/25/InnoDB-MVCC%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>多版本并发控制，MySQL中仅<code>innoDB</code>支持</p>
+<p>依赖于：</p>
+<ol>
+<li>隐藏字段（<code>trx_id</code>，<code>roll_pointer</code>）</li>
+<li>undo log</li>
+<li>read view</li>
+</ol>
 <span id="more"></span>
 
-<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
-<li>CentOS Linux release 7.7.1908 (Core)</li>
-<li>VMWare 15.5.0 build-14665864</li>
-<li>Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
+<h2 id="读行为"><a href="#读行为" class="headerlink" title="读行为"></a>读行为</h2><h3 id="快照读"><a href="#快照读" class="headerlink" title="快照读"></a>快照读</h3><p>读到undo log的某一个历史版本，不加锁的SELECT都属于快照读</p>
+<h3 id="当前读"><a href="#当前读" class="headerlink" title="当前读"></a>当前读</h3><p>读到最新版本，加锁的SELECT，对数据进行增删改都会进行当前读</p>
+<h2 id="Read-View"><a href="#Read-View" class="headerlink" title="Read View"></a>Read View</h2><ul>
+<li>事务在使用MVCC机制进行快照读的时候产生的读视图，每个Read View都属于一个事务。事务启动时会生成数据库当前的一个快照，<code>InnoDB</code>为每个书屋构造一个数组来记录并维护系统当前的活跃事务的id</li>
+<li>仅&#x3D;&#x3D;读已提交&#x3D;&#x3D;和&#x3D;&#x3D;可重复读&#x3D;&#x3D;里使用read view</li>
 </ul>
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="修改windows宿主机中的hosts文件"><a href="#修改windows宿主机中的hosts文件" class="headerlink" title="修改windows宿主机中的hosts文件"></a>修改windows宿主机中的hosts文件</h3><p>hosts文件位于：<code>C:\Windows\System32\drivers\etc\hosts</code></p>
-<p>在hosts文件中添加自定义的域名-ip映射关系</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">192.168.1.200 app01.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="部署Nginx"><a href="#部署Nginx" class="headerlink" title="部署Nginx"></a>部署Nginx</h3><h4 id="通过yum安装"><a href="#通过yum安装" class="headerlink" title="通过yum安装"></a>通过yum安装</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y nginx</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@playground nginx]# nginx -v</span><br><span class="line">nginx version: nginx/1.16.1</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="配置反向代理"><a href="#配置反向代理" class="headerlink" title="配置反向代理"></a>配置反向代理</h3><h4 id="添加自定义反向代理配置"><a href="#添加自定义反向代理配置" class="headerlink" title="添加自定义反向代理配置"></a>添加自定义反向代理配置</h4><p>通过<code>yum</code>进行安装时，<code>Nginx</code>的配置文件的路径会位于<code>/etc/nginx</code>下</p>
-<p>配置文件是<code>/etc/nginx/nginx.conf</code></p>
-<p>我们在更改该文件之前先对其进行一下备份</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup</span><br></pre></td></tr></table></figure>
-
-
-
-<p>然后添加我们自定义的服务配置</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  app01.com;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass   http://127.0.0.1:8080;</span><br><span class="line">        proxy_set_header Host $host;</span><br><span class="line">        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="启动Nginx"><a href="#启动Nginx" class="headerlink" title="启动Nginx"></a>启动Nginx</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx</span><br></pre></td></tr></table></figure>
-
-<p>停止nginx</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx -s stop</span><br></pre></td></tr></table></figure>
-
-<p>修改配置后重启Nginx</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx -s reload</span><br></pre></td></tr></table></figure>
-
-<p>让Nginx开机自启动</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl enable nginx</span><br></pre></td></tr></table></figure>
-
-
-
-<p>自此，运行在虚拟机中端口为8080的项目已经成功被Nginx反向代理</p>
-<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>在windows宿主机的cmd中尝试请求</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">C:\Users\xxx&gt;curl http://app01.com/api/organization</span><br><span class="line">&#123;&quot;code&quot;:200,&quot;data&quot;:[&#123;&quot;id&quot;:1,&quot;name&quot;:&quot;Oppose Militancy \u0026 Neutralize Invasion&quot;,&quot;alias&quot;:&quot;O.M.N.I&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:6,&quot;name&quot;:&quot;Stellar Loussier&quot;,&quot;organizationId&quot;:1,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;,&#123;&quot;id&quot;:2,&quot;name&quot;:&quot;Zodiac Alliance of Freedom Treaty&quot;,&quot;alias&quot;:&quot;Z.A.F.T&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:1,&quot;name&quot;:&quot;Shinn Asuka&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:4,&quot;name&quot;:&quot;Rau Le Crueset&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:5,&quot;name&quot;:&quot;Rey Za Burrel&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;,&#123;&quot;id&quot;:3,&quot;name&quot;:&quot;Orb Union&quot;,&quot;alias&quot;:&quot;O.R.B&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:2,&quot;name&quot;:&quot;Kira Yamato&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:3,&quot;name&quot;:&quot;Athrun Zala&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:7,&quot;name&quot;:&quot;Mu La Flaga&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;],&quot;message&quot;:&quot;Get organization successfully.&quot;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>发现能成功通过我们配置的域名app01.com来请求到数据</p>
+<h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><ul>
+<li>create_trx_id: 创建read view的事务id</li>
+<li>trx_ids: 当前系统活跃事务列表</li>
+<li>up_limit_id: 活跃事务中最小的事务id</li>
+<li>low_limit_id: 生成read view时刻系统分配的&#x3D;&#x3D;下一个&#x3D;&#x3D;事务id</li>
+</ul>
+<h3 id="记录的版本可见性规则"><a href="#记录的版本可见性规则" class="headerlink" title="记录的版本可见性规则"></a>记录的版本可见性规则</h3><ul>
+<li>如果被访问的版本的trx_id和read view中的creator_trx_id一致，说明当前事务在访问自身修改过的记录，该版本&#x3D;&#x3D;可&#x3D;&#x3D;被当前事务访问</li>
+<li>如果当前访问版本的trx_id&#x3D;&#x3D;小于&#x3D;&#x3D;up_limit_id，说明该版本是当前事务发生之&#x3D;&#x3D;前&#x3D;&#x3D;已经被提交过了的版本，当前版本&#x3D;&#x3D;可&#x3D;&#x3D;被当前事务访问</li>
+<li>如果当前访问版本的trx_id&#x3D;&#x3D;大于&#x3D;&#x3D;low_limit_id，说明该版本是当前事务发生之&#x3D;&#x3D;后&#x3D;&#x3D;才开启的，当前版本&#x3D;&#x3D;不可&#x3D;&#x3D;被当前事务访问</li>
+<li>如果当前访问版本的trx_id在up_limit_id和low_limit_id之间：<ol>
+<li>如果trx_id在当前read view的trx_ids列表中&#x3D;&#x3D;存在&#x3D;&#x3D;，说明该版本的事务依旧活跃，因此该版本&#x3D;&#x3D;不可&#x3D;&#x3D;被当前事务访问</li>
+<li>如果trx_id在当前read view的trx_ids列表中&#x3D;&#x3D;不存在&#x3D;&#x3D;，说明该版本的事务已被提交，因此该版本&#x3D;&#x3D;可&#x3D;&#x3D;被当前事务访问</li>
+</ol>
+</li>
+</ul>
+<h3 id="read-view的生成规则"><a href="#read-view的生成规则" class="headerlink" title="read view的生成规则"></a>read view的生成规则</h3><ul>
+<li><p>读已提交级别下</p>
+<p>相同的查找条件下，事务每次执行SELECT都会生成一个read view</p>
+</li>
+<li><p>可重复读级别下</p>
+<p>相同的查找条件下，事务仅第一次执行SELECT的时候生成已给read view，后续相同的查询都使用该read view直到事务结束</p>
+</li>
+</ul>
+<h3 id="解决幻读"><a href="#解决幻读" class="headerlink" title="解决幻读"></a>解决幻读</h3><blockquote>
+<p>可重复读级别下</p>
+</blockquote>
+<p>假设条件：</p>
+<ul>
+<li>表中存在一条id为1的记录，该记录隐藏列的事务id为10</li>
+<li>一个事务A的id为20，执行<code>SELECT * from t where id &gt; 0;</code></li>
+<li>同时一个事务B的id为30，执行<code>INSERT INTO t(id, name) value(2, &quot;test&quot;);</code></li>
+<li>此时事务A的read view的状态为：<ol>
+<li>create_trx_id: 20</li>
+<li>trx_ids: [20, 30]</li>
+<li>up_limit_id: 20</li>
+<li>low_limit_id: 31</li>
+</ol>
+</li>
+<li>事务B提交后，事务A查询的时候会看到id&#x3D;2的记录，但是该记录的trx_id是30，在read view的trx_ids中存在，说明此时在read view创建时事务30还在活跃状态，因此该记录对当前事务不可见，因此会被过滤掉，从而解决幻读</li>
+</ul>
 ]]></content>
       <categories>
-        <category>Web开发</category>
+        <category>Database</category>
       </categories>
       <tags>
-        <tag>Nginx</tag>
+        <tag>MySQL</tag>
       </tags>
   </entry>
   <entry>
-    <title>Nodejs安装</title>
-    <url>/blog/2021/06/09/Nodejs%E5%AE%89%E8%A3%85/</url>
-    <content><![CDATA[<h1 id="Nodejs安装"><a href="#Nodejs安装" class="headerlink" title="Nodejs安装"></a>Nodejs安装</h1><h2 id="环境与配置"><a href="#环境与配置" class="headerlink" title="环境与配置"></a>环境与配置</h2><ul>
-<li>VMware® Workstation 15 Pro - 15.5.0 build-14665864</li>
-<li>宿主机： Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
-<li>CentOS Linux release 7.9.2009 (Core)</li>
-</ul>
-<h2 id="资源清单"><a href="#资源清单" class="headerlink" title="资源清单"></a>资源清单</h2><ul>
-<li>node-v12.16.1-linux-x64</li>
-<li>n 7.3.0</li>
-</ul>
+    <title>InnoDB 事务笔记</title>
+    <url>/blog/2021/01/20/InnoDB-%E4%BA%8B%E5%8A%A1%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>MySQL中仅<code>innoDB</code>支持事务</p>
 <span id="more"></span>
 
+<h2 id="事务特性"><a href="#事务特性" class="headerlink" title="事务特性"></a>事务特性</h2><ul>
+<li><p>原子性：事务是不可分割的工作单位，全部提交&#x2F;失败回滚，不存在中间状态</p>
+<p>undo log保证</p>
+</li>
+<li><p>一致性：事务执行前后数据从一个合法状态变换到另一个合法状态</p>
+<p>undo log保证</p>
+</li>
+<li><p>隔离性：事物的执行不能被其它事务干扰</p>
+<p>锁机制实现</p>
+</li>
+<li><p>持久性：事务被提交后对数据改变是永久的</p>
+<p>redo log保证</p>
+</li>
+</ul>
+<h2 id="隔离级别"><a href="#隔离级别" class="headerlink" title="隔离级别"></a>隔离级别</h2><h3 id="并发问题"><a href="#并发问题" class="headerlink" title="并发问题"></a>并发问题</h3><ul>
+<li><p>脏写：事务A修改了未提交的事务B修改过的数据，所有隔离级别都不允许出现</p>
+</li>
+<li><p>脏读：事务A读到事务B&#x3D;&#x3D;未提交&#x3D;&#x3D;的数据</p>
+</li>
+<li><p>不可重复读：事务A每次都读到事务B&#x3D;&#x3D;已经提交&#x3D;&#x3D;的最新数据</p>
+</li>
+<li><p>幻读：事务A在进行&#x3D;&#x3D;范围读取&#x3D;&#x3D;的时候能读到事务B&#x3D;&#x3D;已经提交&#x3D;&#x3D;的&#x3D;&#x3D;新插入&#x3D;&#x3D;的符合该范围的数据</p>
+<p>（注意：先前读到后面读不到的情况属于不可重复读）</p>
+</li>
+</ul>
+<h3 id="级别"><a href="#级别" class="headerlink" title="级别"></a>级别</h3><blockquote>
+<p>并发能力从高到低，解决的并发问题从少到多</p>
+</blockquote>
+<ul>
+<li><p>读未提交</p>
+<p>不加读锁，解决脏写</p>
+</li>
+<li><p>读已提交</p>
+<p>不加读锁，解决脏写，脏读</p>
+</li>
+<li><p>可重复读</p>
+<p>不加读锁，解决脏写，脏读，不可重复读</p>
+<p>（在<code>innoDB</code>的可重复读级别解决了幻读）</p>
+</li>
+<li><p>可串行化</p>
+<p>加读锁，并发问题全部解决</p>
+</li>
+</ul>
+<h2 id="事务日志"><a href="#事务日志" class="headerlink" title="事务日志"></a>事务日志</h2><h3 id="redo-log"><a href="#redo-log" class="headerlink" title="redo log"></a>redo log</h3><ul>
+<li><p>记录物理级别的页修改，由存储引擎层产生</p>
+</li>
+<li><p>内存中的数据在写入磁盘之前先写redo log(WAL, write ahead logging，日志写入成功事务才算提交成功)，意味着事务一旦提交成功就保证它存在于redo log</p>
+</li>
+</ul>
+<p>特点：</p>
+<ol>
+<li>顺序IO，相比数据页的写入的随机IO，性能大幅提高</li>
+</ol>
+<p>组成：</p>
+<ol>
+<li>redo log buffer – default：16mb</li>
+<li>redo file</li>
+</ol>
+<p>运转流程：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    Data file--&gt;&gt;Buffer pool: find update rows</span><br><span class="line">    Update tx-&gt;&gt;Buffer pool: update data in buffer</span><br><span class="line">    Buffer pool -&gt;&gt; Redo log buffer: write redo log in buffer</span><br><span class="line">    Redo log buffer -&gt;&gt; Redo log file: write redo log in file</span><br><span class="line">    Buffer pool--&gt;&gt;Data file: update data file</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
 
-<h2 id="下载安装包"><a href="#下载安装包" class="headerlink" title="下载安装包"></a>下载安装包</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/packages</span><br><span class="line">wget https://npm.taobao.org/mirrors/node/v12.16.1/node-v12.16.1-linux-x64.tar.gz</span><br></pre></td></tr></table></figure>
+<p>redo log刷盘策略</p>
+<ol>
+<li>每次事务提交不做任何动作，交给后台master thread每隔1s进行一次redo log同步</li>
+<li>每次事务提交都buffer内容写入page cache并同步刷盘（default）</li>
+<li>每次事务提交只把buffer内容写入page cache，不同步，让OS决定同步刷盘时间</li>
+</ol>
+<p>用途</p>
+<ol>
+<li>数据库恢复的时候使用，保证持久性</li>
+</ol>
+<h3 id="undo-log"><a href="#undo-log" class="headerlink" title="undo log"></a>undo log</h3><ul>
+<li><p>记录的是逻辑操作的日志（记录SQL语句）</p>
+</li>
+<li><p>事务更新操作的之前会预先写入一个undo log</p>
+</li>
+<li><p>undo log会产生redo log</p>
+</li>
+</ul>
+<p>生命周期：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    Data file--&gt;&gt;Buffer pool: find update rows stores in buffer</span><br><span class="line">    Update tx-&gt;&gt;Buffer pool: update data in buffer</span><br><span class="line">    Buffer pool -&gt;&gt; Undo log: write undo log</span><br><span class="line">    Executor -&gt;&gt; Buffer pool: update data in data buffer</span><br><span class="line">    Executor -&gt;&gt; Redo log buffer: write into redo log buffer</span><br><span class="line">    Redo log buffer -&gt;&gt; Redo log file: write redo log in file</span><br><span class="line">    Buffer pool--&gt;&gt;Data file: update data file</span><br></pre></td></tr></table></figure>
+
+<p>生成过程：</p>
+<ul>
+<li><p>行记录隐藏列</p>
+<ol>
+<li>DB_ROW_ID：行id</li>
+<li>DB_TRX_ID：事务id</li>
+<li>DB_ROLL_PTR：回滚指针，指向上一个undo log</li>
+</ol>
+</li>
+<li><p>insert时</p>
+<p>生成一条insert undo log，记录undo log序号，主键和列值。</p>
+<p>进行回滚值需把逐渐对应数据删除即可</p>
+</li>
+<li><p>update时</p>
+<p>不更新主键：</p>
+<ol>
+<li><p>生成一个新的undo log（log A），记录列信息</p>
+</li>
+<li><p>log A指向记录的回滚指针指向的undo log（log B）</p>
+</li>
+<li><p>记录的回滚指针指向log A</p>
+</li>
+</ol>
+<p>更新主键：</p>
+<ol>
+<li>将原纪录（record A）<code>deletemark</code> &#x3D; 1</li>
+<li>record A的回滚指针指向记录<code>deletemark</code> &#x3D; 1的过程的undo log</li>
+<li>生成一条新纪录（record B）</li>
+<li>record B的回滚指针指向记录更改主键的过程的undo log</li>
+</ol>
+</li>
+</ul>
+<p>undo log删除</p>
+<ul>
+<li><p>insert undo log</p>
+<p>事务提交后可以直接删除</p>
+</li>
+<li><p>update undo log</p>
+<p>需要提供MVCC机制的支持，事务提交时需要放入undo log链表等待purse线程去删除</p>
+</li>
+</ul>
+<p>用途：</p>
+<ol>
+<li>事务回滚</li>
+<li>MVCC</li>
+</ol>
+<h2 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h2><h3 id="内存结构"><a href="#内存结构" class="headerlink" title="内存结构"></a>内存结构</h3><ul>
+<li>锁所在事务信息</li>
+<li>索引信息</li>
+<li>表锁&#x2F;行锁信息</li>
+<li>type_mode</li>
+<li>其它信息</li>
+<li>比特位</li>
+</ul>
+<h3 id="共享锁"><a href="#共享锁" class="headerlink" title="共享锁"></a>共享锁</h3><p>S锁</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM your_table LOCK IN SHARE MODE;</span><br><span class="line"># &gt;= 8.0</span><br><span class="line">SELECT * FROM your_table FOR SHARE;</span><br></pre></td></tr></table></figure>
 
 
 
-<h2 id="解压与安装"><a href="#解压与安装" class="headerlink" title="解压与安装"></a>解压与安装</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/modules</span><br><span class="line">tar -C . -zxvf /opt/packages/node-v12.16.1-linux-x64.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="排他锁"><a href="#排他锁" class="headerlink" title="排他锁"></a>排他锁</h3><p>X锁</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM your_table FOR UPDATE;</span><br></pre></td></tr></table></figure>
 
 
 
-<h2 id="设置软连接"><a href="#设置软连接" class="headerlink" title="设置软连接"></a>设置软连接</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ln -s /opt/modules/node-v12.16.1-linux-x64/bin/node /usr/bin/node</span><br><span class="line">ln -s /opt/modules/node-v12.16.1-linux-x64/bin/npm /usr/bin/npm</span><br><span class="line">ln -s /opt/modules/node-v12.16.1-linux-x64/bin/npx /usr/bin/npx</span><br></pre></td></tr></table></figure>
 
 
+<h3 id="表锁"><a href="#表锁" class="headerlink" title="表锁"></a>表锁</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># S LOCK</span><br><span class="line">LOCK TABLES your_table READ;</span><br><span class="line"># X LOCK</span><br><span class="line">LOCK TABLES your_table WRITE</span><br></pre></td></tr></table></figure>
 
-<h2 id="安装node版本管理器n"><a href="#安装node版本管理器n" class="headerlink" title="安装node版本管理器n"></a>安装node版本管理器n</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm i -g n</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>自己可读</th>
+<th>自己可写</th>
+<th>自己可操作其他表</th>
+<th>他人可读</th>
+<th>他人可写</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>S</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+<td>False, Block</td>
+</tr>
+<tr>
+<td>X</td>
+<td>True</td>
+<td>True</td>
+<td>False</td>
+<td>False, Block</td>
+<td>False, Block</td>
+</tr>
+</tbody></table>
+<p>意向锁</p>
+<ul>
+<li>事务获取某些记录的共享锁时需要给当前表添加意向共享锁(IS)</li>
+<li>事务获取某些记录的排他锁时需要给当前表添加意向排他锁(IX)</li>
+<li>IS和IX均互相兼容，IS和S兼容，其余情况均互斥</li>
+</ul>
+<p>自增锁 - AUTO-INC</p>
+<h3 id="行锁"><a href="#行锁" class="headerlink" title="行锁"></a>行锁</h3><p>存储引擎层实现</p>
+<ol>
+<li><p>记录锁</p>
+</li>
+<li><p>间隙锁</p>
+<ul>
+<li><p>对某行记录加上间隙锁，表示不允许对该记录前面的间隙（开区间）插入新的记录</p>
+</li>
+<li><p>在为了防止插入幻影记录提出</p>
+</li>
+<li><p>可重入</p>
+</li>
+<li><p>间隙锁会导致死锁</p>
+<p>比如两个事务先分别锁了同一个范围，两边都成功上间隙锁后，再尝试向该范围插入记录，此时就会导致死锁</p>
+</li>
+</ul>
+</li>
+<li><p>临键锁</p>
+<p>下边界闭区间间隙锁</p>
+</li>
+<li><p>插入意向锁</p>
+<p>插入位置被其它事务加入了间隙锁或者临键锁，此时本事务等待的时候生成一个插入意向锁</p>
+</li>
+</ol>
+<h3 id="页锁"><a href="#页锁" class="headerlink" title="页锁"></a>页锁</h3><p>锁升级：行锁到一定空间会升级为页锁，页锁到一定空间升级为表锁</p>
+<h3 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h3><p>基于数据库的锁机制来实现，适合写多读少的较短的事务场景</p>
+<p>注意，使用悲观锁的时候一定要确保使用了索引而不是全表扫描。否在会把扫描过的记录全部锁住</p>
+<h3 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h3><p>基于程序设计实现，适用于多读的应用场景，提高吞吐</p>
+<ul>
+<li><p>基于版本号机制，CAS机制</p>
+<p>设计一个版本字段version，修改的时候执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">UPDATE ... SET version=version+1 WHERE version=`current_version`</span><br></pre></td></tr></table></figure>
 
-<h3 id="设置软连接-1"><a href="#设置软连接-1" class="headerlink" title="设置软连接"></a>设置软连接</h3><p>ps：不知道为啥全局安装之后n没有自己创建个软连接啥的….总觉得以前不用做这一步….</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ln -s /opt/modules/node-v12.16.1-linux-x64/lib/node_modules/n/bin/n /usr/bin/n</span><br></pre></td></tr></table></figure>
-
-<h3 id="设置N-PREFIX"><a href="#设置N-PREFIX" class="headerlink" title="设置N_PREFIX"></a>设置N_PREFIX</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vi /etc/profile</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export N_PREFIX=/usr/local/bin/node</span><br><span class="line">export PATH=$N_PREFIX/bin:$PATH</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="测试n是否安装成功"><a href="#测试n是否安装成功" class="headerlink" title="测试n是否安装成功"></a>测试n是否安装成功</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">n --version</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">7.3.0</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="安装生产环境版本node"><a href="#安装生产环境版本node" class="headerlink" title="安装生产环境版本node"></a>安装生产环境版本node</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">n 12.2.0</span><br></pre></td></tr></table></figure>
-
-<p>切换node</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">n</span><br></pre></td></tr></table></figure>
-
-<p>然后选择需要的版本，enter</p>
-<h2 id="npm换源"><a href="#npm换源" class="headerlink" title="npm换源"></a>npm换源</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm config set registry https://registry.npm.taobao.org/</span><br></pre></td></tr></table></figure>
-
+<ol>
+<li>每次修改数据的时候version都会加1</li>
+<li>当进行修改的时候发现version被更新了，修改会因为定位失败而不成功</li>
+</ol>
+</li>
+<li><p>基于时间戳机制</p>
+<p>将版本号换成时间戳进行比较</p>
+</li>
+</ul>
+<blockquote>
+<p>注意，在独写分离的场景下要强制读取master表中的数据，防止主从由于同步时间造成的不一致</p>
+</blockquote>
+<h3 id="显式锁"><a href="#显式锁" class="headerlink" title="显式锁"></a>显式锁</h3><p>显式声明的锁</p>
+<h3 id="隐式锁"><a href="#隐式锁" class="headerlink" title="隐式锁"></a>隐式锁</h3><p>insert事务在执行前<code>innoDB</code>会为准备插入的新纪录隐式添加一个X锁</p>
+<h3 id="全局锁"><a href="#全局锁" class="headerlink" title="全局锁"></a>全局锁</h3><p>锁住整个库</p>
+<h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h3><p>两个事务都在等待对方释放锁才可以继续执行，并且双方都不会释放自己的锁</p>
+<p>死锁处理：</p>
+<ol>
+<li><p>超时：default 50s</p>
+</li>
+<li><p>死锁检测</p>
+<p>主动回滚undo log数量最小的事务</p>
+<p>wait-for graph算法主动检测死锁</p>
+</li>
+</ol>
+<p>解决死锁：</p>
+<p>造成死锁的原因是两个以上的事务加锁的记录的顺序不一致，因此解决关键是调整语句让加锁的记录的顺序一致即可</p>
 ]]></content>
       <categories>
-        <category>Web开发</category>
+        <category>Database</category>
       </categories>
       <tags>
-        <tag>Nodejs</tag>
+        <tag>MySQL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Installing multiple Go versions</title>
+    <url>/blog/2022/09/07/Installing-multiple-Go-versions/</url>
+    <content><![CDATA[<h2 id="Foreword"><a href="#Foreword" class="headerlink" title="Foreword"></a>Foreword</h2><p>Usually, we install a specified version of golang sdk (such as go1.18.4). But we might want to install the other version for study or work purposes, and keep all the sdk versions in our computer.</p>
+<span id="more"></span>
+
+<h2 id="Assumption"><a href="#Assumption" class="headerlink" title="Assumption"></a>Assumption</h2><p>We have already installed go 1.18.4 in our computer, and we want to install 1.18.6 in the same time</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go version</span><br><span class="line">go version go1.18.4 linux/amd64</span><br></pre></td></tr></table></figure>
+
+<p>Current GOROOT and GOPATH</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go <span class="built_in">env</span> GOROOT</span><br><span class="line">/usr/local/go</span><br><span class="line">$ go <span class="built_in">env</span> GOPATH</span><br><span class="line">/root/go</span><br></pre></td></tr></table></figure>
+
+<h2 id="Steps"><a href="#Steps" class="headerlink" title="Steps"></a>Steps</h2><h3 id="install-the-binary-file"><a href="#install-the-binary-file" class="headerlink" title="install the binary file"></a>install the binary file</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go install golang.org/dl/go1.18.6@latest</span><br><span class="line">go: downloading golang.org/dl v0.0.0-20220907140016-191c3420d549</span><br></pre></td></tr></table></figure>
+
+<p>Try to call go1.18.6 by check its version:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go1.18.6 version</span><br><span class="line">go1.18.6: not downloaded. Run <span class="string">&#x27;go1.18.6 download&#x27;</span> to install to /root/sdk/go1.18.6</span><br></pre></td></tr></table></figure>
+
+<p>Failed to check the version, but we can see go1.18.6 executable binary file has been download in our computer, let’s find out where it is:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">which</span> go1.18.6</span><br><span class="line">/root/go/bin/go1.18.6</span><br></pre></td></tr></table></figure>
+
+<h3 id="Download-the-libaray"><a href="#Download-the-libaray" class="headerlink" title="Download the libaray"></a>Download the libaray</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go1.18.6 download</span><br><span class="line">Downloaded   0.0% (    16384 / 141879729 bytes) ...</span><br><span class="line">Downloaded   1.7% (  2375664 / 141879729 bytes) ...</span><br><span class="line">Downloaded   2.7% (  3817456 / 141879729 bytes) ...</span><br><span class="line">Downloaded   7.4% ( 10469376 / 141879729 bytes) ...</span><br><span class="line">Downloaded  16.7% ( 23658416 / 141879729 bytes) ...</span><br><span class="line">Downloaded  22.6% ( 32128880 / 141879729 bytes) ...</span><br><span class="line">Downloaded  23.4% ( 33144624 / 141879729 bytes) ...</span><br><span class="line">Downloaded  24.9% ( 35323648 / 141879729 bytes) ...</span><br><span class="line">Downloaded  29.9% ( 42368736 / 141879729 bytes) ...</span><br><span class="line">Downloaded  33.0% ( 46874304 / 141879729 bytes) ...</span><br><span class="line">Downloaded  35.5% ( 50364032 / 141879729 bytes) ...</span><br><span class="line">Downloaded  36.6% ( 51871424 / 141879729 bytes) ...</span><br><span class="line">Downloaded  38.2% ( 54148784 / 141879729 bytes) ...</span><br><span class="line">Downloaded  39.6% ( 56196800 / 141879729 bytes) ...</span><br><span class="line">Downloaded  42.9% ( 60849712 / 141879729 bytes) ...</span><br><span class="line">Downloaded  44.6% ( 63258144 / 141879729 bytes) ...</span><br><span class="line">Downloaded  47.1% ( 66895376 / 141879729 bytes) ...</span><br><span class="line">Downloaded  53.9% ( 76529088 / 141879729 bytes) ...</span><br><span class="line">Downloaded  56.4% ( 79953344 / 141879729 bytes) ...</span><br><span class="line">Downloaded  60.1% ( 85327232 / 141879729 bytes) ...</span><br><span class="line">Downloaded  62.0% ( 87981424 / 141879729 bytes) ...</span><br><span class="line">Downloaded  63.8% ( 90471760 / 141879729 bytes) ...</span><br><span class="line">Downloaded  64.6% ( 91684240 / 141879729 bytes) ...</span><br><span class="line">Downloaded  69.7% ( 98860304 / 141879729 bytes) ...</span><br><span class="line">Downloaded  77.7% (110263488 / 141879729 bytes) ...</span><br><span class="line">Downloaded  79.9% (113310928 / 141879729 bytes) ...</span><br><span class="line">Downloaded  81.4% (115457168 / 141879729 bytes) ...</span><br><span class="line">Downloaded  83.0% (117800128 / 141879729 bytes) ...</span><br><span class="line">Downloaded  83.5% (118488224 / 141879729 bytes) ...</span><br><span class="line">Downloaded  84.8% (120257680 / 141879729 bytes) ...</span><br><span class="line">Downloaded  87.9% (124697744 / 141879729 bytes) ...</span><br><span class="line">Downloaded  90.0% (127695936 / 141879729 bytes) ...</span><br><span class="line">Downloaded  95.4% (135412736 / 141879729 bytes) ...</span><br><span class="line">Downloaded  98.4% (139557856 / 141879729 bytes) ...</span><br><span class="line">Downloaded 100.0% (141879729 / 141879729 bytes)</span><br><span class="line">Unpacking /root/sdk/go1.18.6/go1.18.6.linux-amd64.tar.gz ...</span><br><span class="line">Success. You may now run <span class="string">&#x27;go1.18.6&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>Now we have downloaded the library of go1.18.6 completely, let’s try to check its version again:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go1.18.6 version</span><br><span class="line">go version go1.18.6 linux/amd64</span><br></pre></td></tr></table></figure>
+<p>And it works.</p>
+<h3 id="Checkout-GOPATH-and-GOROOT"><a href="#Checkout-GOPATH-and-GOROOT" class="headerlink" title="Checkout GOPATH and GOROOT"></a>Checkout GOPATH and GOROOT</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go1.18.6 <span class="built_in">env</span> GOPATH</span><br><span class="line">/root/go</span><br><span class="line">$ go1.18.6 <span class="built_in">env</span> GOROOT</span><br><span class="line">/root/sdk/go1.18.6</span><br></pre></td></tr></table></figure>
+
+<p>We can see GOPATH is the same as the go1.18.4, but GOROOT has changed to another place</p>
+<h2 id="Uninstall-Addtional-Versions"><a href="#Uninstall-Addtional-Versions" class="headerlink" title="Uninstall Addtional Versions"></a>Uninstall Addtional Versions</h2><ol>
+<li><p>Remove libaray</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf /root/sdk/go1.18.6</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Remove the binary file</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf /root/go/bin/go1.18.6</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a href="https://go.dev/doc/manage-install">Managing Go installations</a></p>
+]]></content>
+      <categories>
+        <category>Golang</category>
+      </categories>
+      <tags>
+        <tag>installation</tag>
       </tags>
   </entry>
   <entry>
@@ -1934,6 +2132,134 @@
       </tags>
   </entry>
   <entry>
+    <title>Nginx实现反向代理</title>
+    <url>/blog/2021/05/23/Nginx%E5%AE%9E%E7%8E%B0%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/</url>
+    <content><![CDATA[<p>在虚拟机中部署Nginx，并使用Nginx为虚拟机中运行的项目分配反向代理的域名</p>
+<h2 id="背景说明"><a href="#背景说明" class="headerlink" title="背景说明"></a>背景说明</h2><p>在windows宿主机中存在一台运行着CentOS7的虚拟机，ip为192.168.1.200</p>
+<p>在虚拟机中存在一个web服务的项目，运行在虚拟机的端口8080上</p>
+<p>希望在宿主机中能通过自定义的域名app01.com来访问该项目的接口服务</p>
+<span id="more"></span>
+
+<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
+<li>CentOS Linux release 7.7.1908 (Core)</li>
+<li>VMWare 15.5.0 build-14665864</li>
+<li>Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
+</ul>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="修改windows宿主机中的hosts文件"><a href="#修改windows宿主机中的hosts文件" class="headerlink" title="修改windows宿主机中的hosts文件"></a>修改windows宿主机中的hosts文件</h3><p>hosts文件位于：<code>C:\Windows\System32\drivers\etc\hosts</code></p>
+<p>在hosts文件中添加自定义的域名-ip映射关系</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">192.168.1.200 app01.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="部署Nginx"><a href="#部署Nginx" class="headerlink" title="部署Nginx"></a>部署Nginx</h3><h4 id="通过yum安装"><a href="#通过yum安装" class="headerlink" title="通过yum安装"></a>通过yum安装</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y nginx</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@playground nginx]# nginx -v</span><br><span class="line">nginx version: nginx/1.16.1</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="配置反向代理"><a href="#配置反向代理" class="headerlink" title="配置反向代理"></a>配置反向代理</h3><h4 id="添加自定义反向代理配置"><a href="#添加自定义反向代理配置" class="headerlink" title="添加自定义反向代理配置"></a>添加自定义反向代理配置</h4><p>通过<code>yum</code>进行安装时，<code>Nginx</code>的配置文件的路径会位于<code>/etc/nginx</code>下</p>
+<p>配置文件是<code>/etc/nginx/nginx.conf</code></p>
+<p>我们在更改该文件之前先对其进行一下备份</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup</span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后添加我们自定义的服务配置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  app01.com;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass   http://127.0.0.1:8080;</span><br><span class="line">        proxy_set_header Host $host;</span><br><span class="line">        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="启动Nginx"><a href="#启动Nginx" class="headerlink" title="启动Nginx"></a>启动Nginx</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx</span><br></pre></td></tr></table></figure>
+
+<p>停止nginx</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx -s stop</span><br></pre></td></tr></table></figure>
+
+<p>修改配置后重启Nginx</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx -s reload</span><br></pre></td></tr></table></figure>
+
+<p>让Nginx开机自启动</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl enable nginx</span><br></pre></td></tr></table></figure>
+
+
+
+<p>自此，运行在虚拟机中端口为8080的项目已经成功被Nginx反向代理</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>在windows宿主机的cmd中尝试请求</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">C:\Users\xxx&gt;curl http://app01.com/api/organization</span><br><span class="line">&#123;&quot;code&quot;:200,&quot;data&quot;:[&#123;&quot;id&quot;:1,&quot;name&quot;:&quot;Oppose Militancy \u0026 Neutralize Invasion&quot;,&quot;alias&quot;:&quot;O.M.N.I&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:6,&quot;name&quot;:&quot;Stellar Loussier&quot;,&quot;organizationId&quot;:1,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;,&#123;&quot;id&quot;:2,&quot;name&quot;:&quot;Zodiac Alliance of Freedom Treaty&quot;,&quot;alias&quot;:&quot;Z.A.F.T&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:1,&quot;name&quot;:&quot;Shinn Asuka&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:4,&quot;name&quot;:&quot;Rau Le Crueset&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:5,&quot;name&quot;:&quot;Rey Za Burrel&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;,&#123;&quot;id&quot;:3,&quot;name&quot;:&quot;Orb Union&quot;,&quot;alias&quot;:&quot;O.R.B&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:2,&quot;name&quot;:&quot;Kira Yamato&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:3,&quot;name&quot;:&quot;Athrun Zala&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:7,&quot;name&quot;:&quot;Mu La Flaga&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;],&quot;message&quot;:&quot;Get organization successfully.&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>发现能成功通过我们配置的域名app01.com来请求到数据</p>
+]]></content>
+      <categories>
+        <category>Web开发</category>
+      </categories>
+      <tags>
+        <tag>Nginx</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Nodejs安装</title>
+    <url>/blog/2021/06/09/Nodejs%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<h1 id="Nodejs安装"><a href="#Nodejs安装" class="headerlink" title="Nodejs安装"></a>Nodejs安装</h1><h2 id="环境与配置"><a href="#环境与配置" class="headerlink" title="环境与配置"></a>环境与配置</h2><ul>
+<li>VMware® Workstation 15 Pro - 15.5.0 build-14665864</li>
+<li>宿主机： Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
+<li>CentOS Linux release 7.9.2009 (Core)</li>
+</ul>
+<h2 id="资源清单"><a href="#资源清单" class="headerlink" title="资源清单"></a>资源清单</h2><ul>
+<li>node-v12.16.1-linux-x64</li>
+<li>n 7.3.0</li>
+</ul>
+<span id="more"></span>
+
+
+<h2 id="下载安装包"><a href="#下载安装包" class="headerlink" title="下载安装包"></a>下载安装包</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/packages</span><br><span class="line">wget https://npm.taobao.org/mirrors/node/v12.16.1/node-v12.16.1-linux-x64.tar.gz</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="解压与安装"><a href="#解压与安装" class="headerlink" title="解压与安装"></a>解压与安装</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/modules</span><br><span class="line">tar -C . -zxvf /opt/packages/node-v12.16.1-linux-x64.tar.gz</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="设置软连接"><a href="#设置软连接" class="headerlink" title="设置软连接"></a>设置软连接</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ln -s /opt/modules/node-v12.16.1-linux-x64/bin/node /usr/bin/node</span><br><span class="line">ln -s /opt/modules/node-v12.16.1-linux-x64/bin/npm /usr/bin/npm</span><br><span class="line">ln -s /opt/modules/node-v12.16.1-linux-x64/bin/npx /usr/bin/npx</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="安装node版本管理器n"><a href="#安装node版本管理器n" class="headerlink" title="安装node版本管理器n"></a>安装node版本管理器n</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm i -g n</span><br></pre></td></tr></table></figure>
+
+<h3 id="设置软连接-1"><a href="#设置软连接-1" class="headerlink" title="设置软连接"></a>设置软连接</h3><p>ps：不知道为啥全局安装之后n没有自己创建个软连接啥的….总觉得以前不用做这一步….</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ln -s /opt/modules/node-v12.16.1-linux-x64/lib/node_modules/n/bin/n /usr/bin/n</span><br></pre></td></tr></table></figure>
+
+<h3 id="设置N-PREFIX"><a href="#设置N-PREFIX" class="headerlink" title="设置N_PREFIX"></a>设置N_PREFIX</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vi /etc/profile</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export N_PREFIX=/usr/local/bin/node</span><br><span class="line">export PATH=$N_PREFIX/bin:$PATH</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="测试n是否安装成功"><a href="#测试n是否安装成功" class="headerlink" title="测试n是否安装成功"></a>测试n是否安装成功</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">n --version</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">7.3.0</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="安装生产环境版本node"><a href="#安装生产环境版本node" class="headerlink" title="安装生产环境版本node"></a>安装生产环境版本node</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">n 12.2.0</span><br></pre></td></tr></table></figure>
+
+<p>切换node</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">n</span><br></pre></td></tr></table></figure>
+
+<p>然后选择需要的版本，enter</p>
+<h2 id="npm换源"><a href="#npm换源" class="headerlink" title="npm换源"></a>npm换源</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm config set registry https://registry.npm.taobao.org/</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Web开发</category>
+      </categories>
+      <tags>
+        <tag>Nodejs</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Node模块机制</title>
     <url>/blog/2020/07/25/Node%E6%A8%A1%E5%9D%97%E6%9C%BA%E5%88%B6/</url>
     <content><![CDATA[<h2 id="模块机制"><a href="#模块机制" class="headerlink" title="模块机制"></a>模块机制</h2><p>Node的模块是在<a href="http://www.commonjs.org/">CommonJs</a>的基础上对模块的规范进行了一定的取舍，再结合自身特性的需求去实现的。</p>
@@ -2140,37 +2466,6 @@
       </tags>
   </entry>
   <entry>
-    <title>windows powershell此系统上禁止运行脚本问题解决办法</title>
-    <url>/blog/2019/10/30/powershell%E6%AD%A4%E7%B3%BB%E7%BB%9F%E4%B8%8A%E7%A6%81%E6%AD%A2%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/</url>
-    <content><![CDATA[<p>问题描述：</p>
-<ul>
-<li>在powershell（或者调用powershell的IDE中）使用DOS命令时提示：</li>
-</ul>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">无法加载文件ps1，因为在此系统中禁止执行脚本。有关详细信息，请参阅 <span class="string">&quot;get-help about_signing</span></span><br></pre></td></tr></table></figure>
-
-
-<span id="more"></span>
-<p>解决步骤：</p>
-<ol>
-<li><p>使用管理员权限打开powershell</p>
-</li>
-<li><p>查看当前脚本执行策略</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">get-executionpolicy</span></span><br></pre></td></tr></table></figure>
-
-<p>若返回<code>Restricted</code>，说明不允许执行任何脚本 </p>
-</li>
-<li><p>继续执行以下命令，并且在系统提示后输入Y即可</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">Set-ExecutionPolicy</span> RemoteSigned</span><br></pre></td></tr></table></figure></li>
-</ol>
-]]></content>
-      <categories>
-        <category>其它</category>
-      </categories>
-      <tags>
-        <tag>powershell</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>gRPC的四种通信模式</title>
     <url>/blog/2022/04/01/grpc%E7%9A%84%E5%9B%9B%E7%A7%8D%E9%80%9A%E4%BF%A1%E6%A8%A1%E5%BC%8F/</url>
     <content><![CDATA[<h2 id="简单RPC"><a href="#简单RPC" class="headerlink" title="简单RPC"></a>简单RPC</h2><h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><blockquote>
@@ -2230,178 +2525,34 @@
       </tags>
   </entry>
   <entry>
-    <title>使用Remote-ssh连接vscode与远程服务器</title>
-    <url>/blog/2020/07/14/%E4%BD%BF%E7%94%A8Remote-ssh%E8%BF%9E%E6%8E%A5vscode%E4%B8%8E%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
-    <content><![CDATA[<h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><ul>
-<li><p>宿主机：Windows10</p>
-</li>
-<li><p>服务器：CentOS 7</p>
-</li>
-<li><p>VsCode：1.47.0</p>
-</li>
-<li><p>Remote-ssh：0.51.0</p>
-</li>
+    <title>windows powershell此系统上禁止运行脚本问题解决办法</title>
+    <url>/blog/2019/10/30/powershell%E6%AD%A4%E7%B3%BB%E7%BB%9F%E4%B8%8A%E7%A6%81%E6%AD%A2%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/</url>
+    <content><![CDATA[<p>问题描述：</p>
+<ul>
+<li>在powershell（或者调用powershell的IDE中）使用DOS命令时提示：</li>
 </ul>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">无法加载文件ps1，因为在此系统中禁止执行脚本。有关详细信息，请参阅 <span class="string">&quot;get-help about_signing</span></span><br></pre></td></tr></table></figure>
+
+
 <span id="more"></span>
+<p>解决步骤：</p>
+<ol>
+<li><p>使用管理员权限打开powershell</p>
+</li>
+<li><p>查看当前脚本执行策略</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">get-executionpolicy</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="连接步骤"><a href="#连接步骤" class="headerlink" title="连接步骤"></a>连接步骤</h2><ol>
-<li><p>在宿主机上，安装OpenSSH</p>
+<p>若返回<code>Restricted</code>，说明不允许执行任何脚本 </p>
 </li>
-<li><p>Git bash中运行</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096 - &quot;xxxx&quot; # 请将xxxx替换成自己定义的内容，一般习惯为自己邮箱</span><br></pre></td></tr></table></figure>
-
-<p>之后可以一路回车确定即可，完成后在宿主机的目录<code>C:\Users\username\.ssh</code>下会看到生成了<code>id_rsa</code>与<code>id_rsa.pub</code>两个文件</p>
-</li>
-<li><p>将<code>id_rsa.pub</code>上传至服务器的<code>~/.ssh/</code>目录下，并更名为<code>authorized_keys</code></p>
-</li>
-<li><p>在宿主机的<code>C:\Users\username\.ssh</code>中配置文件<code>config</code>，内容如下</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Host myServer	# 服务器名</span><br><span class="line">	HostName 192.168.1.233 #服务器ip</span><br><span class="line">	User root	# 登录用户名</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在VsCode中安装插件Remote-ssh</p>
-</li>
-<li><p>在VsCode的左侧图标中找到Remote Explore，点击后会看到我们刚刚在在文件<code>config</code>中配置的服务器名，右键选择连接至该服务器，在左下角看到SSH: &lt;服务器名称&gt;即表示连接成功</p>
-</li>
-</ol>
-<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><ol>
-<li><p>今天不知道为啥突然打开虚拟机之后VsCode突然远程连接不上了，但是Xshell是能正常连接的，然后具体报错的内容为：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">failed to create hard link &#x27;/home/*/.vscode-server/bin/*/*&#x27; file exists</span><br></pre></td></tr></table></figure>
-
-<p>搜索了一下，发现以下方法可以解决：</p>
-<p>连接上服务器后，把服务器上的<code>/root/.vscode-server/bin/</code>的日期最新的文件夹中的名字带有<code>vscode-remote-lock.root</code>的两个文件删除，重新使用VsCode连接后成功。</p>
-</li>
+<li><p>继续执行以下命令，并且在系统提示后输入Y即可</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">Set-ExecutionPolicy</span> RemoteSigned</span><br></pre></td></tr></table></figure></li>
 </ol>
 ]]></content>
       <categories>
         <category>其它</category>
       </categories>
       <tags>
-        <tag>VS Code</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>使用docker快速安装RabbitMQ</title>
-    <url>/blog/2021/10/17/%E4%BD%BF%E7%94%A8docker%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85RabbitMQ/</url>
-    <content><![CDATA[<h2 id="环境与配置"><a href="#环境与配置" class="headerlink" title="环境与配置"></a>环境与配置</h2><ul>
-<li>VMware® Workstation 15 Pro - 15.5.0 build-14665864</li>
-<li>宿主机： Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
-<li>CentOS Linux release 7.9.2009 (Core)</li>
-</ul>
-<h2 id="资源清单"><a href="#资源清单" class="headerlink" title="资源清单"></a>资源清单</h2><ul>
-<li>docker 20.10.1</li>
-<li>RabbitMQ镜像: docker.io&#x2F;rabbitmq:3.8-management</li>
-</ul>
-<span id="more"></span>
-
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull docker.io/rabbitmq:3.8-management</span><br></pre></td></tr></table></figure>
-
-<p>要注意要拉取镜像名称带有management的镜像。默认的镜像是不带有web管理界面的</p>
-<h3 id="启动容器"><a href="#启动容器" class="headerlink" title="启动容器"></a>启动容器</h3><p>查看镜像的ID</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@playground ~]<span class="comment"># docker images | grep mq</span></span><br><span class="line">rabbitmq                3.8-management   d589227b9b99   23 hours ago    250MB</span><br></pre></td></tr></table></figure>
-
-<p>由上面的结果可知在本机的rabbitmq镜像id为<code>d589227b9b99</code></p>
-<p>启动容器</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --name rabbitmq -d -p 15672:15672 -p 5672:5672 d589227b9b99</span><br></pre></td></tr></table></figure>
-
-<p>命令解析：</p>
-<p><code>--name</code>: 指定容器名称</p>
-<p><code>-d</code>: 进程守护模式运行</p>
-<p><code>-p 15672:15672</code>: 15672端口为web服务客户端的端口，将容器的该端口映射到宿主机的相同的端口号中</p>
-<p><code>-p 5672:5672</code>:  5672端口为中间件服务端口，将容器的该端口映射到宿主机的相同的端口号中</p>
-<p>查看容器是否正常运行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@playground ~]<span class="comment"># docker ps | grep mq</span></span><br><span class="line">3c13d0f36e9b   d589227b9b99                   <span class="string">&quot;docker-entrypoint.s…&quot;</span>   25 minutes ago   Up 25 minutes      4369/tcp, 5671/tcp, 0.0.0.0:5672-&gt;5672/tcp, 15671/tcp, 15691-15692/tcp, 25672/tcp, 0.0.0.0:15672-&gt;15672/tcp   rabbitmq</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="web服务访问"><a href="#web服务访问" class="headerlink" title="web服务访问"></a>web服务访问</h3><p>浏览器输入<code>&lt;主机ip&gt;:15672</code></p>
-<p>默认创建的账号密码均为guest</p>
-<p><img src="/blog/2021/10/17/%E4%BD%BF%E7%94%A8docker%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85RabbitMQ/1634441126.jpg" alt="1634441126.jpg"></p>
-<p>如果能正常登录并看到该页面，表示web服务正常运行</p>
-<h3 id="创建用户"><a href="#创建用户" class="headerlink" title="创建用户"></a>创建用户</h3><p> 默认的<code>guest</code> 账户有访问限制，默认只能通过本地网络(如 localhost) 访问，远程网络访问受限，我们添加一个root用户以满足远程网络访问的需求</p>
-<p>进入容器内</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it 3c13d0f36e9b bin/bash</span><br></pre></td></tr></table></figure>
-
-<p>创建用户</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@3c13d0f36e9b:/<span class="comment"># rabbitmqctl add_user root 000000 </span></span><br><span class="line">Adding user <span class="string">&quot;root&quot;</span> ...</span><br></pre></td></tr></table></figure>
-
-<p>赋予root所有权限</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@3c13d0f36e9b:/<span class="comment"># rabbitmqctl set_permissions -p / root &quot;.*&quot; &quot;.*&quot; &quot;.*&quot;</span></span><br><span class="line">Setting permissions <span class="keyword">for</span> user <span class="string">&quot;root&quot;</span> <span class="keyword">in</span> vhost <span class="string">&quot;/&quot;</span> ...</span><br></pre></td></tr></table></figure>
-
-<p> 赋予root用户administrator角色 </p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@3c13d0f36e9b:/<span class="comment"># rabbitmqctl set_user_tags root administrator</span></span><br><span class="line">Setting tags <span class="keyword">for</span> user <span class="string">&quot;root&quot;</span> to [adminstrator] ...</span><br></pre></td></tr></table></figure>
-
-<p>查看用户是否被成功建立</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@3c13d0f36e9b:/<span class="comment"># rabbitmqctl list_users</span></span><br><span class="line">Listing <span class="built_in">users</span> ...</span><br><span class="line">user	tags</span><br><span class="line">guest	[administrator]</span><br><span class="line">root	[administrator]</span><br></pre></td></tr></table></figure>
-
-<p>执行<code>exit</code>退出容器</p>
-<p>回到web页面，测试root用户是否能成功登录</p>
-<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://juejin.cn/post/6844903970545090574">docker安装RabbitMq</a></p>
-]]></content>
-      <categories>
-        <category>DevOps</category>
-      </categories>
-      <tags>
-        <tag>RabbitMQ</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>如何发布Go Module</title>
-    <url>/blog/2022/01/12/%E5%A6%82%E4%BD%95%E5%8F%91%E5%B8%83Go-Module/</url>
-    <content><![CDATA[<h2 id="建立和发布Go模块的流程"><a href="#建立和发布Go模块的流程" class="headerlink" title="建立和发布Go模块的流程"></a>建立和发布Go模块的流程</h2><h3 id="引用本机其它位置的Go模块"><a href="#引用本机其它位置的Go模块" class="headerlink" title="引用本机其它位置的Go模块"></a>引用本机其它位置的Go模块</h3><p>假设我们有如下的目录</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./module-learn/</span><br><span class="line">├── module1</span><br><span class="line">│   ├── go.mod</span><br><span class="line">│   └── whattime.go</span><br><span class="line">└── module2</span><br><span class="line">    ├── go.mod</span><br><span class="line">    └── main.go</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-
-<p>module1和module2的模块名称分别为<code>example.com/module1</code>和<code>example.com/module2</code></p>
-<p>在<code>module1/whattime.go</code>中定义了一个方法</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> module1</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;time&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WhatTimeIsItNow</span><span class="params">()</span></span> <span class="type">string</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> time.Now().Local().String()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们希望在module2中引用它</p>
-<p>在<code>module2/main.go</code>中如下定义</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;example.com/module1&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;it&#x27;s %s now.\n&quot;</span>, module1.WhatTimeIsItNow())</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>为了能引用到module2的go mod范围以外的module1的方法，我们需要先在module2下先执行以下命令来替换外部module的路径</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go mod edit -replace example.com/module1=../module1</span><br></pre></td></tr></table></figure>
-
-<p>完成后在module2下的<code>go.mod</code>文件会出现以下内容，</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">replace example.com/module1 =&gt; ../module1</span><br></pre></td></tr></table></figure>
-
-<p>表示替换生效</p>
-<p>此时我们只需要执行<code>go mod tidy</code>，查看<code>go.mod</code>发现成功引用了module1</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">module example.com/module2</span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> <span class="number">1.16</span></span><br><span class="line"></span><br><span class="line">replace example.com/module1 =&gt; ../module1</span><br><span class="line"></span><br><span class="line">require example.com/module1 v0<span class="number">.0</span><span class="number">.0</span><span class="number">-00010101000000</span><span class="number">-000000000000</span></span><br></pre></td></tr></table></figure>
-
-<p>运行module2，结果符合预期</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@playground module2]<span class="comment"># go run .</span></span><br><span class="line">it<span class="string">&#x27;s 2022-01-12 21:23:22.466931038 +0800 CST now.</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="发布一个Go模块"><a href="#发布一个Go模块" class="headerlink" title="发布一个Go模块"></a>发布一个Go模块</h3><ol>
-<li>首先创建一个go模块</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go mod init github.com/AkiOuma/greeting</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li><p>在该模块中定义好一些方法后，创建一个仓库，提交到代码仓</p>
-</li>
-<li><p>为该模块提交版本标签</p>
-</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git commit -m <span class="string">&quot;commit v0.1.0&quot;</span></span><br><span class="line">git tag v0.1.0</span><br><span class="line">git push origin v0.1.0</span><br></pre></td></tr></table></figure>
-
-<p>​		推送成功后，到仓库上查看提交的版本是否存在</p>
-<ol start="4">
-<li><p>在其它项目中引用该模块</p>
-<p>使用<code>go get github.com/AkiOuma/greeting</code>或者<code>go mod tidy</code>能成功安装该模块，完成</p>
-</li>
-</ol>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/AkiOuma/greeting&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/AkiOuma/greeting/zh&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(greeting.Greet(<span class="string">&quot;yuki&quot;</span>))</span><br><span class="line">	fmt.Println(zh.Greet(<span class="string">&quot;yuki&quot;</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-]]></content>
-      <categories>
-        <category>Web开发</category>
-      </categories>
-      <tags>
-        <tag>Golang</tag>
+        <tag>powershell</tag>
       </tags>
   </entry>
   <entry>
@@ -2701,6 +2852,181 @@
       </categories>
       <tags>
         <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用Remote-ssh连接vscode与远程服务器</title>
+    <url>/blog/2020/07/14/%E4%BD%BF%E7%94%A8Remote-ssh%E8%BF%9E%E6%8E%A5vscode%E4%B8%8E%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
+    <content><![CDATA[<h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><ul>
+<li><p>宿主机：Windows10</p>
+</li>
+<li><p>服务器：CentOS 7</p>
+</li>
+<li><p>VsCode：1.47.0</p>
+</li>
+<li><p>Remote-ssh：0.51.0</p>
+</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="连接步骤"><a href="#连接步骤" class="headerlink" title="连接步骤"></a>连接步骤</h2><ol>
+<li><p>在宿主机上，安装OpenSSH</p>
+</li>
+<li><p>Git bash中运行</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096 - &quot;xxxx&quot; # 请将xxxx替换成自己定义的内容，一般习惯为自己邮箱</span><br></pre></td></tr></table></figure>
+
+<p>之后可以一路回车确定即可，完成后在宿主机的目录<code>C:\Users\username\.ssh</code>下会看到生成了<code>id_rsa</code>与<code>id_rsa.pub</code>两个文件</p>
+</li>
+<li><p>将<code>id_rsa.pub</code>上传至服务器的<code>~/.ssh/</code>目录下，并更名为<code>authorized_keys</code></p>
+</li>
+<li><p>在宿主机的<code>C:\Users\username\.ssh</code>中配置文件<code>config</code>，内容如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Host myServer	# 服务器名</span><br><span class="line">	HostName 192.168.1.233 #服务器ip</span><br><span class="line">	User root	# 登录用户名</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在VsCode中安装插件Remote-ssh</p>
+</li>
+<li><p>在VsCode的左侧图标中找到Remote Explore，点击后会看到我们刚刚在在文件<code>config</code>中配置的服务器名，右键选择连接至该服务器，在左下角看到SSH: &lt;服务器名称&gt;即表示连接成功</p>
+</li>
+</ol>
+<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><ol>
+<li><p>今天不知道为啥突然打开虚拟机之后VsCode突然远程连接不上了，但是Xshell是能正常连接的，然后具体报错的内容为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">failed to create hard link &#x27;/home/*/.vscode-server/bin/*/*&#x27; file exists</span><br></pre></td></tr></table></figure>
+
+<p>搜索了一下，发现以下方法可以解决：</p>
+<p>连接上服务器后，把服务器上的<code>/root/.vscode-server/bin/</code>的日期最新的文件夹中的名字带有<code>vscode-remote-lock.root</code>的两个文件删除，重新使用VsCode连接后成功。</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>其它</category>
+      </categories>
+      <tags>
+        <tag>VS Code</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用docker快速安装RabbitMQ</title>
+    <url>/blog/2021/10/17/%E4%BD%BF%E7%94%A8docker%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85RabbitMQ/</url>
+    <content><![CDATA[<h2 id="环境与配置"><a href="#环境与配置" class="headerlink" title="环境与配置"></a>环境与配置</h2><ul>
+<li>VMware® Workstation 15 Pro - 15.5.0 build-14665864</li>
+<li>宿主机： Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
+<li>CentOS Linux release 7.9.2009 (Core)</li>
+</ul>
+<h2 id="资源清单"><a href="#资源清单" class="headerlink" title="资源清单"></a>资源清单</h2><ul>
+<li>docker 20.10.1</li>
+<li>RabbitMQ镜像: docker.io&#x2F;rabbitmq:3.8-management</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull docker.io/rabbitmq:3.8-management</span><br></pre></td></tr></table></figure>
+
+<p>要注意要拉取镜像名称带有management的镜像。默认的镜像是不带有web管理界面的</p>
+<h3 id="启动容器"><a href="#启动容器" class="headerlink" title="启动容器"></a>启动容器</h3><p>查看镜像的ID</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@playground ~]<span class="comment"># docker images | grep mq</span></span><br><span class="line">rabbitmq                3.8-management   d589227b9b99   23 hours ago    250MB</span><br></pre></td></tr></table></figure>
+
+<p>由上面的结果可知在本机的rabbitmq镜像id为<code>d589227b9b99</code></p>
+<p>启动容器</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --name rabbitmq -d -p 15672:15672 -p 5672:5672 d589227b9b99</span><br></pre></td></tr></table></figure>
+
+<p>命令解析：</p>
+<p><code>--name</code>: 指定容器名称</p>
+<p><code>-d</code>: 进程守护模式运行</p>
+<p><code>-p 15672:15672</code>: 15672端口为web服务客户端的端口，将容器的该端口映射到宿主机的相同的端口号中</p>
+<p><code>-p 5672:5672</code>:  5672端口为中间件服务端口，将容器的该端口映射到宿主机的相同的端口号中</p>
+<p>查看容器是否正常运行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@playground ~]<span class="comment"># docker ps | grep mq</span></span><br><span class="line">3c13d0f36e9b   d589227b9b99                   <span class="string">&quot;docker-entrypoint.s…&quot;</span>   25 minutes ago   Up 25 minutes      4369/tcp, 5671/tcp, 0.0.0.0:5672-&gt;5672/tcp, 15671/tcp, 15691-15692/tcp, 25672/tcp, 0.0.0.0:15672-&gt;15672/tcp   rabbitmq</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="web服务访问"><a href="#web服务访问" class="headerlink" title="web服务访问"></a>web服务访问</h3><p>浏览器输入<code>&lt;主机ip&gt;:15672</code></p>
+<p>默认创建的账号密码均为guest</p>
+<p><img src="/blog/2021/10/17/%E4%BD%BF%E7%94%A8docker%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85RabbitMQ/1634441126.jpg" alt="1634441126.jpg"></p>
+<p>如果能正常登录并看到该页面，表示web服务正常运行</p>
+<h3 id="创建用户"><a href="#创建用户" class="headerlink" title="创建用户"></a>创建用户</h3><p> 默认的<code>guest</code> 账户有访问限制，默认只能通过本地网络(如 localhost) 访问，远程网络访问受限，我们添加一个root用户以满足远程网络访问的需求</p>
+<p>进入容器内</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it 3c13d0f36e9b bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>创建用户</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@3c13d0f36e9b:/<span class="comment"># rabbitmqctl add_user root 000000 </span></span><br><span class="line">Adding user <span class="string">&quot;root&quot;</span> ...</span><br></pre></td></tr></table></figure>
+
+<p>赋予root所有权限</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@3c13d0f36e9b:/<span class="comment"># rabbitmqctl set_permissions -p / root &quot;.*&quot; &quot;.*&quot; &quot;.*&quot;</span></span><br><span class="line">Setting permissions <span class="keyword">for</span> user <span class="string">&quot;root&quot;</span> <span class="keyword">in</span> vhost <span class="string">&quot;/&quot;</span> ...</span><br></pre></td></tr></table></figure>
+
+<p> 赋予root用户administrator角色 </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@3c13d0f36e9b:/<span class="comment"># rabbitmqctl set_user_tags root administrator</span></span><br><span class="line">Setting tags <span class="keyword">for</span> user <span class="string">&quot;root&quot;</span> to [adminstrator] ...</span><br></pre></td></tr></table></figure>
+
+<p>查看用户是否被成功建立</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@3c13d0f36e9b:/<span class="comment"># rabbitmqctl list_users</span></span><br><span class="line">Listing <span class="built_in">users</span> ...</span><br><span class="line">user	tags</span><br><span class="line">guest	[administrator]</span><br><span class="line">root	[administrator]</span><br></pre></td></tr></table></figure>
+
+<p>执行<code>exit</code>退出容器</p>
+<p>回到web页面，测试root用户是否能成功登录</p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://juejin.cn/post/6844903970545090574">docker安装RabbitMq</a></p>
+]]></content>
+      <categories>
+        <category>DevOps</category>
+      </categories>
+      <tags>
+        <tag>RabbitMQ</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>如何发布Go Module</title>
+    <url>/blog/2022/01/12/%E5%A6%82%E4%BD%95%E5%8F%91%E5%B8%83Go-Module/</url>
+    <content><![CDATA[<h2 id="建立和发布Go模块的流程"><a href="#建立和发布Go模块的流程" class="headerlink" title="建立和发布Go模块的流程"></a>建立和发布Go模块的流程</h2><h3 id="引用本机其它位置的Go模块"><a href="#引用本机其它位置的Go模块" class="headerlink" title="引用本机其它位置的Go模块"></a>引用本机其它位置的Go模块</h3><p>假设我们有如下的目录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./module-learn/</span><br><span class="line">├── module1</span><br><span class="line">│   ├── go.mod</span><br><span class="line">│   └── whattime.go</span><br><span class="line">└── module2</span><br><span class="line">    ├── go.mod</span><br><span class="line">    └── main.go</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<p>module1和module2的模块名称分别为<code>example.com/module1</code>和<code>example.com/module2</code></p>
+<p>在<code>module1/whattime.go</code>中定义了一个方法</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> module1</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;time&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WhatTimeIsItNow</span><span class="params">()</span></span> <span class="type">string</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> time.Now().Local().String()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们希望在module2中引用它</p>
+<p>在<code>module2/main.go</code>中如下定义</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;example.com/module1&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;it&#x27;s %s now.\n&quot;</span>, module1.WhatTimeIsItNow())</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>为了能引用到module2的go mod范围以外的module1的方法，我们需要先在module2下先执行以下命令来替换外部module的路径</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go mod edit -replace example.com/module1=../module1</span><br></pre></td></tr></table></figure>
+
+<p>完成后在module2下的<code>go.mod</code>文件会出现以下内容，</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">replace example.com/module1 =&gt; ../module1</span><br></pre></td></tr></table></figure>
+
+<p>表示替换生效</p>
+<p>此时我们只需要执行<code>go mod tidy</code>，查看<code>go.mod</code>发现成功引用了module1</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">module example.com/module2</span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> <span class="number">1.16</span></span><br><span class="line"></span><br><span class="line">replace example.com/module1 =&gt; ../module1</span><br><span class="line"></span><br><span class="line">require example.com/module1 v0<span class="number">.0</span><span class="number">.0</span><span class="number">-00010101000000</span><span class="number">-000000000000</span></span><br></pre></td></tr></table></figure>
+
+<p>运行module2，结果符合预期</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@playground module2]<span class="comment"># go run .</span></span><br><span class="line">it<span class="string">&#x27;s 2022-01-12 21:23:22.466931038 +0800 CST now.</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="发布一个Go模块"><a href="#发布一个Go模块" class="headerlink" title="发布一个Go模块"></a>发布一个Go模块</h3><ol>
+<li>首先创建一个go模块</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go mod init github.com/AkiOuma/greeting</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>在该模块中定义好一些方法后，创建一个仓库，提交到代码仓</p>
+</li>
+<li><p>为该模块提交版本标签</p>
+</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git commit -m <span class="string">&quot;commit v0.1.0&quot;</span></span><br><span class="line">git tag v0.1.0</span><br><span class="line">git push origin v0.1.0</span><br></pre></td></tr></table></figure>
+
+<p>​		推送成功后，到仓库上查看提交的版本是否存在</p>
+<ol start="4">
+<li><p>在其它项目中引用该模块</p>
+<p>使用<code>go get github.com/AkiOuma/greeting</code>或者<code>go mod tidy</code>能成功安装该模块，完成</p>
+</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/AkiOuma/greeting&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/AkiOuma/greeting/zh&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(greeting.Greet(<span class="string">&quot;yuki&quot;</span>))</span><br><span class="line">	fmt.Println(zh.Greet(<span class="string">&quot;yuki&quot;</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+]]></content>
+      <categories>
+        <category>Web开发</category>
+      </categories>
+      <tags>
+        <tag>Golang</tag>
       </tags>
   </entry>
   <entry>
@@ -3014,6 +3340,45 @@
       </tags>
   </entry>
   <entry>
+    <title>部署局域网FTP</title>
+    <url>/blog/2019/10/30/%E9%83%A8%E7%BD%B2%E5%B1%80%E5%9F%9F%E7%BD%91FTP/</url>
+    <content><![CDATA[<ol>
+<li><p><code>控制面板 -&gt; 程序 -&gt; 启用或关闭windows功能</code></p>
+</li>
+<li><p>在<code>Internet information Services</code>中，勾选<code>FTP服务器</code>中的<code>FTP服务</code>，与<code>Web管理工具</code>中的<code>IIS管理控制台</code>，然后点击确定进行安装和配置，等待配置完成</p>
+</li>
+<li><p>打开<code>IIS管理器</code>，在<code>网站</code>中<code>添加FTP站点</code>，命名站点名称与设置内容目录</p>
+</li>
+<li><p>IP地址若为<code>全部未分配</code>，则使用时使用本机的ip即可</p>
+</li>
+<li><p>在SSL中勾选<code>无SSL</code></p>
+<span id="more"></span></li>
+<li><p>身份验证使用<code>基本</code>,选择授权用户，以及用户权限，然后点击完成</p>
+</li>
+<li><p><code>防火墙与网络保护 -&gt; 高级设置</code></p>
+</li>
+</ol>
+<blockquote>
+<ul>
+<li>入站规则：启动FTP相关的入站规则</li>
+<li>出站规则：启动FTP相关的出站规则</li>
+</ul>
+</blockquote>
+<ol start="8">
+<li><p>保存配置后，重启计算机</p>
+</li>
+<li><p>在另外一台计算机中的资源管理器中访问<code>ftp://&#123;&#123; 配置了ftp的计算机的ip地址 &#125;&#125;</code>，输入用户名与密码即可访问</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>其它</category>
+      </categories>
+      <tags>
+        <tag>FTP</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>搭建HADOOP完全分布式</title>
     <url>/blog/2019/10/30/%E9%85%8D%E7%BD%AEHADOOP%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F/</url>
     <content><![CDATA[<h2 id="配置环境说明"><a href="#配置环境说明" class="headerlink" title="配置环境说明"></a>配置环境说明</h2><p>   win10下使用vmware-workstation15 搭建 centOS 7 虚拟环境</p>
@@ -3193,45 +3558,6 @@
       </categories>
       <tags>
         <tag>HADOOP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>部署局域网FTP</title>
-    <url>/blog/2019/10/30/%E9%83%A8%E7%BD%B2%E5%B1%80%E5%9F%9F%E7%BD%91FTP/</url>
-    <content><![CDATA[<ol>
-<li><p><code>控制面板 -&gt; 程序 -&gt; 启用或关闭windows功能</code></p>
-</li>
-<li><p>在<code>Internet information Services</code>中，勾选<code>FTP服务器</code>中的<code>FTP服务</code>，与<code>Web管理工具</code>中的<code>IIS管理控制台</code>，然后点击确定进行安装和配置，等待配置完成</p>
-</li>
-<li><p>打开<code>IIS管理器</code>，在<code>网站</code>中<code>添加FTP站点</code>，命名站点名称与设置内容目录</p>
-</li>
-<li><p>IP地址若为<code>全部未分配</code>，则使用时使用本机的ip即可</p>
-</li>
-<li><p>在SSL中勾选<code>无SSL</code></p>
-<span id="more"></span></li>
-<li><p>身份验证使用<code>基本</code>,选择授权用户，以及用户权限，然后点击完成</p>
-</li>
-<li><p><code>防火墙与网络保护 -&gt; 高级设置</code></p>
-</li>
-</ol>
-<blockquote>
-<ul>
-<li>入站规则：启动FTP相关的入站规则</li>
-<li>出站规则：启动FTP相关的出站规则</li>
-</ul>
-</blockquote>
-<ol start="8">
-<li><p>保存配置后，重启计算机</p>
-</li>
-<li><p>在另外一台计算机中的资源管理器中访问<code>ftp://&#123;&#123; 配置了ftp的计算机的ip地址 &#125;&#125;</code>，输入用户名与密码即可访问</p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>其它</category>
-      </categories>
-      <tags>
-        <tag>FTP</tag>
       </tags>
   </entry>
   <entry>
