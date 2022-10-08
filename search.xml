@@ -2132,6 +2132,263 @@
       </tags>
   </entry>
   <entry>
+    <title>MySQL索引笔记</title>
+    <url>/blog/2021/01/15/MySQL%E7%B4%A2%E5%BC%95%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><blockquote>
+<p>在存储引擎层实现的</p>
+<p>索引是⼀种特殊的⽂件(<code>InnoDB</code>数据表上的索引是表空间的⼀个组成部分)，它们包含着对数据表⾥所有记录的引⽤ 指针。索引是⼀种数据结构。数据库索引，是数据库管理系统中⼀个排序的数据结构，以协助快速查询、更新数据 库表中数据。索引的实现通常使⽤ B树及其变种 B+树。</p>
+</blockquote>
+<p>优点：</p>
+<ul>
+<li>减少磁盘IO次数，提升查询速度</li>
+<li>唯一索引可以保证数据唯一性</li>
+<li>加速表之间的连接</li>
+<li>减少分组和排序子句的查询时间和降低CPU消耗</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>创建和维护索引要耗费时间，索引会降低更新表的速度</li>
+<li>索引需要占据磁盘空间</li>
+</ul>
+<span id="more"></span>
+
+<h1 id="B-树结构"><a href="#B-树结构" class="headerlink" title="B+树结构"></a>B+树结构</h1><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>B+树结构如下：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/8ea6f9361ad8adac588c3b48737e140c.png" alt="图片"></p>
+<ul>
+<li><p>叶子节点：存放真实数据的数据页，并且叶子节点本身按关键字大小从小到大构成一个有序的链表</p>
+</li>
+<li><p>非叶子节点：存放目录项的数据页（目录页）</p>
+</li>
+<li><p>页目录：通过二分法快速定位数据位置</p>
+</li>
+<li><p>每个数据页的大小是16KB</p>
+</li>
+<li><p>一般情况下B+树不会超过4层</p>
+<blockquote>
+<p>Q: 为什么一般情况下B+树不会超过4层？</p>
+<p>A: 由于非叶子节点仅存放目录项而不直接存放数据，因此相同大小的数据页16KB可以存放更多的目录页，意味着能扇出更多的子节点，因此在较为大量的数据下B+树的整体高度越矮。一个深度为3（共4层）的B+树可以存放大约十亿条的记录</p>
+<p>且因为根节点常驻在内存中，因此通过索引一般最多进行1~3次IO就可查到需要的数据</p>
+</blockquote>
+</li>
+</ul>
+<p>注意事项：</p>
+<ul>
+<li>根节点的地址会一直不变，当根节点放满的时候，会创建一个下级节点，然后将根节点的数据复制到该新建节点中，并建立根节点与该新建节点的连接</li>
+<li>非叶子节点中目录项记录的唯一性，通过存放主键的值来保证其唯一性</li>
+<li>一个页面最少存两条记录</li>
+</ul>
+<h2 id="与其它数据结构的比较"><a href="#与其它数据结构的比较" class="headerlink" title="与其它数据结构的比较"></a>与其它数据结构的比较</h2><blockquote>
+<p>选择基准： 磁盘IO次数</p>
+</blockquote>
+<ul>
+<li><p>hash索引</p>
+<p>优势：</p>
+<ol>
+<li>等值的时候效率非常高O(1)</li>
+</ol>
+<p>劣势：</p>
+<ol>
+<li>范围查询效率较低</li>
+<li>存储时本身无序，在有排序需求的场景下需要重新进行排序</li>
+<li>联合索引的场景下无法对一个key或者几个key进行索引查询</li>
+<li>索引列存在大量重复的值（如年龄，性别）的时候效率会减低</li>
+</ol>
+<p>与B+的区别：</p>
+<ul>
+<li>不支持联合索引的最左原则，但是B+树可以</li>
+<li>不支持模糊查找？</li>
+</ul>
+<p><code>innoDB</code>中的自适应hash</p>
+<ul>
+<li>当某个数据被经常访问，满足一定的条件的时候就会将这个数据页的地址存放到hash table中，下次查询的时候可以直接找到这个页面所在的位置</li>
+</ul>
+</li>
+<li><p>B-树</p>
+<ol>
+<li>n叉树</li>
+<li>非叶子节点也存放数据</li>
+<li>插入和删除的时候导致不平衡会自动调整节点保持自平衡</li>
+</ol>
+<p>为什么采用B+树不采用B-树？</p>
+<ul>
+<li>B-树的非叶子节点也存放数据，会有以下问题：<ol>
+<li>在数据页大小一定（16KB）的情况下，B+树的非叶子节点仅存放目录项，可以比B-树存放的目录项更加多，因此数据量较大的情况时，整棵树的高度会更矮，更有利于较少IO次数</li>
+<li>获取范围数据的时候由于非叶子节点也存在数据，需要进行中序遍历才能获取，但是B+树由于数据仅存放在叶子节点，所以仅需定位第一条数据通过叶子节点之间的指针来查找范围数据</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="面试问题"><a href="#面试问题" class="headerlink" title="面试问题"></a>面试问题</h2><ul>
+<li><p>B+树是如何进行记录检索的？</p>
+<p>如果通过B+树的索引查询行记录，首先从B+树的树根开始，逐层检索，直到找到叶子节点的对应的数据页为止，然后将数据页加载到内存中。页目录中的槽采用二分查找的方式先找到一个粗略的记录分组，然后在分组中通过链表遍历的方式查找记录</p>
+</li>
+<li><p>普通索引和唯一索引在查询效率上有什么不一样？</p>
+<p>先说结论：采用普通索引和唯一索引在检索效率上基本没有太大差别</p>
+<p>原因：由于在读取一条记录的时候不是仅将这一条记录读取到内存，而是将这条记录所在的数据页（16KB）整页读取到内存中。唯一索引就是普通索引的基础上加上了关键字唯一的约束，就是说找到了关键字的值就会停止检索，而普通检索在找到关键字的时候，由于可能不是唯一的，需要在内存中多进行几次<code>下一条记录是否符合条件</code>的操作。对于CPU来说数次的寻址和判断的操作消耗的时间是几乎可以忽略的，因此普通索引和唯一索引的查询效率没有太大差别</p>
+</li>
+<li></li>
+</ul>
+<h1 id="索引分类"><a href="#索引分类" class="headerlink" title="索引分类"></a>索引分类</h1><p>按物理实现方式分类：</p>
+<ul>
+<li>聚簇索引</li>
+<li>非聚簇索引</li>
+</ul>
+<p>按功能逻辑分类：</p>
+<ul>
+<li>普通索引</li>
+<li>唯一索引</li>
+<li>主键索引</li>
+<li>全文索引</li>
+</ul>
+<p>按作用字段个数：</p>
+<ul>
+<li>单列索引</li>
+<li>联合索引</li>
+</ul>
+<h2 id="聚簇索引"><a href="#聚簇索引" class="headerlink" title="聚簇索引"></a>聚簇索引</h2><p>概念</p>
+<ul>
+<li><p>通过主键创建，B+ 树</p>
+</li>
+<li><p>一种数据存储方式（所有记录都存储在叶子节点），仅<code>innoDB</code></p>
+</li>
+<li><p>不需要显示使用index语句去创建，<code>innoDB</code>会自动创建聚簇索引，每个表仅有一个聚簇索引</p>
+</li>
+</ul>
+<p>优点：</p>
+<ul>
+<li>数据访问速度极快</li>
+<li>对于主键的排序查找和范围查找速度非常快</li>
+<li>查询一定范围的数据的时候，由于数据都是紧密相连的，数据库不用从多个数据块中提起数据，节省IO次数</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>插入速度严重依赖插入顺序，按主键的顺序插入是最快的方式</li>
+<li>更新主键的代价很高</li>
+<li>二级索引需要两次索引查找</li>
+</ul>
+<h2 id="非聚簇索引"><a href="#非聚簇索引" class="headerlink" title="非聚簇索引"></a>非聚簇索引</h2><p>概念</p>
+<ul>
+<li>基于主键以外的键构建的二级索引，B+树</li>
+<li>每个表可以有多个非聚簇索引</li>
+<li>叶子节点存放的是构成索引的列的值，与该列的主键的值，并且没有隐藏列</li>
+<li>通过二级索引找到记录的主键，然后再通过主键在聚簇索引找到完整记录的行为，称为<strong>回表</strong></li>
+</ul>
+<p>在<code>MyISAM</code>中所有索引都是非聚簇索引（索引与数据分离）,且仅保存数据记录的地址</p>
+<h2 id="联合索引"><a href="#联合索引" class="headerlink" title="联合索引"></a>联合索引</h2><p>基于多个非主键构成的非聚簇索引</p>
+<h1 id="索引管理"><a href="#索引管理" class="headerlink" title="索引管理"></a>索引管理</h1><h2 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h2><blockquote>
+<p>tip: 声明索引的时候可以指定升序或者降序，但是在8.0以前的版本仅支持升序的索引，查询的时候如果按索引降序排序的话效率是会比正常升序排列的效率要大打折扣的。在8.0声明索引是降序排列后，如果使用索引进行升序排列也会造成效率打折的问题</p>
+</blockquote>
+<ul>
+<li><p>隐式创建</p>
+<p>在建表的时候在字段后声明主键，唯一或者外键等</p>
+</li>
+<li><p>显式创建</p>
+<p>建表时创建</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 普通索引</span><br><span class="line">CREATE TABLE ... INDEX(KEY) &lt;idx_name&gt;(field1 &lt;ASC or DESC&gt;, feild2&lt;ASC or DESC&gt;...)</span><br><span class="line"># 唯一索引</span><br><span class="line">CREATE TABLE ... UNIQUE INDEX(KEY) &lt;idx_name&gt;(field1, feild2...)</span><br></pre></td></tr></table></figure>
+
+<p>建表后创建</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ALTER TABLE &lt;table_name&gt; ADD INDEX &lt;idx_name&gt;(field1&lt;ASC or DESC&gt;, feild2&lt;ASC or DESC&gt;...);</span><br><span class="line">ALTER TABLE &lt;table_name&gt; ADD UNIQUE &lt;idx_name&gt;(field1, feild2...);</span><br><span class="line"></span><br><span class="line">CREATE INDEX INDEX &lt;idx_name&gt; ON &lt;table_name&gt;(field1, feild2...);</span><br><span class="line">CREATE INDEX UNIQUE INDEX &lt;idx_name&gt; ON &lt;table_name&gt;(field1, feild2...);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看索引</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SHOW INDEX FROM `table_name`;</span><br><span class="line">SHOW CREATE TABLE `table_name`;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><blockquote>
+<p>tip: </p>
+<ol>
+<li>当要以离线的形式向表中加入非常大量的数据的时候，可以考虑先把索引删掉，加快插入输入，完成后再把索引加上</li>
+<li>当删除连合索引的列的时候，该列也会再索引中被删除</li>
+</ol>
+</blockquote>
+<ul>
+<li><p>显式删除</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ALTER TABLE &lt;table_name&gt; DROP PRIMARY KEY; # 前提是不能声明AUTO INCREMENT</span><br><span class="line"></span><br><span class="line">ALTER TABLE &lt;table_name&gt; DROP INDEX &lt;index_name&gt;; </span><br><span class="line"></span><br><span class="line">DROP INDEX &lt;index_name&gt; ON &lt;table_name&gt;;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="隐藏"><a href="#隐藏" class="headerlink" title="隐藏"></a>隐藏</h2><blockquote>
+<p>版本&gt;&#x3D;8.0适用</p>
+</blockquote>
+<p>在删除索引的时候如果出现错误，只能通过显式创建索引的方式创建回来。如果此时表中的数据量非常多的时候，创建索引会消耗很多的资源，操作成别非常高</p>
+<p>使用隐藏索引的方式，可以使得该索引暂时失效。在确认隐藏索引后不会对系统造成任何影响后，我们就可以彻底讲索引删除。如果有错误发生就再次讲索引设置为可见即可</p>
+<p>注意问题：</p>
+<ol>
+<li>主键不能设置隐藏索引</li>
+<li>如果没有显示主键，表中第一个非空唯一的列会成为隐藏主键，也不能设为隐藏索引</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CREATE TABLE ... INDEX(KEY) &lt;idx_name&gt;(field1 &lt;ASC or DESC&gt; INVISIBLE</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ALTER TABLE &lt;table_name&gt; ADD INDEX &lt;idx_name&gt;(field1&lt;ASC or DESC&gt; INVISIBLE</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CREATE INDEX &lt;idx_name&gt; ON &lt;table_name&gt;(field1, feild2...) INVISIBLE;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h1><h2 id="适合创建"><a href="#适合创建" class="headerlink" title="适合创建"></a>适合创建</h2><ul>
+<li><p>字段具有唯一性</p>
+</li>
+<li><p>频繁作为WHERE查询的字段</p>
+</li>
+<li><p>频繁GROUP BY和ORDER BY的字段</p>
+</li>
+<li><p>DISTINCT字段需要创建索引</p>
+</li>
+<li><p>多表JOIN连接操作的时候，创建索引需要注意：</p>
+<ol>
+<li>连接表的数量尽可能小于3</li>
+<li>针对WHERE字段创建索引</li>
+<li>对用于连接的字段创建索引</li>
+</ol>
+</li>
+<li><p>使用列的类型小的（数据类型实际占用空间小）创建索引：</p>
+<p>为了增加数据页存放键的个数</p>
+</li>
+<li><p>使用字符出的前缀创建索引（前缀索引）</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CREATE INDEX &lt;index_name&gt; ON &lt;table_name&gt;(field1(prefix_len), feild2(prefix_len)...) </span><br></pre></td></tr></table></figure>
+
+<p>截取原则：</p>
+<ol>
+<li><p>查看字段在全部数据中的区分度</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT COUNT(DISTINCT &lt;field_name&gt;) / COUNT(*) FROM &lt;table_name&gt;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试不同长度的该字段在数据中的区分度</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT COUNT(DISTINCT LEFT(&lt;field_name&gt;, 10)) / COUNT(*) FROM &lt;table_name&gt;;</span><br><span class="line">SELECT COUNT(DISTINCT LEFT(&lt;field_name&gt;, 20)) / COUNT(*) FROM &lt;table_name&gt;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>区分度越接近1效果越好，当区分度相差不大的时候优先选择小的长度</p>
+</li>
+</ol>
+<blockquote>
+<p>注意，使用前缀索引的话就无法支持索引排序了</p>
+</blockquote>
+</li>
+<li><p>区分度高（散列性高）的列合适作为索引</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT COUNT(DISTINCT &lt;field_name&gt;) / COUNT(*) FROM &lt;table_name&gt;;</span><br></pre></td></tr></table></figure>
+
+<p>一般而言区分度大于0.33就认为是相对高效的索引了</p>
+</li>
+<li><p>使用最频繁的列放在列和索引的左侧</p>
+</li>
+<li><p>多个字段都要创建索引的时候，建立联合索引优于单列索引</p>
+</li>
+<li><p>实际开发中也需要注意平衡，建议每张表上的索引数量不超过6个</p>
+</li>
+</ul>
+<h2 id="不适合创建"><a href="#不适合创建" class="headerlink" title="不适合创建"></a>不适合创建</h2><ul>
+<li>WHERE字段用不到</li>
+<li>数据量小的表</li>
+<li>区分度低的字段不要创建索引（重复度 &gt; 10%）</li>
+<li>不建议使用无序的值作为索引</li>
+<li>不要定义冗余或者重复的索引</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Database</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Nginx实现反向代理</title>
     <url>/blog/2021/05/23/Nginx%E5%AE%9E%E7%8E%B0%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/</url>
     <content><![CDATA[<p>在虚拟机中部署Nginx，并使用Nginx为虚拟机中运行的项目分配反向代理的域名</p>
