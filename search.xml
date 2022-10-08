@@ -1856,6 +1856,12 @@
 <h3 id="Checkout-GOPATH-and-GOROOT"><a href="#Checkout-GOPATH-and-GOROOT" class="headerlink" title="Checkout GOPATH and GOROOT"></a>Checkout GOPATH and GOROOT</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go1.18.6 <span class="built_in">env</span> GOPATH</span><br><span class="line">/root/go</span><br><span class="line">$ go1.18.6 <span class="built_in">env</span> GOROOT</span><br><span class="line">/root/sdk/go1.18.6</span><br></pre></td></tr></table></figure>
 
 <p>We can see GOPATH is the same as the go1.18.4, but GOROOT has changed to another place</p>
+<h3 id="Use-Alias-in-Linux"><a href="#Use-Alias-in-Linux" class="headerlink" title="Use Alias in Linux"></a>Use Alias in Linux</h3><p>It’s a bit annoying if we call the specified version by calling go1.18.6, so we can use alias command to replace go1.18.6 by go.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">alias</span> go=go1.18.6</span><br></pre></td></tr></table></figure>
+<p>The alias command will take effect until the session is closed, now we can call go instead of go1.18.6 until this session is closed.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go version</span><br><span class="line">go version go1.18.6 linux/amd64</span><br></pre></td></tr></table></figure>
+
+
 <h2 id="Uninstall-Addtional-Versions"><a href="#Uninstall-Addtional-Versions" class="headerlink" title="Uninstall Addtional Versions"></a>Uninstall Addtional Versions</h2><ol>
 <li><p>Remove libaray</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf /root/sdk/go1.18.6</span><br></pre></td></tr></table></figure>
@@ -2132,6 +2138,72 @@
       </tags>
   </entry>
   <entry>
+    <title>Nginx实现反向代理</title>
+    <url>/blog/2021/05/23/Nginx%E5%AE%9E%E7%8E%B0%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/</url>
+    <content><![CDATA[<p>在虚拟机中部署Nginx，并使用Nginx为虚拟机中运行的项目分配反向代理的域名</p>
+<h2 id="背景说明"><a href="#背景说明" class="headerlink" title="背景说明"></a>背景说明</h2><p>在windows宿主机中存在一台运行着CentOS7的虚拟机，ip为192.168.1.200</p>
+<p>在虚拟机中存在一个web服务的项目，运行在虚拟机的端口8080上</p>
+<p>希望在宿主机中能通过自定义的域名app01.com来访问该项目的接口服务</p>
+<span id="more"></span>
+
+<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
+<li>CentOS Linux release 7.7.1908 (Core)</li>
+<li>VMWare 15.5.0 build-14665864</li>
+<li>Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
+</ul>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="修改windows宿主机中的hosts文件"><a href="#修改windows宿主机中的hosts文件" class="headerlink" title="修改windows宿主机中的hosts文件"></a>修改windows宿主机中的hosts文件</h3><p>hosts文件位于：<code>C:\Windows\System32\drivers\etc\hosts</code></p>
+<p>在hosts文件中添加自定义的域名-ip映射关系</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">192.168.1.200 app01.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="部署Nginx"><a href="#部署Nginx" class="headerlink" title="部署Nginx"></a>部署Nginx</h3><h4 id="通过yum安装"><a href="#通过yum安装" class="headerlink" title="通过yum安装"></a>通过yum安装</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y nginx</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@playground nginx]# nginx -v</span><br><span class="line">nginx version: nginx/1.16.1</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="配置反向代理"><a href="#配置反向代理" class="headerlink" title="配置反向代理"></a>配置反向代理</h3><h4 id="添加自定义反向代理配置"><a href="#添加自定义反向代理配置" class="headerlink" title="添加自定义反向代理配置"></a>添加自定义反向代理配置</h4><p>通过<code>yum</code>进行安装时，<code>Nginx</code>的配置文件的路径会位于<code>/etc/nginx</code>下</p>
+<p>配置文件是<code>/etc/nginx/nginx.conf</code></p>
+<p>我们在更改该文件之前先对其进行一下备份</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup</span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后添加我们自定义的服务配置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  app01.com;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass   http://127.0.0.1:8080;</span><br><span class="line">        proxy_set_header Host $host;</span><br><span class="line">        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="启动Nginx"><a href="#启动Nginx" class="headerlink" title="启动Nginx"></a>启动Nginx</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx</span><br></pre></td></tr></table></figure>
+
+<p>停止nginx</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx -s stop</span><br></pre></td></tr></table></figure>
+
+<p>修改配置后重启Nginx</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx -s reload</span><br></pre></td></tr></table></figure>
+
+<p>让Nginx开机自启动</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl enable nginx</span><br></pre></td></tr></table></figure>
+
+
+
+<p>自此，运行在虚拟机中端口为8080的项目已经成功被Nginx反向代理</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>在windows宿主机的cmd中尝试请求</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">C:\Users\xxx&gt;curl http://app01.com/api/organization</span><br><span class="line">&#123;&quot;code&quot;:200,&quot;data&quot;:[&#123;&quot;id&quot;:1,&quot;name&quot;:&quot;Oppose Militancy \u0026 Neutralize Invasion&quot;,&quot;alias&quot;:&quot;O.M.N.I&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:6,&quot;name&quot;:&quot;Stellar Loussier&quot;,&quot;organizationId&quot;:1,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;,&#123;&quot;id&quot;:2,&quot;name&quot;:&quot;Zodiac Alliance of Freedom Treaty&quot;,&quot;alias&quot;:&quot;Z.A.F.T&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:1,&quot;name&quot;:&quot;Shinn Asuka&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:4,&quot;name&quot;:&quot;Rau Le Crueset&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:5,&quot;name&quot;:&quot;Rey Za Burrel&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;,&#123;&quot;id&quot;:3,&quot;name&quot;:&quot;Orb Union&quot;,&quot;alias&quot;:&quot;O.R.B&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:2,&quot;name&quot;:&quot;Kira Yamato&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:3,&quot;name&quot;:&quot;Athrun Zala&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:7,&quot;name&quot;:&quot;Mu La Flaga&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;],&quot;message&quot;:&quot;Get organization successfully.&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>发现能成功通过我们配置的域名app01.com来请求到数据</p>
+]]></content>
+      <categories>
+        <category>Web开发</category>
+      </categories>
+      <tags>
+        <tag>Nginx</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MySQL索引笔记</title>
     <url>/blog/2021/01/15/MySQL%E7%B4%A2%E5%BC%95%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><blockquote>
@@ -2386,72 +2458,6 @@
       </categories>
       <tags>
         <tag>MySQL</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Nginx实现反向代理</title>
-    <url>/blog/2021/05/23/Nginx%E5%AE%9E%E7%8E%B0%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/</url>
-    <content><![CDATA[<p>在虚拟机中部署Nginx，并使用Nginx为虚拟机中运行的项目分配反向代理的域名</p>
-<h2 id="背景说明"><a href="#背景说明" class="headerlink" title="背景说明"></a>背景说明</h2><p>在windows宿主机中存在一台运行着CentOS7的虚拟机，ip为192.168.1.200</p>
-<p>在虚拟机中存在一个web服务的项目，运行在虚拟机的端口8080上</p>
-<p>希望在宿主机中能通过自定义的域名app01.com来访问该项目的接口服务</p>
-<span id="more"></span>
-
-<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
-<li>CentOS Linux release 7.7.1908 (Core)</li>
-<li>VMWare 15.5.0 build-14665864</li>
-<li>Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
-</ul>
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="修改windows宿主机中的hosts文件"><a href="#修改windows宿主机中的hosts文件" class="headerlink" title="修改windows宿主机中的hosts文件"></a>修改windows宿主机中的hosts文件</h3><p>hosts文件位于：<code>C:\Windows\System32\drivers\etc\hosts</code></p>
-<p>在hosts文件中添加自定义的域名-ip映射关系</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">192.168.1.200 app01.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="部署Nginx"><a href="#部署Nginx" class="headerlink" title="部署Nginx"></a>部署Nginx</h3><h4 id="通过yum安装"><a href="#通过yum安装" class="headerlink" title="通过yum安装"></a>通过yum安装</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y nginx</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@playground nginx]# nginx -v</span><br><span class="line">nginx version: nginx/1.16.1</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="配置反向代理"><a href="#配置反向代理" class="headerlink" title="配置反向代理"></a>配置反向代理</h3><h4 id="添加自定义反向代理配置"><a href="#添加自定义反向代理配置" class="headerlink" title="添加自定义反向代理配置"></a>添加自定义反向代理配置</h4><p>通过<code>yum</code>进行安装时，<code>Nginx</code>的配置文件的路径会位于<code>/etc/nginx</code>下</p>
-<p>配置文件是<code>/etc/nginx/nginx.conf</code></p>
-<p>我们在更改该文件之前先对其进行一下备份</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup</span><br></pre></td></tr></table></figure>
-
-
-
-<p>然后添加我们自定义的服务配置</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  app01.com;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass   http://127.0.0.1:8080;</span><br><span class="line">        proxy_set_header Host $host;</span><br><span class="line">        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="启动Nginx"><a href="#启动Nginx" class="headerlink" title="启动Nginx"></a>启动Nginx</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx</span><br></pre></td></tr></table></figure>
-
-<p>停止nginx</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx -s stop</span><br></pre></td></tr></table></figure>
-
-<p>修改配置后重启Nginx</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx -s reload</span><br></pre></td></tr></table></figure>
-
-<p>让Nginx开机自启动</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl enable nginx</span><br></pre></td></tr></table></figure>
-
-
-
-<p>自此，运行在虚拟机中端口为8080的项目已经成功被Nginx反向代理</p>
-<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>在windows宿主机的cmd中尝试请求</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">C:\Users\xxx&gt;curl http://app01.com/api/organization</span><br><span class="line">&#123;&quot;code&quot;:200,&quot;data&quot;:[&#123;&quot;id&quot;:1,&quot;name&quot;:&quot;Oppose Militancy \u0026 Neutralize Invasion&quot;,&quot;alias&quot;:&quot;O.M.N.I&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:6,&quot;name&quot;:&quot;Stellar Loussier&quot;,&quot;organizationId&quot;:1,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;,&#123;&quot;id&quot;:2,&quot;name&quot;:&quot;Zodiac Alliance of Freedom Treaty&quot;,&quot;alias&quot;:&quot;Z.A.F.T&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:1,&quot;name&quot;:&quot;Shinn Asuka&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:4,&quot;name&quot;:&quot;Rau Le Crueset&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:5,&quot;name&quot;:&quot;Rey Za Burrel&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;,&#123;&quot;id&quot;:3,&quot;name&quot;:&quot;Orb Union&quot;,&quot;alias&quot;:&quot;O.R.B&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:2,&quot;name&quot;:&quot;Kira Yamato&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:3,&quot;name&quot;:&quot;Athrun Zala&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:7,&quot;name&quot;:&quot;Mu La Flaga&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;],&quot;message&quot;:&quot;Get organization successfully.&quot;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>发现能成功通过我们配置的域名app01.com来请求到数据</p>
-]]></content>
-      <categories>
-        <category>Web开发</category>
-      </categories>
-      <tags>
-        <tag>Nginx</tag>
       </tags>
   </entry>
   <entry>

@@ -28,7 +28,7 @@
 <meta property="og:description" content="ForewordUsually, we install a specified version of golang sdk (such as go1.18.4). But we might want to install the other version for study or work purposes, and keep all the sdk versions in our comput">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-09-07T14:32:33.000Z">
-<meta property="article:modified_time" content="2022-10-08T02:35:38.761Z">
+<meta property="article:modified_time" content="2022-10-08T13:44:28.933Z">
 <meta property="article:author" content="Yuki">
 <meta property="article:tag" content="installation">
 <meta name="twitter:card" content="summary">
@@ -216,7 +216,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-10-08 02:35:38" itemprop="dateModified" datetime="2022-10-08T02:35:38+00:00">2022-10-08</time>
+                <time title="Modified: 2022-10-08 13:44:28" itemprop="dateModified" datetime="2022-10-08T13:44:28+00:00">2022-10-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -264,6 +264,12 @@
 <h3 id="Checkout-GOPATH-and-GOROOT"><a href="#Checkout-GOPATH-and-GOROOT" class="headerlink" title="Checkout GOPATH and GOROOT"></a>Checkout GOPATH and GOROOT</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ go1.18.6 <span class="built_in">env</span> GOPATH</span><br><span class="line">/root/go</span><br><span class="line">$ go1.18.6 <span class="built_in">env</span> GOROOT</span><br><span class="line">/root/sdk/go1.18.6</span><br></pre></td></tr></table></figure>
 
 <p>We can see GOPATH is the same as the go1.18.4, but GOROOT has changed to another place</p>
+<h3 id="Use-Alias-in-Linux"><a href="#Use-Alias-in-Linux" class="headerlink" title="Use Alias in Linux"></a>Use Alias in Linux</h3><p>It’s a bit annoying if we call the specified version by calling go1.18.6, so we can use alias command to replace go1.18.6 by go.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">alias</span> go=go1.18.6</span><br></pre></td></tr></table></figure>
+<p>The alias command will take effect until the session is closed, now we can call go instead of go1.18.6 until this session is closed.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ go version</span><br><span class="line">go version go1.18.6 linux/amd64</span><br></pre></td></tr></table></figure>
+
+
 <h2 id="Uninstall-Addtional-Versions"><a href="#Uninstall-Addtional-Versions" class="headerlink" title="Uninstall Addtional Versions"></a>Uninstall Addtional Versions</h2><ol>
 <li><p>Remove libaray</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf /root/sdk/go1.18.6</span><br></pre></td></tr></table></figure>
@@ -355,7 +361,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Foreword"><span class="nav-number">1.</span> <span class="nav-text">Foreword</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Assumption"><span class="nav-number">2.</span> <span class="nav-text">Assumption</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Steps"><span class="nav-number">3.</span> <span class="nav-text">Steps</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#install-the-binary-file"><span class="nav-number">3.1.</span> <span class="nav-text">install the binary file</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Download-the-libaray"><span class="nav-number">3.2.</span> <span class="nav-text">Download the libaray</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Checkout-GOPATH-and-GOROOT"><span class="nav-number">3.3.</span> <span class="nav-text">Checkout GOPATH and GOROOT</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Uninstall-Addtional-Versions"><span class="nav-number">4.</span> <span class="nav-text">Uninstall Addtional Versions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Foreword"><span class="nav-number">1.</span> <span class="nav-text">Foreword</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Assumption"><span class="nav-number">2.</span> <span class="nav-text">Assumption</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Steps"><span class="nav-number">3.</span> <span class="nav-text">Steps</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#install-the-binary-file"><span class="nav-number">3.1.</span> <span class="nav-text">install the binary file</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Download-the-libaray"><span class="nav-number">3.2.</span> <span class="nav-text">Download the libaray</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Checkout-GOPATH-and-GOROOT"><span class="nav-number">3.3.</span> <span class="nav-text">Checkout GOPATH and GOROOT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Use-Alias-in-Linux"><span class="nav-number">3.4.</span> <span class="nav-text">Use Alias in Linux</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Uninstall-Addtional-Versions"><span class="nav-number">4.</span> <span class="nav-text">Uninstall Addtional Versions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
