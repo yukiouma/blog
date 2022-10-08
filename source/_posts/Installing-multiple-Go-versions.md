@@ -108,6 +108,20 @@ $ go1.18.6 env GOROOT
 
 We can see GOPATH is the same as the go1.18.4, but GOROOT has changed to another place
 
+
+### Use Alias in Linux
+It's a bit annoying if we call the specified version by calling go1.18.6, so we can use alias command to replace go1.18.6 by go.
+```bash
+$ alias go=go1.18.6
+```
+The alias command will take effect until the session is closed, now we can call go instead of go1.18.6 until this session is closed.
+
+```bash
+$ go version
+go version go1.18.6 linux/amd64
+```
+
+
 ## Uninstall Addtional Versions
 
 1. Remove libaray
