@@ -98,6 +98,7 @@ sequenceDiagram
     Buffer pool-->>Data file: update data file
     
 ```
+![](https://mermaid.ink/img/pako:eNptkE0OgjAQha8ymbVcoAsWhhNo3HUz0gEbocXSBg3h7raCRtCumjffe_MzYmkVo8Ceb4FNyYWm2lErDcRXkCeodMNZluf7UFXsoLO2EVE0CkKnyDM4O_Qzf5oFf9_iC6lSnjZwftVmzxcH0QYHVhYaWy-QgMHp1OQtb-wbfB2RRv8XkPSf7mnHz8LrkZOCO2zZtaRVvNaY3BL9hVuWKOJXkbtKlGaKHAVvjw9TovAu8A7nqOWyKCpqep6eQG9_Zw)
 
 redo log刷盘策略
 
@@ -131,6 +132,7 @@ sequenceDiagram
     Redo log buffer ->> Redo log file: write redo log in file
     Buffer pool-->>Data file: update data file
 ```
+![](https://mermaid.ink/img/pako:eNp9kUFuAyEMRa9ieZ1cgEUWVXqBVtmxcQdPijoDqQElVZS71wyTKDOVygYw__0P5opddIwGE38XDh3vPR2FRhtAx54yQe8H3m53u5fS9yxwinEwWgwOyslRZpB4TpByFE7gA3xMumZwaIp8WfMz6mrAinnSgWJwCC7CEI8GzuKVKfO-qV8v3BXNnqT_RUzzc86CfONmOivuWT7kCLI8a_QKWJrUlt0tHrTeodb_PLL29tHo5bVrBTc4sozknf7StdIW8yePbNHo0pF8WbThpjrS57z_hA5NlsIbbFbzj6LpaUh8-wWAhahq)
 
 生成过程：
 
