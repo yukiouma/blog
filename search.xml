@@ -58,6 +58,55 @@
       </tags>
   </entry>
   <entry>
+    <title>Git安装</title>
+    <url>/blog/2021/06/07/Git%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<h1 id="Git安装"><a href="#Git安装" class="headerlink" title="Git安装"></a>Git安装</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
+<li>VMware® Workstation 15 Pro - 15.5.0 build-14665864</li>
+<li>宿主机： Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
+<li>CentOS Linux release 7.9.2009 (Core)</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="安装wget"><a href="#安装wget" class="headerlink" title="安装wget"></a>安装wget</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y wget</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="安装编译组件"><a href="#安装编译组件" class="headerlink" title="安装编译组件"></a>安装编译组件</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y curl-devel</span><br><span class="line">yum install -y gcc-c++</span><br><span class="line">yum install -y zlib-devel perl-ExtUtils-MakeMaker</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="下载解压git"><a href="#下载解压git" class="headerlink" title="下载解压git"></a>下载解压git</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/packages</span><br><span class="line">wget https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.9.0.tar.gz</span><br><span class="line">cd /opt/modules</span><br><span class="line">tar -C . -zxvf ../packages/git-2.9.0.tar.gz</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="编译部署"><a href="#编译部署" class="headerlink" title="编译部署"></a>编译部署</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/modules/git-2.9.0/</span><br><span class="line">./configure --prefix=/usr/local</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vi /etc/profile</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export PATH=$PATH:/usr/local/bin</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git --version</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git version 2.9.0</span><br></pre></td></tr></table></figure>
+
+
+
+
+]]></content>
+      <categories>
+        <category>其它</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker部署RedisCluster</title>
     <url>/blog/2022/05/24/Docker%E9%83%A8%E7%BD%B2RedisCluster/</url>
     <content><![CDATA[<h2 id="Prepare"><a href="#Prepare" class="headerlink" title="Prepare"></a>Prepare</h2><span id="more"></span>
@@ -118,55 +167,6 @@
       </categories>
       <tags>
         <tag>Cache</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Git安装</title>
-    <url>/blog/2021/06/07/Git%E5%AE%89%E8%A3%85/</url>
-    <content><![CDATA[<h1 id="Git安装"><a href="#Git安装" class="headerlink" title="Git安装"></a>Git安装</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
-<li>VMware® Workstation 15 Pro - 15.5.0 build-14665864</li>
-<li>宿主机： Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
-<li>CentOS Linux release 7.9.2009 (Core)</li>
-</ul>
-<span id="more"></span>
-
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="安装wget"><a href="#安装wget" class="headerlink" title="安装wget"></a>安装wget</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y wget</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="安装编译组件"><a href="#安装编译组件" class="headerlink" title="安装编译组件"></a>安装编译组件</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y curl-devel</span><br><span class="line">yum install -y gcc-c++</span><br><span class="line">yum install -y zlib-devel perl-ExtUtils-MakeMaker</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="下载解压git"><a href="#下载解压git" class="headerlink" title="下载解压git"></a>下载解压git</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/packages</span><br><span class="line">wget https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.9.0.tar.gz</span><br><span class="line">cd /opt/modules</span><br><span class="line">tar -C . -zxvf ../packages/git-2.9.0.tar.gz</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="编译部署"><a href="#编译部署" class="headerlink" title="编译部署"></a>编译部署</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /opt/modules/git-2.9.0/</span><br><span class="line">./configure --prefix=/usr/local</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vi /etc/profile</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export PATH=$PATH:/usr/local/bin</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git --version</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git version 2.9.0</span><br></pre></td></tr></table></figure>
-
-
-
-
-]]></content>
-      <categories>
-        <category>其它</category>
-      </categories>
-      <tags>
-        <tag>git</tag>
       </tags>
   </entry>
   <entry>
@@ -1635,7 +1635,7 @@
 </ol>
 <p>运转流程：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    Data file--&gt;&gt;Buffer pool: find update rows</span><br><span class="line">    Update tx-&gt;&gt;Buffer pool: update data in buffer</span><br><span class="line">    Buffer pool -&gt;&gt; Redo log buffer: write redo log in buffer</span><br><span class="line">    Redo log buffer -&gt;&gt; Redo log file: write redo log in file</span><br><span class="line">    Buffer pool--&gt;&gt;Data file: update data file</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
-
+<p><img src="https://mermaid.ink/img/pako:eNptkE0OgjAQha8ymbVcoAsWhhNo3HUz0gEbocXSBg3h7raCRtCumjffe_MzYmkVo8Ceb4FNyYWm2lErDcRXkCeodMNZluf7UFXsoLO2EVE0CkKnyDM4O_Qzf5oFf9_iC6lSnjZwftVmzxcH0QYHVhYaWy-QgMHp1OQtb-wbfB2RRv8XkPSf7mnHz8LrkZOCO2zZtaRVvNaY3BL9hVuWKOJXkbtKlGaKHAVvjw9TovAu8A7nqOWyKCpqep6eQG9_Zw"></p>
 <p>redo log刷盘策略</p>
 <ol>
 <li>每次事务提交不做任何动作，交给后台master thread每隔1s进行一次redo log同步</li>
@@ -1656,7 +1656,7 @@
 </ul>
 <p>生命周期：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    Data file--&gt;&gt;Buffer pool: find update rows stores in buffer</span><br><span class="line">    Update tx-&gt;&gt;Buffer pool: update data in buffer</span><br><span class="line">    Buffer pool -&gt;&gt; Undo log: write undo log</span><br><span class="line">    Executor -&gt;&gt; Buffer pool: update data in data buffer</span><br><span class="line">    Executor -&gt;&gt; Redo log buffer: write into redo log buffer</span><br><span class="line">    Redo log buffer -&gt;&gt; Redo log file: write redo log in file</span><br><span class="line">    Buffer pool--&gt;&gt;Data file: update data file</span><br></pre></td></tr></table></figure>
-
+<p><img src="https://mermaid.ink/img/pako:eNp9kUFuAyEMRa9ieZ1cgEUWVXqBVtmxcQdPijoDqQElVZS71wyTKDOVygYw__0P5opddIwGE38XDh3vPR2FRhtAx54yQe8H3m53u5fS9yxwinEwWgwOyslRZpB4TpByFE7gA3xMumZwaIp8WfMz6mrAinnSgWJwCC7CEI8GzuKVKfO-qV8v3BXNnqT_RUzzc86CfONmOivuWT7kCLI8a_QKWJrUlt0tHrTeodb_PLL29tHo5bVrBTc4sozknf7StdIW8yePbNHo0pF8WbThpjrS57z_hA5NlsIbbFbzj6LpaUh8-wWAhahq"></p>
 <p>生成过程：</p>
 <ul>
 <li><p>行记录隐藏列</p>
@@ -2138,72 +2138,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Nginx实现反向代理</title>
-    <url>/blog/2021/05/23/Nginx%E5%AE%9E%E7%8E%B0%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/</url>
-    <content><![CDATA[<p>在虚拟机中部署Nginx，并使用Nginx为虚拟机中运行的项目分配反向代理的域名</p>
-<h2 id="背景说明"><a href="#背景说明" class="headerlink" title="背景说明"></a>背景说明</h2><p>在windows宿主机中存在一台运行着CentOS7的虚拟机，ip为192.168.1.200</p>
-<p>在虚拟机中存在一个web服务的项目，运行在虚拟机的端口8080上</p>
-<p>希望在宿主机中能通过自定义的域名app01.com来访问该项目的接口服务</p>
-<span id="more"></span>
-
-<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
-<li>CentOS Linux release 7.7.1908 (Core)</li>
-<li>VMWare 15.5.0 build-14665864</li>
-<li>Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
-</ul>
-<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="修改windows宿主机中的hosts文件"><a href="#修改windows宿主机中的hosts文件" class="headerlink" title="修改windows宿主机中的hosts文件"></a>修改windows宿主机中的hosts文件</h3><p>hosts文件位于：<code>C:\Windows\System32\drivers\etc\hosts</code></p>
-<p>在hosts文件中添加自定义的域名-ip映射关系</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">192.168.1.200 app01.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="部署Nginx"><a href="#部署Nginx" class="headerlink" title="部署Nginx"></a>部署Nginx</h3><h4 id="通过yum安装"><a href="#通过yum安装" class="headerlink" title="通过yum安装"></a>通过yum安装</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y nginx</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@playground nginx]# nginx -v</span><br><span class="line">nginx version: nginx/1.16.1</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="配置反向代理"><a href="#配置反向代理" class="headerlink" title="配置反向代理"></a>配置反向代理</h3><h4 id="添加自定义反向代理配置"><a href="#添加自定义反向代理配置" class="headerlink" title="添加自定义反向代理配置"></a>添加自定义反向代理配置</h4><p>通过<code>yum</code>进行安装时，<code>Nginx</code>的配置文件的路径会位于<code>/etc/nginx</code>下</p>
-<p>配置文件是<code>/etc/nginx/nginx.conf</code></p>
-<p>我们在更改该文件之前先对其进行一下备份</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup</span><br></pre></td></tr></table></figure>
-
-
-
-<p>然后添加我们自定义的服务配置</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  app01.com;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass   http://127.0.0.1:8080;</span><br><span class="line">        proxy_set_header Host $host;</span><br><span class="line">        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="启动Nginx"><a href="#启动Nginx" class="headerlink" title="启动Nginx"></a>启动Nginx</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx</span><br></pre></td></tr></table></figure>
-
-<p>停止nginx</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx -s stop</span><br></pre></td></tr></table></figure>
-
-<p>修改配置后重启Nginx</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx -s reload</span><br></pre></td></tr></table></figure>
-
-<p>让Nginx开机自启动</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl enable nginx</span><br></pre></td></tr></table></figure>
-
-
-
-<p>自此，运行在虚拟机中端口为8080的项目已经成功被Nginx反向代理</p>
-<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>在windows宿主机的cmd中尝试请求</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">C:\Users\xxx&gt;curl http://app01.com/api/organization</span><br><span class="line">&#123;&quot;code&quot;:200,&quot;data&quot;:[&#123;&quot;id&quot;:1,&quot;name&quot;:&quot;Oppose Militancy \u0026 Neutralize Invasion&quot;,&quot;alias&quot;:&quot;O.M.N.I&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:6,&quot;name&quot;:&quot;Stellar Loussier&quot;,&quot;organizationId&quot;:1,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;,&#123;&quot;id&quot;:2,&quot;name&quot;:&quot;Zodiac Alliance of Freedom Treaty&quot;,&quot;alias&quot;:&quot;Z.A.F.T&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:1,&quot;name&quot;:&quot;Shinn Asuka&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:4,&quot;name&quot;:&quot;Rau Le Crueset&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:5,&quot;name&quot;:&quot;Rey Za Burrel&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;,&#123;&quot;id&quot;:3,&quot;name&quot;:&quot;Orb Union&quot;,&quot;alias&quot;:&quot;O.R.B&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:2,&quot;name&quot;:&quot;Kira Yamato&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:3,&quot;name&quot;:&quot;Athrun Zala&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:7,&quot;name&quot;:&quot;Mu La Flaga&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;],&quot;message&quot;:&quot;Get organization successfully.&quot;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>发现能成功通过我们配置的域名app01.com来请求到数据</p>
-]]></content>
-      <categories>
-        <category>Web开发</category>
-      </categories>
-      <tags>
-        <tag>Nginx</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>MySQL索引笔记</title>
     <url>/blog/2021/01/15/MySQL%E7%B4%A2%E5%BC%95%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><blockquote>
@@ -2458,6 +2392,678 @@
       </categories>
       <tags>
         <tag>MySQL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL调优笔记</title>
+    <url>/blog/2021/01/18/MySQL%E8%B0%83%E4%BC%98%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h1 id="数据库优化流程"><a href="#数据库优化流程" class="headerlink" title="数据库优化流程"></a>数据库优化流程</h1><p>从四个角度去优化：1. 硬件，2. 系统配置，3. 数据库表结构，4. SQL与索引</p>
+<p>优化流程：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">graph TD;</span><br><span class="line">    观察服务器状态--&gt;A&#123;是否存在周期性波动&#125;;</span><br><span class="line">    A--是--&gt;增加缓存或更改缓存失效策略;</span><br><span class="line">    A--否--&gt;D[仍有不规则延迟或卡顿];</span><br><span class="line">    增加缓存或更改缓存失效策略--是--&gt;B&#123;是否解决&#125;;</span><br><span class="line">    B--是--&gt;Done</span><br><span class="line">    B--否--&gt;D</span><br><span class="line">    D--&gt;E[开启慢查询,记录慢查询语句]</span><br><span class="line">    E--&gt;F[分析执行计划, EXPLAIN和SHOW PROFILING]</span><br><span class="line">    F--&gt;H[SQL等待时间长]</span><br><span class="line">    F--&gt;I[SQL执行时间长]</span><br><span class="line">    H--&gt;J[调优服务器参数]</span><br><span class="line">    J--&gt;K&#123;是否解决&#125;;</span><br><span class="line">    K--是--&gt;Done</span><br><span class="line">    I--&gt;L[1.索引设计优化, 2.JOIN表过多, 3.数据表设计优化]</span><br><span class="line">    L--&gt;M&#123;是否解决&#125;</span><br><span class="line">    M--是--&gt;Done</span><br><span class="line">    K--否--&gt;N&#123;SQL查询是否达到瓶颈&#125;</span><br><span class="line">    M--否--&gt;N</span><br><span class="line">    N--否--&gt;重新检查</span><br><span class="line">    N--是--&gt;O[1.读写分离, 2.分表分库]</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://mermaid.ink/img/pako:eNqNU19v0lAU_ypNnwuJ-oaJCQsgBQZTTDQpPDSjukWBBeHBEBKcbisEMhyWgZJhuzF4gWJGiArCl-HcXr6FB1vYdD7Yh-ac-_tz_tzcLLudjEmsg32REvd2mCeu-5EEgx_t7IPeIs0yFFVodI3iiOTf2mwPnFlS16FyCb06NLvwoUuaLZLvkCsNit2cJXbabMhCNmhnUPxiTKpIJ3KNfB6Sj9_NFC6-EkU2ejVDaV_L0BllLmE-LpNmYf6tTDvvQW7AeERnLXSAsrpQZ1FL8J_2q242rN5p5xwOr1bNbqxgVzIhrY-sRszchaFbgEkeKjo50EirTXWNo_0B_FTWOdV7cNyOmgo3KjwCyIfkrEIKHaqWaF8F-YRj3M-2Ak4-CCelsDf0lNl6HPLwAT740BJ6UOgVwo8CRq8A0wNyOlqcDhfK7AbML2HT9G_Yi7BPoIN380l9fXdwvE-UgcXwIcP_zz34b--Bxywg3LEbQw0mCu1PcQh0hlKNY-7afSE-SNUunR3BxSeOuWfHKqTcXx7dYFp1A2i1-WddE9i8Xda_Wn8wu5z093Yt5XQK8sCojhaafK23yGYeXOWLozKpDch5Hg3WkFkqhDNRfQyHDbwh43K8nAYj7Bz_8KMaZTk2LqXi4m4MX0Z2qY6w6R0pLkVYB4YxMfUywkYSOeSJmXQy_CaxzTrSqYzEsZm9mJiWXLsiPqg463guvnot5X4BPB-sKw"></p>
+<h1 id="慢查询日志"><a href="#慢查询日志" class="headerlink" title="慢查询日志"></a>慢查询日志</h1><blockquote>
+<p>默认关闭，需要调优的时候打开</p>
+<p>打开后将执行时间大于long_query_time的语句写入文件</p>
+</blockquote>
+<p>分析慢查询日志工具: <code>mysqldumpslow</code>，获取到具体的查询语句与耗费时间</p>
+<h1 id="查看执行成本"><a href="#查看执行成本" class="headerlink" title="查看执行成本"></a>查看执行成本</h1><p>SHOW PROFILE，查看具体的每个步骤的开销</p>
+<h1 id="分析查询语句"><a href="#分析查询语句" class="headerlink" title="分析查询语句"></a>分析查询语句</h1><blockquote>
+<p> EXPLAIN 或 DESCRIBE</p>
+<p> 可以使用FORMAT&#x3D;&lt;format&gt;语句来指定分析语句的展示格式，不指定则是默认的格式</p>
+<ul>
+<li><code>EXPLAIN FORMAT=JSON SELECT * FROM user;</code></li>
+<li><code>EXPLAIN FORMAT=TREE SELECT * FROM user;</code></li>
+</ul>
+</blockquote>
+<h2 id="id"><a href="#id" class="headerlink" title="id"></a>id</h2><p>一个select对应一个id</p>
+<blockquote>
+<p>注意，不一定是输入的查询命令中的select个数，而是实际执行的select个数，输入的命令可能会被查询优化器重写</p>
+<p>临时表的id为NULL</p>
+</blockquote>
+<h2 id="select-type"><a href="#select-type" class="headerlink" title="select_type"></a>select_type</h2><ol>
+<li><p>SIMPLE</p>
+<p>不包含UNION和子查询都是SIMPLE类型</p>
+</li>
+<li><p>UNION RESULT</p>
+<p>使用UNION的时候，由于需要去重，因此会生成一个临时表（id为NULL），该查询的类型为UNION RESULT</p>
+<p>但如果是UNION ALL的是时候由于无需去重，就可以不用生成该临时表了</p>
+</li>
+<li><p>SUBQUERY</p>
+<p>子查询无法转成多表连接时，如果不是相关子查询，子查询类型是SUBQUERY</p>
+</li>
+<li><p>DEPENDENT SUBQUERY</p>
+<p>子查询无法转成多表连接时，如果是相关子查询，子查询类型是DEPENDENT  SUBQUERY</p>
+</li>
+<li><p>DEPENDENT UNION</p>
+<p>子查询是UNION的时候，如果都依赖外侧查询，那么除了最左侧的查询以外的子查询类型都是DEPENDENT UNION</p>
+</li>
+<li><p>DERIVED</p>
+<p>派生的表，通常是进行了聚合过后的结果</p>
+</li>
+<li><p>MATERIALIZED</p>
+<p>优化器执行包含子查询的时候选择将子查询物化之后与外侧查询进行连接查询</p>
+</li>
+</ol>
+<h2 id="type（重点）"><a href="#type（重点）" class="headerlink" title="type（重点）"></a>type（重点）</h2><p>访问类型，下面的对访问类型的解析从最优到最劣</p>
+<blockquote>
+<p>system &gt; const &gt; eq_ref &gt; ref &gt; fulltext &gt; ref_or_null &gt; index_merge &gt; unique_subquery &gt; index_subquery &gt; range &gt; index &gt; all</p>
+<p>日常至少要达到range级别，最好是ref以上</p>
+</blockquote>
+<ol>
+<li><p>system</p>
+<p>没有进行数据遍历，而是直接在系统内部直接记录了某个结果（比如MyISAM中的统计数据），最快</p>
+</li>
+<li><p>const</p>
+<p>根据主键或者唯一的二级索引与常数进行等值匹配</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE id = 1;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>eq_ref</p>
+<p>连接查询时，被驱动表是通过主键或者唯一的二级索引字段等值匹配的方式进行访问</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 INNER JOIN s2 ON s1.id = s2.id;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>ref</p>
+<p>普通二级索引与常量等值匹配来查询时</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE name = &quot;test&quot;;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>ref_or_null</p>
+<p>普通二级索引与常量等值匹配，且索引字段可以为NULL时来查询时</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE name = &quot;test&quot; OR name IS NULL;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>index_merge</p>
+<p>使用多个索引字段进行OR匹配的时候，优化器会将其转为多个UNION的查询，然后再去重</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE key1 = 1 OR key2 = 1;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>unique_subquery</p>
+<p>针对包含IN子查询的查询语句中，优化器决定将IN子查询转换为EXISTS子查询，且子查询可以使用主键进行等值匹配</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE key2 IN (SELECT id FROM s2 WHERE s1.key1 = s2.key1) OR key3 = &#x27;a&#x27;;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>range</p>
+<p>索引字段进行范围区间的查询</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM s1 WHERE key1 &gt; 0 AND key1 &lt; 100;</span><br><span class="line">EXPLAIN SELECT * FROM s1 WHERE key1 IN (1, 2, 3);</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>index</p>
+<p>当查询可以使用索引覆盖（查找和过滤的字段刚好都在索引内），但是需要扫描全部的索引记录时</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 联合索引字段为key1, key2, key3</span><br><span class="line">EXPLAIN SELECT key2 FROM s1 WHERE key3 = &#x27;a&#x27;;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>all</p>
+<p>全表扫描，最差</p>
+</li>
+</ol>
+<h2 id="possible-keys"><a href="#possible-keys" class="headerlink" title="possible_keys"></a>possible_keys</h2><p>可能是用到的索引，并不是越多越好，越多可选的索引，挑选索引话的时间越多</p>
+<h2 id="key"><a href="#key" class="headerlink" title="key"></a>key</h2><p>优化器真正使用到的索引</p>
+<h2 id="key-len（重点）"><a href="#key-len（重点）" class="headerlink" title="key_len（重点）"></a>key_len（重点）</h2><p>实际使用到的索引长度（字节数），检查是否充分利用上了索引，该值越大越好，在联合索引中参考意义较大</p>
+<h2 id="ref"><a href="#ref" class="headerlink" title="ref"></a>ref</h2><p>使用索引字段等值查询时，与索引字段等值匹配的对象信息</p>
+<h2 id="rows（重点）"><a href="#rows（重点）" class="headerlink" title="rows（重点）"></a>rows（重点）</h2><p>预估该SELECT查询到的记录数目，该数值越小，说明数据越有可能在同一个数据页中，IO次数越少，效率越高</p>
+<h2 id="filtered（重点）"><a href="#filtered（重点）" class="headerlink" title="filtered（重点）"></a>filtered（重点）</h2><p>满足需求的记录的百分比，越高越好</p>
+<p>对于单表查询其实该值意义不大，在连接查询的时候，驱动表对应的执行计划记录的filter值，决定了被驱动表要执行的次数（rows * filtered）</p>
+<h2 id="extra（重点）"><a href="#extra（重点）" class="headerlink" title="extra（重点）"></a>extra（重点）</h2><p>一些额外的信息，重点关注以下内容</p>
+<ul>
+<li><p>Using where</p>
+<ol>
+<li>全表扫描，且语句中的WHERE有针对该表的搜索条件时</li>
+<li>使用索引，且语句中的WHERE包含除了索引以外的该表的非索引字段</li>
+</ol>
+</li>
+<li><p>Using index</p>
+<p>查询的列和搜索条件中只包含属于某个索引的列，也就是可以使用覆盖索引的情况下会出现该信息，说明不用回表</p>
+</li>
+<li><p>Using index condition pushdown</p>
+<p>索引条件下推：<br>WHERE条件是需要使用索引字段，但是索引字段无法被使用的时候，如<code>WHERE key &gt; &#39;a&#39; AND key LIKE &quot;%s&quot;</code>，此时优化器会先去索引字段在二级索引中找到对应的记录的索引的值的列表，根据过滤过滤条件去过滤该列表后，根据列表中剩下的主键去进行回表查询。</p>
+<p>此举是为了减少回表的次数，由于回表行为本身是和随机IO行为，因此可以提高查询性能</p>
+</li>
+<li><p>Using join buffer</p>
+<p>连接查询时驱动表没有索引，innoDB为其创建一块内存来加快查询速度</p>
+</li>
+<li><p>Using filesort</p>
+<p>说明使用了非索引字段进行了排序，效率较差</p>
+</li>
+<li><p>Using temporary</p>
+<p>使用临时表，体现在DISTINCT和UNION查询的时候，做去重用。建立和维护临时表的成别较高，最好能使用索引替代临时表</p>
+</li>
+</ul>
+<h2 id="SHOW-WARNINGS"><a href="#SHOW-WARNINGS" class="headerlink" title="SHOW WARNINGS"></a>SHOW WARNINGS</h2><p>使用EXPLAIN语句查看某个查询的执行计划后，紧接着使用SHOW WARNINGS语句可以查询到这个执行计划的一些扩展信息，如优化器优化后大致的查询语句（不一定可以运行….）</p>
+<h1 id="索引优化与查询优化"><a href="#索引优化与查询优化" class="headerlink" title="索引优化与查询优化"></a>索引优化与查询优化</h1><h2 id="索引失效"><a href="#索引失效" class="headerlink" title="索引失效"></a>索引失效</h2><blockquote>
+<p>使用索引与否，都是优化器说了算</p>
+<p>优化器基于cost开销来决定是否使用索引</p>
+<p>SQL语句是否使用索引跟数据库版本，数据量和数据选择度有关系</p>
+</blockquote>
+<ul>
+<li><p>全值匹配</p>
+<p>使用WHERE语句进行全值匹配的场景应当给所涉及的列添加一个联合索引</p>
+</li>
+<li><p>最佳左前缀</p>
+<p>联合索引中的定义的字段，如果靠近左侧的字段都出现在WHERE条件中，则可以选用该索引</p>
+</li>
+<li><p>主键插入顺序</p>
+<p>最好不要用无序主键，如uuid</p>
+</li>
+<li><p>计算，函数与类型转换导致索引失效</p>
+<p>假设name是索引</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM student WHERE name LIKE &#x27;abc%&#x27;; # 用到索引</span><br><span class="line">EXPLAIN SELECT * FROM student WHERE LEFT(name) = &#x27;abc&#x27;; # 用不到索引</span><br></pre></td></tr></table></figure>
+
+<p>LEFT函数导致了索引失效</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM student WHERE id + 1 = 10; # 用不到索引</span><br></pre></td></tr></table></figure>
+
+<p>计算导致索引失效</p>
+</li>
+<li><p>范围条件右侧的列索引失效</p>
+<p>假设age, classId和name组成联合索引</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM student WHERE age = 10 AND classId &gt; 20 AND name = &quot;test&quot;;</span><br></pre></td></tr></table></figure>
+
+<p>上述查询只能用上age和classId两个字段作为索引，因为classId使用了范围索引，因此导致后面的索引失效了</p>
+<p>实际开发中在建立联合索引的时候应注意将范围查询的字段尽可能放到右侧</p>
+</li>
+<li><p>不等于索引失效</p>
+<p>不等于 !&#x3D; 或者 &lt;&gt; 会导致索引失效，但是注意，在满足覆盖索引的场合不等于也可能会使用上索引</p>
+</li>
+<li><p>NULL</p>
+<p>IS NULL可以使用索引，IS NOT NULL不可以使用索引</p>
+<p>实际开发中尽可能为每个字段加上NOT NULL约束</p>
+</li>
+<li><p>LIKE</p>
+<p>LIKE可以所用索引，NOT LIKE则不可以</p>
+<p>通配符开头的LIKE查询也会导致索引失效，如LIKE ‘%abc’</p>
+</li>
+<li><p>OR</p>
+<p>前后存在非索引的列，索引失效</p>
+</li>
+<li><p>数据库的表和字符集同意使用utf8mb4</p>
+<p>统一字符集可以避免字符集转换产生的乱码，不同字符集比较浅需要进行转换，此时会导致索引失效</p>
+</li>
+</ul>
+<p>一般性建议：</p>
+<ul>
+<li>单列索引，选过滤性更好的列</li>
+<li>选择联合索引时，<ol>
+<li>过滤性最好的列越在左侧越好</li>
+<li>范围查询的列在越右侧越好</li>
+<li>当前查询的列最好能全部包含在索引中，避免回表</li>
+</ol>
+</li>
+</ul>
+<h2 id="关联查询"><a href="#关联查询" class="headerlink" title="关联查询"></a>关联查询</h2><p>驱动表：主表</p>
+<p>非驱动表：从表</p>
+<h3 id="JOIN原理"><a href="#JOIN原理" class="headerlink" title="JOIN原理"></a>JOIN原理</h3><blockquote>
+<p>效率上看：</p>
+<p>index nested loop join &gt; block nested loop join &gt; simple nested loop join</p>
+</blockquote>
+<ul>
+<li><p>simple nested loop join - 简单嵌套循环连接</p>
+<blockquote>
+<p>驱动表和非驱动表在连接条件上都没有索引</p>
+</blockquote>
+<ol>
+<li>驱动表获取一条数据</li>
+<li>从非驱动表里面全表扫描，有符合连接条件的记录则输出到结果</li>
+<li>重复步骤1，直到驱动表中的数据被扫描完</li>
+</ol>
+<p>开销统计：</p>
+<p>假设有A, B两个表</p>
+<table>
+<thead>
+<tr>
+<th>开销统计</th>
+<th>simple nested loop join</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>驱动表扫描次数</td>
+<td>1</td>
+</tr>
+<tr>
+<td>被驱动表表扫描次数</td>
+<td>Row(A)</td>
+</tr>
+<tr>
+<td>读取记录数</td>
+<td>Row(A) + Row(B) * Row(A)</td>
+</tr>
+<tr>
+<td>JOIN比较次数</td>
+<td>Row(B) * Row(A)</td>
+</tr>
+<tr>
+<td>回表</td>
+<td>0</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>index nested loop join - 索引嵌套循环连接</p>
+<blockquote>
+<p>要求被驱动表上必须有索引</p>
+<p>将被驱动表的全表扫描过程替换为从索引中去查找</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>开销统计</th>
+<th>index nested loop join</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>驱动表扫描次数</td>
+<td>1</td>
+</tr>
+<tr>
+<td>被驱动表表扫描次数0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>读取记录数</td>
+<td>Row(A) + Match(Row(B))</td>
+</tr>
+<tr>
+<td>JOIN比较次数</td>
+<td>Row(A) * Height(Index_B)</td>
+</tr>
+<tr>
+<td>回表</td>
+<td>Match(Row(B)) (or 0, if use pk)</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>block nested loop join - 块嵌套循环连接</p>
+<p>不是逐条获取驱动表的数据，而是一块一块地获取，引入join buffer缓冲区，减少IO次数</p>
+<p>n个表连接会有n-1个buffer</p>
+<table>
+<thead>
+<tr>
+<th>开销统计</th>
+<th>block nested loop join</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>驱动表扫描次数</td>
+<td>1</td>
+</tr>
+<tr>
+<td>被驱动表表扫描次数</td>
+<td>Row(A) * column_size &#x2F; join_buffer_size + 1</td>
+</tr>
+<tr>
+<td>读取记录数</td>
+<td>Row(A) + Row(B) * 被驱动表表扫描次数</td>
+</tr>
+<tr>
+<td>JOIN比较次数</td>
+<td>Row(B) * Row(A)</td>
+</tr>
+<tr>
+<td>回表</td>
+<td>0</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>hash join</p>
+<p>MySQL 8.0以上 nested loop join会默认替换为hash join</p>
+<p>优化器使用小表，利用join key在内存中建立hash表，然后扫描较大的表并探测散列表，找出与hash表匹配的行</p>
+<p>只能用于等值连接</p>
+</li>
+</ul>
+<h3 id="外连接"><a href="#外连接" class="headerlink" title="外连接"></a>外连接</h3><p>人为指定驱动表，如LEFT JOIN的左侧是驱动表，右侧是被驱动表，但是也有可能被优化器进行修改成内连接，从而改变驱动表和被驱动表的位置</p>
+<h3 id="内连接"><a href="#内连接" class="headerlink" title="内连接"></a>内连接</h3><p>查询优化器可以决定谁作为驱动表，谁作为被驱动表</p>
+<ol>
+<li><p>表的连接条件中，如果只有一个字段有索引，那么优化器会选择该字段对应的表作为被驱动表</p>
+</li>
+<li><p>两个表的连接条件都存在索引的前提下，小表作为驱动表</p>
+<blockquote>
+<p>什么是小表？</p>
+<p>在经过过滤后剩下了的记录，乘以每行的大小，结果较小的一方称之为小表</p>
+</blockquote>
+<blockquote>
+<p>为什么是小表驱动大表？</p>
+<p>相同的join_buffer大小，能容纳更多的小表的记录，减少外层循环的数据数量</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="子查询"><a href="#子查询" class="headerlink" title="子查询"></a>子查询</h2><p>子查询一般效率不高的原因:</p>
+<blockquote>
+<ol>
+<li>内层查询会建立临时表，查询完毕后再撤销临时表，会消耗较多CPU和IO资源，产生较多慢查询</li>
+<li>内存临时表和磁盘临时表都没有索引</li>
+<li>对于子查询结果集越大的情形，对查询性能影响越大</li>
+</ol>
+</blockquote>
+<p>优化策略：</p>
+<ul>
+<li><p>子查询优化为多表查询</p>
+<p>原SQL</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM student</span><br><span class="line">WHERE no IN (</span><br><span class="line">	SELECT monitor FROM class</span><br><span class="line">    WHERE monitor IS NOT NULL</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>优化为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT s.* FROM student s JOIN class c</span><br><span class="line">ON s.no = c.monitor</span><br><span class="line">WHERE c.monitor IS NOT NULL;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="排序优化"><a href="#排序优化" class="headerlink" title="排序优化"></a>排序优化</h2><h3 id="Order-By"><a href="#Order-By" class="headerlink" title="Order By"></a>Order By</h3><p>两种排序</p>
+<ul>
+<li><p>FileSort</p>
+<p>内存中排序，CPU占用较高</p>
+</li>
+<li><p>index</p>
+<p>无需再次进行排序</p>
+</li>
+</ul>
+<p>索引失效的场景：</p>
+<ul>
+<li><p>当查询的字段较多，需要在二级索引中找到之后再进行回表的时候，优化器可能会判断直接全表取出到内存后直接filesort的开销较低，导致查询不使用已有的索引</p>
+<p>假设有student表中有联合索引，关联的字段是age，classid，no</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM student ORDER BY age,classid,no; # 使用FILESORT</span><br></pre></td></tr></table></figure>
+
+<p>由于字段权限，优化器可能判定造成大量回表，因此选择了filesort</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM student ORDER BY age,classid,no LIMIT 10; # 使用index</span><br></pre></td></tr></table></figure>
+
+<p>由于限制了返回的记录条数，优化器认为造成的回表的次数有限，因此使用了index</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT age,classid FROM student ORDER BY age,classid,no; # 使用index</span><br></pre></td></tr></table></figure>
+
+<p>由于查询的字段都被联合索引所覆盖，因此不用回表，优化器选择index</p>
+<p>上述的例子使用LIMIT来体现过滤数据，也可以使用WHERE来达到相同的效果，总而言之就是优化器认为回表的次数是否过多，若过多则会放弃使用索引从而直接所用filesort。核心还是分析经过过滤后剩下的记录是否较多，从而导致的回表次数较多来觉得是否使用索引进行排序</p>
+</li>
+<li><p>ORDER BY和索引规则不一致时，索引失效</p>
+</li>
+</ul>
+<p>优化策略：</p>
+<ul>
+<li><p>在ORDER BY子句中的字段添加索引</p>
+</li>
+<li><p>ORDER BY最好不要SELECT *</p>
+</li>
+<li><p>尽量用index完成ORDER BY排序</p>
+</li>
+<li><p>当范围条件和排序字段出现二选一的时候，优先观察条件字段的过滤数量。如果过滤的数量足够多，而且排序的数据并不多的时候（记录数量不多filesort消耗的cpu也比较有限），优先把索引放在范围字段上</p>
+</li>
+<li><p>无法使用INDEX的时候要对FileSort进行调优：</p>
+<ol>
+<li><p>尝试提高sort_buffer_size</p>
+</li>
+<li><p>尝试提高max_length_for_sort_data，增加使用单路排序算法的概率</p>
+<p>filesort算法</p>
+<ul>
+<li>双路排序（较慢）</li>
+<li>单路排序</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="Group-By"><a href="#Group-By" class="headerlink" title="Group By"></a>Group By</h3><ul>
+<li>使用索引的原则几乎与order by保持一致</li>
+<li>group by是先排序，再分组</li>
+<li>where效率高于having</li>
+<li>包含过滤排序的语句，实际开发中最好能保证where过滤出来的结果集合在1000行内</li>
+</ul>
+<h2 id="分页查询"><a href="#分页查询" class="headerlink" title="分页查询"></a>分页查询</h2><blockquote>
+<p>总而言之，查询优化的重点就在于如何能扫描最少的记录，返回查询的结果</p>
+</blockquote>
+<p>像<code>LIMIT 2000000, 10</code>这种语句，MySQL要排序前2000010条记录(也就是说要将前2000010先扫描加载到内存中)，但仅仅返回2000000 - 2000010条记录，其他记录丢弃，查询排序的代价非常高</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM student LIMIT 2000000, 10; # type是ALL，意味着不会用上主键索引</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li><p>优化思路1</p>
+<p>使用自增的主键的表时，可以将limit查询转换为某个位置的查询，先使用索引定位与过滤，在分页</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM student WHERE id &gt; 2000000 LIMIT 10;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>优化思路2</p>
+<p>现在索引上完成排序分页的操作，最后根据主键关联回表查询所需的内容。虽然也是加载了前2000010条记录排序了，但是因为仅是对索引的列进行排序，加载到内存中的数据还是比全量加载要好</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM student t, (SELECT id FROM student ORDER BY id LIMIT 2000000, 10) a WHERE t.id = a.id</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h2><p>当查询的字段刚好被联合索引的字段所覆盖的时候，就无需再进行回表操作即可获得结果</p>
+<p>利：</p>
+<ul>
+<li><p>避免回表</p>
+<p>回表行为是基于二级索引所找到的具体的主键回到聚簇索引找数据的行为，本身是一个随机IO的行为，</p>
+<p>在覆盖索引的场合避免该行为，在范围查询的场景就可以将随机IO转变成顺序IO，提高性能</p>
+</li>
+</ul>
+<p>弊：</p>
+<ul>
+<li>额外的索引维护，额外的磁盘空间与数据增删改的时间开销</li>
+</ul>
+<h2 id="索引条件下推-ICP"><a href="#索引条件下推-ICP" class="headerlink" title="索引条件下推(ICP)"></a>索引条件下推(ICP)</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>优化器的行为，可以通过optimizer_switch参数打开或关闭</p>
+<p>EXPLAIN命令中提示索引下推：extra字段中出现Using index condition</p>
+<p>先过滤索引的检索结果，再根据过滤后的结果去回表查询具体数据</p>
+<p>假设表people有联合索引，字段由zipcode，lastname和firstname组成，查询：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM people</span><br><span class="line">WHERE zipcode = &#x27;00001&#x27;</span><br><span class="line">	AND lastname LIKE &#x27;%Test%&#x27;</span><br><span class="line">	AND address LIKE &#x27;%NewYork%&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>该查询中，zipcode属于联合索引，lastname也属于联合索引，但因为范围条件右侧的列索引的缘故导致索引失效，因此会索引仅根据zipcode来进行定位，获取id后再回表去查询记录，最后过滤符合lastname和address条件的记录。</p>
+<p>但是这里因为lastname存在于二级索引之中，为了减少回表次数，优化器会在二级索引中对根据zipcode得到的记录先进行一次过滤，得到记录id后，再回表去取到对应记录，最后仅需根据address条件过滤结果。</p>
+<p>由于再回表前过滤了数据，因此可以减少回表次数，减少随机IO，提高性能</p>
+<h3 id="ICP的使用条件"><a href="#ICP的使用条件" class="headerlink" title="ICP的使用条件"></a>ICP的使用条件</h3><ol>
+<li>表访问类型是range，ref，eq_ref，ref_or_null时</li>
+<li>可用于InnoDB(仅用于二级索引，因为聚簇索引不需要回表)和MyISAM</li>
+<li>使用索引覆盖是不支持ICP，因为没有回表了</li>
+<li>相关子查询条件不能使用ICP</li>
+</ol>
+<h2 id="其他策略"><a href="#其他策略" class="headerlink" title="其他策略"></a>其他策略</h2><h3 id="IN与EXISTS"><a href="#IN与EXISTS" class="headerlink" title="IN与EXISTS"></a>IN与EXISTS</h3><p>核心还是小表驱动大表，假设有A，B两个表</p>
+<ul>
+<li><p>IN</p>
+<blockquote>
+<p>当B表较小时，选用IN</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM A WHERE id IN (SELECT id FROM B);</span><br></pre></td></tr></table></figure>
+
+<p>IN实现相当于内表循环</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> B</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> A</span><br><span class="line">		<span class="keyword">if</span> i.id = j.id</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>EXISTS</p>
+<blockquote>
+<p>当A表较小时，选用EXISTS</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">SELECT * FROM A WHERE EXISTS (SELECT id FROM B WHERE id=A.id)</span><br></pre></td></tr></table></figure>
+
+<p>EXISTS实现相当于外表循环</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> A</span><br><span class="line">	<span class="keyword">for</span> j <span class="keyword">in</span> B</span><br><span class="line">		<span class="keyword">if</span> i.id = j.id</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="COUNT"><a href="#COUNT" class="headerlink" title="COUNT"></a>COUNT</h3><p>在MyISAM中，统计表行数是O(1)</p>
+<p>对于InnoDB</p>
+<ul>
+<li><p>COUNT(*)和COUNT(1)</p>
+<ul>
+<li>会挑选一个较小的二级索引，如果没有二级索引，就会使用主键</li>
+</ul>
+</li>
+<li><p>count(具体field)</p>
+<p>尽量挑选二级索引去count，避免直接使用主键</p>
+</li>
+</ul>
+<h3 id="SELECT"><a href="#SELECT" class="headerlink" title="SELECT(*)"></a>SELECT(*)</h3><p>先去元数据查找具体字段，然后再替换到*中，整个过程相对耗时，因此建议查询的时候使用具体字段</p>
+<h3 id="LIMIT-1"><a href="#LIMIT-1" class="headerlink" title="LIMIT 1"></a>LIMIT 1</h3><p>全表扫描找一条数据的时候可以加快速度，因为找到之后便不会继续扫描了</p>
+<p>如果已经建立了唯一索引，那也就没有必要使用了</p>
+<h1 id="主键设计"><a href="#主键设计" class="headerlink" title="主键设计"></a>主键设计</h1><ul>
+<li><p>自增id的问题</p>
+<ol>
+<li><p>可靠性不高</p>
+<p>自增ID回溯问题</p>
+</li>
+<li><p>安全性不高</p>
+<p>对外暴露接口容易猜到对应信息</p>
+</li>
+<li><p>性能差</p>
+<p>需要服务器端生成</p>
+</li>
+<li><p>交互多</p>
+<p>业务方需要额外执行一条类型last_insert_id()的函数才知道刚刚插入的自增的id的值</p>
+</li>
+<li><p>局部唯一性</p>
+<p>只在当前数据库唯一，对于分布式来说不保证唯一</p>
+</li>
+</ol>
+</li>
+<li><p>不推荐业务字段作为主键</p>
+<p>当遇到业务字段的某个值需要重用的时候会带来一连串的错误，非常不推荐。并且更改主键的成本往往是非常的高的</p>
+</li>
+</ul>
+<h2 id="推荐的设计策略"><a href="#推荐的设计策略" class="headerlink" title="推荐的设计策略"></a>推荐的设计策略</h2><ul>
+<li>非核心业务：使用自增id即可</li>
+<li>核心业务：<ul>
+<li>全局唯一</li>
+<li>单调递增</li>
+<li>推荐在业务端生成，如snowflake</li>
+<li>使用二进制存储，而不是字符串存储</li>
+</ul>
+</li>
+</ul>
+<p>对于UUID，5.7之前生成的UUID是无序的，因为时间位上的是从小到大，但是8.0之后时间位是可以使用从大到小，可以生成有序的UUID。</p>
+<h1 id="其他优化策略"><a href="#其他优化策略" class="headerlink" title="其他优化策略"></a>其他优化策略</h1><h2 id="优化数据库结构"><a href="#优化数据库结构" class="headerlink" title="优化数据库结构"></a>优化数据库结构</h2><ul>
+<li><p>表拆分</p>
+<p>冷热数据分离</p>
+<p>当一个表的字段很多的时候，把它拆成2个或者多个较小的表</p>
+<ul>
+<li>把查询频率和更新很高的表（热数据）放到一个表中</li>
+<li>把查询频率和更新较低的表（冷数据）放到一个表中</li>
+</ul>
+<p>原因是如果列很多的时候，把表加载到缓冲池中的时候会导致</p>
+<ol>
+<li>占用的内存越大</li>
+<li>消耗更多的IO</li>
+</ol>
+</li>
+<li><p>增加中间表</p>
+<p>对于经常要联表查询的两张表，可以建立中间表来提高查询效率</p>
+<p>把经常要联合查询的数据插入表中，将原来的联合查询改为对中间表的查询</p>
+<p>仅适合更新不频繁的场景</p>
+</li>
+<li><p>增加冗余字段</p>
+</li>
+<li><p>优化数据类型</p>
+<ol>
+<li>能用数值型的场景尽量不用文本型</li>
+<li>避免使用TEXT，BLOB类型</li>
+<li>使用TIMESTAMP(4Byte)存储时间，尽量避免使用DATETIME(8 Byte)</li>
+</ol>
+</li>
+<li><p>浮点类型使用DECIMAL(不会丢失精度)来替代FLOAT和DOUBLE(会丢失精度)</p>
+</li>
+<li><p>优化插入速度的记录</p>
+<p>这里指插入大量的数据的场景</p>
+<ul>
+<li>先移除索引，完成后再重建索引</li>
+<li>禁用唯一性检查</li>
+<li>禁用外键检查</li>
+<li>禁用自动提交</li>
+</ul>
+</li>
+<li><p>使用非空约束</p>
+<p>业务允许的时候尽量使用非空约束（如约定业务的空值，数值型空值为0，字符型空值为空字符），因为IS NOT NULL是不能使用上索引的</p>
+</li>
+<li><p>分析表，检查表和优化表</p>
+<p>分析表: </p>
+<p>更新表的一些分析信息，比如SHOW INDEX结果里面的Cardinality（区分度，表面再当前索引里有多少个不同的值）</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ANALYSE TABLE table_name;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>优化表</p>
+<p>主要是优化VARCHAR，BLOB和TEXT类型的字段，整理变长字段的碎片空间，节约磁盘空间</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">OPTIMIZE TABLE table_name</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="大表优化"><a href="#大表优化" class="headerlink" title="大表优化"></a>大表优化</h2><p>单表记录过多时，CRUD性能明显下降</p>
+<ul>
+<li><p>限定查询范围</p>
+</li>
+<li><p>读写分离</p>
+</li>
+<li><p>垂直拆分，分表和分库</p>
+</li>
+<li><p>水平拆分，空值单表的记录数量大小，建议10000k以内，可以按一定的业务逻辑来进行拆分，比如按年限来拆分记录，按地域来拆分记录等。</p>
+<p>分片的方案常见两种：</p>
+<ol>
+<li>中间件代理</li>
+<li>客户端代理，尽量在客户端处做分片的逻辑，减少一次和中间件的网络IO</li>
+</ol>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Database</category>
+      </categories>
+      <tags>
+        <tag>MySQL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Nginx实现反向代理</title>
+    <url>/blog/2021/05/23/Nginx%E5%AE%9E%E7%8E%B0%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/</url>
+    <content><![CDATA[<p>在虚拟机中部署Nginx，并使用Nginx为虚拟机中运行的项目分配反向代理的域名</p>
+<h2 id="背景说明"><a href="#背景说明" class="headerlink" title="背景说明"></a>背景说明</h2><p>在windows宿主机中存在一台运行着CentOS7的虚拟机，ip为192.168.1.200</p>
+<p>在虚拟机中存在一个web服务的项目，运行在虚拟机的端口8080上</p>
+<p>希望在宿主机中能通过自定义的域名app01.com来访问该项目的接口服务</p>
+<span id="more"></span>
+
+<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
+<li>CentOS Linux release 7.7.1908 (Core)</li>
+<li>VMWare 15.5.0 build-14665864</li>
+<li>Windows 10, 64-bit  (Build 19042) 10.0.19042</li>
+</ul>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="修改windows宿主机中的hosts文件"><a href="#修改windows宿主机中的hosts文件" class="headerlink" title="修改windows宿主机中的hosts文件"></a>修改windows宿主机中的hosts文件</h3><p>hosts文件位于：<code>C:\Windows\System32\drivers\etc\hosts</code></p>
+<p>在hosts文件中添加自定义的域名-ip映射关系</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">192.168.1.200 app01.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="部署Nginx"><a href="#部署Nginx" class="headerlink" title="部署Nginx"></a>部署Nginx</h3><h4 id="通过yum安装"><a href="#通过yum安装" class="headerlink" title="通过yum安装"></a>通过yum安装</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y nginx</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[root@playground nginx]# nginx -v</span><br><span class="line">nginx version: nginx/1.16.1</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="配置反向代理"><a href="#配置反向代理" class="headerlink" title="配置反向代理"></a>配置反向代理</h3><h4 id="添加自定义反向代理配置"><a href="#添加自定义反向代理配置" class="headerlink" title="添加自定义反向代理配置"></a>添加自定义反向代理配置</h4><p>通过<code>yum</code>进行安装时，<code>Nginx</code>的配置文件的路径会位于<code>/etc/nginx</code>下</p>
+<p>配置文件是<code>/etc/nginx/nginx.conf</code></p>
+<p>我们在更改该文件之前先对其进行一下备份</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup</span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后添加我们自定义的服务配置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  app01.com;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass   http://127.0.0.1:8080;</span><br><span class="line">        proxy_set_header Host $host;</span><br><span class="line">        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="启动Nginx"><a href="#启动Nginx" class="headerlink" title="启动Nginx"></a>启动Nginx</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx</span><br></pre></td></tr></table></figure>
+
+<p>停止nginx</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx -s stop</span><br></pre></td></tr></table></figure>
+
+<p>修改配置后重启Nginx</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nginx -s reload</span><br></pre></td></tr></table></figure>
+
+<p>让Nginx开机自启动</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">systemctl enable nginx</span><br></pre></td></tr></table></figure>
+
+
+
+<p>自此，运行在虚拟机中端口为8080的项目已经成功被Nginx反向代理</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>在windows宿主机的cmd中尝试请求</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">C:\Users\xxx&gt;curl http://app01.com/api/organization</span><br><span class="line">&#123;&quot;code&quot;:200,&quot;data&quot;:[&#123;&quot;id&quot;:1,&quot;name&quot;:&quot;Oppose Militancy \u0026 Neutralize Invasion&quot;,&quot;alias&quot;:&quot;O.M.N.I&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:6,&quot;name&quot;:&quot;Stellar Loussier&quot;,&quot;organizationId&quot;:1,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;,&#123;&quot;id&quot;:2,&quot;name&quot;:&quot;Zodiac Alliance of Freedom Treaty&quot;,&quot;alias&quot;:&quot;Z.A.F.T&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:1,&quot;name&quot;:&quot;Shinn Asuka&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:4,&quot;name&quot;:&quot;Rau Le Crueset&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:5,&quot;name&quot;:&quot;Rey Za Burrel&quot;,&quot;organizationId&quot;:2,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;,&#123;&quot;id&quot;:3,&quot;name&quot;:&quot;Orb Union&quot;,&quot;alias&quot;:&quot;O.R.B&quot;,&quot;pilot&quot;:[&#123;&quot;id&quot;:2,&quot;name&quot;:&quot;Kira Yamato&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:3,&quot;name&quot;:&quot;Athrun Zala&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;,&#123;&quot;id&quot;:7,&quot;name&quot;:&quot;Mu La Flaga&quot;,&quot;organizationId&quot;:3,&quot;organization&quot;:&#123;&quot;id&quot;:0,&quot;name&quot;:&quot;&quot;,&quot;alias&quot;:&quot;&quot;,&quot;pilot&quot;:null&#125;,&quot;Gundam&quot;:null&#125;]&#125;],&quot;message&quot;:&quot;Get organization successfully.&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>发现能成功通过我们配置的域名app01.com来请求到数据</p>
+]]></content>
+      <categories>
+        <category>Web开发</category>
+      </categories>
+      <tags>
+        <tag>Nginx</tag>
       </tags>
   </entry>
   <entry>
