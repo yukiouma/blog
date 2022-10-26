@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yukiouma.github.io","root":"/blog/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":5,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="介绍Docker Registry是官方提供的工具，可以用于构建私有的镜像仓库。它通过暴露RESTFUL API来对存放在其中的镜像进行查看与管理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker Registry部署">
+<meta property="og:url" content="https://yukiouma.github.io/blog/2022/05/30/Docker-Registry%E9%83%A8%E7%BD%B2/index.html">
+<meta property="og:site_name" content="Meowthra@ᓚᘏᗢ">
+<meta property="og:description" content="介绍Docker Registry是官方提供的工具，可以用于构建私有的镜像仓库。它通过暴露RESTFUL API来对存放在其中的镜像进行查看与管理。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-05-30T21:07:37.000Z">
+<meta property="article:modified_time" content="2022-10-26T14:42:43.735Z">
+<meta property="article:author" content="Yuki">
+<meta property="article:tag" content="Docker">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://yukiouma.github.io/blog/2022/05/30/Docker-Registry%E9%83%A8%E7%BD%B2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Docker Registry部署 | Meowthra@ᓚᘏᗢ</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Meowthra@ᓚᘏᗢ</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://yukiouma.github.io/blog/2022/05/30/Docker-Registry%E9%83%A8%E7%BD%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpg">
+      <meta itemprop="name" content="Yuki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Meowthra@ᓚᘏᗢ">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Docker Registry部署
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-05-30 21:07:37" itemprop="dateCreated datePublished" datetime="2022-05-30T21:07:37+00:00">2022-05-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-10-26 14:42:43" itemprop="dateModified" datetime="2022-10-26T14:42:43+00:00">2022-10-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/DevOps/" itemprop="url" rel="index"><span itemprop="name">DevOps</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p><a target="_blank" rel="noopener" href="https://docs.docker.com/registry/">Docker Registry</a>是官方提供的工具，可以用于构建私有的镜像仓库。它通过暴露RESTFUL API来对存放在其中的镜像进行查看与管理。</p>
+<span id="more"></span>
+
+
+
+<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
+<li><p>OS</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ lsb_release -a</span><br><span class="line">No LSB modules are available.</span><br><span class="line">Distributor ID: Ubuntu</span><br><span class="line">Description:    Ubuntu 20.04.4 LTS</span><br><span class="line">Release:        20.04</span><br><span class="line">Codename:       focal</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>Docker</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">$ docker version</span><br><span class="line">Client: Docker Engine - Community</span><br><span class="line"> Version:           20.10.17</span><br><span class="line"> API version:       1.41</span><br><span class="line"> Go version:        go1.17.11</span><br><span class="line"> Git commit:        100c701</span><br><span class="line"> Built:             Mon Jun  6 23:02:57 2022</span><br><span class="line"> OS/Arch:           linux/amd64</span><br><span class="line"> Context:           default</span><br><span class="line"> Experimental:      <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">Server: Docker Engine - Community</span><br><span class="line"> Engine:</span><br><span class="line">  Version:          20.10.17</span><br><span class="line">  API version:      1.41 (minimum version 1.12)</span><br><span class="line">  Go version:       go1.17.11</span><br><span class="line">  Git commit:       a89b842</span><br><span class="line">  Built:            Mon Jun  6 23:01:03 2022</span><br><span class="line">  OS/Arch:          linux/amd64</span><br><span class="line">  Experimental:     <span class="literal">true</span></span><br><span class="line"> containerd:</span><br><span class="line">  Version:          1.6.6</span><br><span class="line">  GitCommit:        10c12954828e7c7c9b6e0ea9b0c02b01407d3ae1</span><br><span class="line"> runc:</span><br><span class="line">  Version:          1.1.2</span><br><span class="line">  GitCommit:        v1.1.2-0-ga916309</span><br><span class="line"> docker-init:</span><br><span class="line">  Version:          0.19.0</span><br><span class="line">  GitCommit:        de40ad0</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><ol>
+<li><p>查看本机域名</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ hostname</span><br><span class="line">playground</span><br><span class="line"></span><br><span class="line">$ ip addr | grep ens33</span><br><span class="line">2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UP group default qlen 1000</span><br><span class="line">    inet 192.168.31.233/24 brd 192.168.31.255 scope global ens33</span><br></pre></td></tr></table></figure>
+
+<p>可以看到本机的域名为playground， IP地址是192.168.31.233</p>
+</li>
+<li><p>在其它设备上配置好对安装registry的设备的域名解析</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cat</span> /etc/hosts</span><br><span class="line">127.0.0.1 localhost</span><br><span class="line">192.168.31.233 playground</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><h3 id="目录准备"><a href="#目录准备" class="headerlink" title="目录准备"></a>目录准备</h3><p>创建一个用来配置docker registry的目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> &lt;your <span class="built_in">dir</span>&gt;</span><br><span class="line">$ <span class="built_in">mkdir</span> -p certs</span><br><span class="line">$ <span class="built_in">mkdir</span> -p registry</span><br></pre></td></tr></table></figure>
+
+<p><code>certs</code>目录用来存放证书和密钥</p>
+<p><code>registry</code>目录用来映射registry存放进行的目录，持久化镜像数据</p>
+<h3 id="配置证书"><a href="#配置证书" class="headerlink" title="配置证书"></a>配置证书</h3><p>因为docker的通信默认使用https，因此我们需要为registry配置SSL&#x2F;TLS证书。</p>
+<p>由于是在本地使用的仓库，因此选择使用<code>openssl</code>自签发证书</p>
+<p>在当前目录中的certs目录中生成私钥：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ openssl genrsa -out <span class="variable">$PWD</span>/certs/server.key 4096</span><br></pre></td></tr></table></figure>
+
+<p>在当前目录中的certs目录中使用该私钥签发证书：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ openssl req -new -x509 -days 3650 \</span><br><span class="line">    -subj <span class="string">&quot;/C=GB/L=China/O=grpc-server/CN=<span class="subst">$(hostname)</span>&quot;</span> \</span><br><span class="line">    -addext <span class="string">&quot;subjectAltName = DNS:<span class="subst">$(hostname)</span>&quot;</span> \</span><br><span class="line">    -key <span class="variable">$PWD</span>/certs/server.key -out <span class="variable">$PWD</span>/certs/server.crt</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="运行docker-registry"><a href="#运行docker-registry" class="headerlink" title="运行docker registry"></a>运行docker registry</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -d \</span><br><span class="line">  --restart=always \</span><br><span class="line">  --name registry \</span><br><span class="line">  -v <span class="string">&quot;<span class="subst">$(pwd)</span>&quot;</span>/certs:/certs \</span><br><span class="line">  -v <span class="string">&quot;<span class="subst">$(pwd)</span>&quot;</span>/registry:/var/lib/registry \</span><br><span class="line">  -e REGISTRY_HTTP_ADDR=0.0.0.0:5000 \</span><br><span class="line">  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/server.crt \</span><br><span class="line">  -e REGISTRY_HTTP_TLS_KEY=/certs/server.key \</span><br><span class="line">  -p 5000:5000 \</span><br><span class="line">  registry:2</span><br><span class="line">cd023ac82d12ef37845ac741df7bafa57f9c48fed8223e032fd0a03259ef1157</span><br></pre></td></tr></table></figure>
+
+<p>命令解析：</p>
+<ul>
+<li><p>-v：将容器中的路径挂载到宿主机路径中</p>
+<p>这里映射了之前配置的<code>certs</code>和<code>registry</code>目录</p>
+</li>
+<li><p>-e：设定环境变量</p>
+<p><code>REGISTRY_HTTP_ADDR</code>：项目监听的地址</p>
+<p><code>REGISTRY_HTTP_TLS_CERTIFICATE</code>：证书在容器中的地址</p>
+<p><code>REGISTRY_HTTP_TLS_KEY</code>：密钥在容器中的地址</p>
+</li>
+<li><p>-p：运行端口</p>
+</li>
+</ul>
+<h3 id="在本机和其它设备安装上自签发证书"><a href="#在本机和其它设备安装上自签发证书" class="headerlink" title="在本机和其它设备安装上自签发证书"></a>在本机和其它设备安装上自签发证书</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cp</span> <span class="variable">$PWD</span>/certs/server.crt /usr/local/share/ca-certificates/</span><br><span class="line">$ sudo update-ca-certificates</span><br></pre></td></tr></table></figure>
+
+<p>尝试能否访问registry</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl https://playground:5000/v2/_catalog</span><br><span class="line">&#123;<span class="string">&quot;repositories&quot;</span>:[]&#125;</span><br></pre></td></tr></table></figure>
+
+<p>成功返回空仓库列表表示配置成功</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>最后我们可以将上述的操作封装成一个shell脚本，如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># prepare folder</span></span><br><span class="line"><span class="built_in">mkdir</span> -p certs</span><br><span class="line"><span class="built_in">mkdir</span> -p registry</span><br><span class="line"></span><br><span class="line"><span class="comment"># generate private key and certificate</span></span><br><span class="line">openssl genrsa -out <span class="variable">$PWD</span>/certs/server.key 4096</span><br><span class="line">openssl req -new -x509 -days 3650 \</span><br><span class="line">    -subj <span class="string">&quot;/C=GB/L=China/O=grpc-server/CN=<span class="subst">$(hostname)</span>&quot;</span> \</span><br><span class="line">    -addext <span class="string">&quot;subjectAltName = DNS:<span class="subst">$(hostname)</span>&quot;</span> \</span><br><span class="line">    -key <span class="variable">$PWD</span>/certs/server.key -out <span class="variable">$PWD</span>/certs/server.crt</span><br><span class="line"></span><br><span class="line"><span class="comment"># start registry</span></span><br><span class="line">docker run -d \</span><br><span class="line">    --restart=always \</span><br><span class="line">    --name registry \</span><br><span class="line">    -v <span class="string">&quot;<span class="subst">$(pwd)</span>&quot;</span>/certs:/certs \</span><br><span class="line">    -v <span class="string">&quot;<span class="subst">$(pwd)</span>&quot;</span>/registry:/var/lib/registry \</span><br><span class="line">    -e REGISTRY_HTTP_ADDR=0.0.0.0:5000 \</span><br><span class="line">    -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/server.crt \</span><br><span class="line">    -e REGISTRY_HTTP_TLS_KEY=/certs/server.key \</span><br><span class="line">    -p 5000:5000 \</span><br><span class="line">    registry:2</span><br><span class="line"></span><br><span class="line"><span class="comment"># install certificate to device</span></span><br><span class="line"><span class="built_in">cp</span> <span class="variable">$PWD</span>/certs/server.crt /usr/local/share/ca-certificates/</span><br><span class="line">update-ca-certificates</span><br></pre></td></tr></table></figure>
+
+<p>以后安装的时候执行这个脚本即可</p>
+<h2 id="常用操作"><a href="#常用操作" class="headerlink" title="常用操作"></a>常用操作</h2><h3 id="查看私有仓库中的镜像列表"><a href="#查看私有仓库中的镜像列表" class="headerlink" title="查看私有仓库中的镜像列表"></a>查看私有仓库中的镜像列表</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl https://playground:5000/v2/_catalog</span><br><span class="line">&#123;<span class="string">&quot;repositories&quot;</span>:[]&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="本地镜像推送至registry"><a href="#本地镜像推送至registry" class="headerlink" title="本地镜像推送至registry"></a>本地镜像推送至registry</h3><p>先为本地镜像打上标签</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker tag nginx:latest playground:5000/nginx:v1</span><br></pre></td></tr></table></figure>
+
+
+
+<p>推送至私有仓库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker push playground:5000/nginx:v1</span><br></pre></td></tr></table></figure>
+
+
+
+<p>再次查看私有仓库镜像列表</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl https://playground:5000/v2/_catalog</span><br><span class="line">&#123;<span class="string">&quot;repositories&quot;</span>:[<span class="string">&quot;nginx&quot;</span>]&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时列表存在刚上传的镜像了</p>
+<h3 id="从registry拉取镜像"><a href="#从registry拉取镜像" class="headerlink" title="从registry拉取镜像"></a>从registry拉取镜像</h3><p>由于我们刚刚上传到registry中的Nginx是没有任何改动的，为了体现拉取效果我们先要把原本的和tag后的Nginx镜像均移除</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker rmi playground:5000/nginx:v1</span><br><span class="line">$ docker rmi nginx</span><br></pre></td></tr></table></figure>
+
+<p>从registry拉取刚刚上传的镜像</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ docker pull playgrouond:5000/nginx:v1</span><br><span class="line">v1: Pulling from nginx</span><br><span class="line">1efc276f4ff9: Pull complete </span><br><span class="line">baf2da91597d: Pull complete </span><br><span class="line">05396a986fd3: Pull complete </span><br><span class="line">6a17c8e7063d: Pull complete </span><br><span class="line">27e0d286aeab: Pull complete </span><br><span class="line">b1349eea8fc5: Pull complete </span><br></pre></td></tr></table></figure>
+
+<p>可以看到拉取成功</p>
+<h3 id="查看某镜像的tag列表"><a href="#查看某镜像的tag列表" class="headerlink" title="查看某镜像的tag列表"></a>查看某镜像的tag列表</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl https://host:port/v2/&lt;image_name&gt;/tags/list</span><br></pre></td></tr></table></figure>
+
+<p>如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl https://playground:5000/v2/nginx/tags/list</span><br><span class="line">&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;nginx&quot;</span>,<span class="string">&quot;tags&quot;</span>:[<span class="string">&quot;v1&quot;</span>]&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到当前在registry中的nginx仅有我们刚刚上传的版本v1</p>
+<h3 id="查看镜像某个版本的详情"><a href="#查看镜像某个版本的详情" class="headerlink" title="查看镜像某个版本的详情"></a>查看镜像某个版本的详情</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl https://host:port/v2/&lt;image_name&gt;/manifests/&lt;tag_name&gt;</span><br></pre></td></tr></table></figure>
+
+<p>如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line">$ curl https://playgrouond:5000/v2/nginx/manifests/v1</span><br><span class="line">&#123;</span><br><span class="line">   <span class="string">&quot;schemaVersion&quot;</span>: 1,</span><br><span class="line">   <span class="string">&quot;name&quot;</span>: <span class="string">&quot;nginx&quot;</span>,</span><br><span class="line">   <span class="string">&quot;tag&quot;</span>: <span class="string">&quot;v1&quot;</span>,</span><br><span class="line">   <span class="string">&quot;architecture&quot;</span>: <span class="string">&quot;amd64&quot;</span>,</span><br><span class="line">   <span class="string">&quot;fsLayers&quot;</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;blobSum&quot;</span>: <span class="string">&quot;sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;blobSum&quot;</span>: <span class="string">&quot;sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;blobSum&quot;</span>: <span class="string">&quot;sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;blobSum&quot;</span>: <span class="string">&quot;sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;blobSum&quot;</span>: <span class="string">&quot;sha256:b1349eea8fc5b5eebb633c2cd79fc24a915fcb00279de24684bb07e349e8eab3&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;blobSum&quot;</span>: <span class="string">&quot;sha256:27e0d286aeab484653fdf0f736d5f7a2fbcc572e387ec8a1d6ccf0e74b6bfefc&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;blobSum&quot;</span>: <span class="string">&quot;sha256:6a17c8e7063d97ef72e89f7d4673935ff9a2b7c179bea1726852399219118f65&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;blobSum&quot;</span>: <span class="string">&quot;sha256:05396a986fd3f3739cc890e30a2ed78e377c6a2b24d9f0ebe99ff3349aedc603&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;blobSum&quot;</span>: <span class="string">&quot;sha256:baf2da91597d101646b307b706d06b048862192b127f74b1079d374d902e32f4&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;blobSum&quot;</span>: <span class="string">&quot;sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;blobSum&quot;</span>: <span class="string">&quot;sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;blobSum&quot;</span>: <span class="string">&quot;sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;blobSum&quot;</span>: <span class="string">&quot;sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;blobSum&quot;</span>: <span class="string">&quot;sha256:a3ed95caeb02ffe68cdd9fd84406680ae93d633cb16422d00e8a7c22955b46d4&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;blobSum&quot;</span>: <span class="string">&quot;sha256:1efc276f4ff952c055dea726cfc96ec6a4fdb8b62d9eed816bd2b788f2860ad7&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">   ],</span><br><span class="line">   <span class="string">&quot;history&quot;</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;v1Compatibility&quot;</span>: <span class="string">&quot;&#123;\&quot;architecture\&quot;:\&quot;amd64\&quot;,\&quot;config\&quot;:&#123;\&quot;Hostname\&quot;:\&quot;\&quot;,\&quot;Domainname\&quot;:\&quot;\&quot;,\&quot;User\&quot;:\&quot;\&quot;,\&quot;AttachStdin\&quot;:false,\&quot;AttachStdout\&quot;:false,\&quot;AttachStderr\&quot;:false,\&quot;ExposedPorts\&quot;:&#123;\&quot;80/tcp\&quot;:&#123;&#125;&#125;,\&quot;Tty\&quot;:false,\&quot;OpenStdin\&quot;:false,\&quot;StdinOnce\&quot;:false,\&quot;Env\&quot;:[\&quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\&quot;,\&quot;NGINX_VERSION=1.23.1\&quot;,\&quot;NJS_VERSION=0.7.6\&quot;,\&quot;PKG_RELEASE=1~bullseye\&quot;],\&quot;Cmd\&quot;:[\&quot;nginx\&quot;,\&quot;-g\&quot;,\&quot;daemon off;\&quot;],\&quot;Image\&quot;:\&quot;sha256:0417134432daa8913f92f7bf71641a8fa7ab3405c91b717dde22c855e71eef4d\&quot;,\&quot;Volumes\&quot;:null,\&quot;WorkingDir\&quot;:\&quot;\&quot;,\&quot;Entrypoint\&quot;:[\&quot;/docker-entrypoint.sh\&quot;],\&quot;OnBuild\&quot;:null,\&quot;Labels\&quot;:&#123;\&quot;maintainer\&quot;:\&quot;NGINX Docker Maintainers \\u003cdocker-maint@nginx.com\\u003e\&quot;&#125;,\&quot;StopSignal\&quot;:\&quot;SIGQUIT\&quot;&#125;,\&quot;container\&quot;:\&quot;5f19bc2cd794cd60ec845cbed7a60c85003dc56f26ee807f9eea2480bc465b76\&quot;,\&quot;container_config\&quot;:&#123;\&quot;Hostname\&quot;:\&quot;5f19bc2cd794\&quot;,\&quot;Domainname\&quot;:\&quot;\&quot;,\&quot;User\&quot;:\&quot;\&quot;,\&quot;AttachStdin\&quot;:false,\&quot;AttachStdout\&quot;:false,\&quot;AttachStderr\&quot;:false,\&quot;ExposedPorts\&quot;:&#123;\&quot;80/tcp\&quot;:&#123;&#125;&#125;,\&quot;Tty\&quot;:false,\&quot;OpenStdin\&quot;:false,\&quot;StdinOnce\&quot;:false,\&quot;Env\&quot;:[\&quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\&quot;,\&quot;NGINX_VERSION=1.23.1\&quot;,\&quot;NJS_VERSION=0.7.6\&quot;,\&quot;PKG_RELEASE=1~bullseye\&quot;],\&quot;Cmd\&quot;:[\&quot;/bin/sh\&quot;,\&quot;-c\&quot;,\&quot;#(nop) \&quot;,\&quot;CMD [\\\&quot;nginx\\\&quot; \\\&quot;-g\\\&quot; \\\&quot;daemon off;\\\&quot;]\&quot;],\&quot;Image\&quot;:\&quot;sha256:0417134432daa8913f92f7bf71641a8fa7ab3405c91b717dde22c855e71eef4d\&quot;,\&quot;Volumes\&quot;:null,\&quot;WorkingDir\&quot;:\&quot;\&quot;,\&quot;Entrypoint\&quot;:[\&quot;/docker-entrypoint.sh\&quot;],\&quot;OnBuild\&quot;:null,\&quot;Labels\&quot;:&#123;\&quot;maintainer\&quot;:\&quot;NGINX Docker Maintainers \\u003cdocker-maint@nginx.com\\u003e\&quot;&#125;,\&quot;StopSignal\&quot;:\&quot;SIGQUIT\&quot;&#125;,\&quot;created\&quot;:\&quot;2022-08-02T05:17:19.274343015Z\&quot;,\&quot;docker_version\&quot;:\&quot;20.10.12\&quot;,\&quot;id\&quot;:\&quot;7c5cdba2be2c5c3bdc971384d8b59252de4872d6d6bb58fce757f7f91c8e814a\&quot;,\&quot;os\&quot;:\&quot;linux\&quot;,\&quot;parent\&quot;:\&quot;8ca7e4f3d4f29f3b6f6faff7967f155deaec0b0cbad1d803a0821e38a4c9a002\&quot;,\&quot;throwaway\&quot;:true&#125;&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;v1Compatibility&quot;</span>: <span class="string">&quot;&#123;\&quot;id\&quot;:\&quot;8ca7e4f3d4f29f3b6f6faff7967f155deaec0b0cbad1d803a0821e38a4c9a002\&quot;,\&quot;parent\&quot;:\&quot;fe24cb7d5bfcb7abdb8e9d6d3a968c39d40a9a58d7d6fd6fd93ff59ba5297597\&quot;,\&quot;created\&quot;:\&quot;2022-08-02T05:17:19.181030991Z\&quot;,\&quot;container_config\&quot;:&#123;\&quot;Cmd\&quot;:[\&quot;/bin/sh -c #(nop)  STOPSIGNAL SIGQUIT\&quot;]&#125;,\&quot;throwaway\&quot;:true&#125;&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;v1Compatibility&quot;</span>: <span class="string">&quot;&#123;\&quot;id\&quot;:\&quot;fe24cb7d5bfcb7abdb8e9d6d3a968c39d40a9a58d7d6fd6fd93ff59ba5297597\&quot;,\&quot;parent\&quot;:\&quot;fb2f20a92a2fc4111b7fa3bda0f2e227eb223be9e019d4350fb511f28226824b\&quot;,\&quot;created\&quot;:\&quot;2022-08-02T05:17:19.086729123Z\&quot;,\&quot;container_config\&quot;:&#123;\&quot;Cmd\&quot;:[\&quot;/bin/sh -c #(nop)  EXPOSE 80\&quot;]&#125;,\&quot;throwaway\&quot;:true&#125;&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;v1Compatibility&quot;</span>: <span class="string">&quot;&#123;\&quot;id\&quot;:\&quot;fb2f20a92a2fc4111b7fa3bda0f2e227eb223be9e019d4350fb511f28226824b\&quot;,\&quot;parent\&quot;:\&quot;02ed2b7141b9f0835fb4efa4ccfd4b6eec9b41f2d4d85585d063068d8e98aee8\&quot;,\&quot;created\&quot;:\&quot;2022-08-02T05:17:18.99389332Z\&quot;,\&quot;container_config\&quot;:&#123;\&quot;Cmd\&quot;:[\&quot;/bin/sh -c #(nop)  ENTRYPOINT [\\\&quot;/docker-entrypoint.sh\\\&quot;]\&quot;]&#125;,\&quot;throwaway\&quot;:true&#125;&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;v1Compatibility&quot;</span>: <span class="string">&quot;&#123;\&quot;id\&quot;:\&quot;02ed2b7141b9f0835fb4efa4ccfd4b6eec9b41f2d4d85585d063068d8e98aee8\&quot;,\&quot;parent\&quot;:\&quot;ceeb2e38c614ca2e627cab7a7fcc566ee8df510f6c191f2acc05a5d8cfaa603e\&quot;,\&quot;created\&quot;:\&quot;2022-08-02T05:17:18.902903333Z\&quot;,\&quot;container_config\&quot;:&#123;\&quot;Cmd\&quot;:[\&quot;/bin/sh -c #(nop) COPY file:09a214a3e07c919af2fb2d7c749ccbc446b8c10eb217366e5a65640ee9edcc25 in /docker-entrypoint.d \&quot;]&#125;&#125;&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;v1Compatibility&quot;</span>: <span class="string">&quot;&#123;\&quot;id\&quot;:\&quot;ceeb2e38c614ca2e627cab7a7fcc566ee8df510f6c191f2acc05a5d8cfaa603e\&quot;,\&quot;parent\&quot;:\&quot;c48f34848f468e802779942c8e466812b1707e45f2b40b2e4218780f9de5e89e\&quot;,\&quot;created\&quot;:\&quot;2022-08-02T05:17:18.793448025Z\&quot;,\&quot;container_config\&quot;:&#123;\&quot;Cmd\&quot;:[\&quot;/bin/sh -c #(nop) COPY file:0fd5fca330dcd6a7de297435e32af634f29f7132ed0550d342cad9fd20158258 in /docker-entrypoint.d \&quot;]&#125;&#125;&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;v1Compatibility&quot;</span>: <span class="string">&quot;&#123;\&quot;id\&quot;:\&quot;c48f34848f468e802779942c8e466812b1707e45f2b40b2e4218780f9de5e89e\&quot;,\&quot;parent\&quot;:\&quot;2fdecd1475853cb1580d27ea00d3d3bda678d6b42113458647aed44ba65813f2\&quot;,\&quot;created\&quot;:\&quot;2022-08-02T05:17:18.687477159Z\&quot;,\&quot;container_config\&quot;:&#123;\&quot;Cmd\&quot;:[\&quot;/bin/sh -c #(nop) COPY file:0b866ff3fc1ef5b03c4e6c8c513ae014f691fb05d530257dfffd07035c1b75da in /docker-entrypoint.d \&quot;]&#125;&#125;&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;v1Compatibility&quot;</span>: <span class="string">&quot;&#123;\&quot;id\&quot;:\&quot;2fdecd1475853cb1580d27ea00d3d3bda678d6b42113458647aed44ba65813f2\&quot;,\&quot;parent\&quot;:\&quot;c3c349bd8afc6759f2f317980c4556c63c2293f015cdbc2edf999f9a6b6fc700\&quot;,\&quot;created\&quot;:\&quot;2022-08-02T05:17:18.579257834Z\&quot;,\&quot;container_config\&quot;:&#123;\&quot;Cmd\&quot;:[\&quot;/bin/sh -c #(nop) COPY file:65504f71f5855ca017fb64d502ce873a31b2e0decd75297a8fb0a287f97acf92 in / \&quot;]&#125;&#125;&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;v1Compatibility&quot;</span>: <span class="string">&quot;&#123;\&quot;id\&quot;:\&quot;c3c349bd8afc6759f2f317980c4556c63c2293f015cdbc2edf999f9a6b6fc700\&quot;,\&quot;parent\&quot;:\&quot;3fd6cfd0997f003bf2bd7303d989d421f7467e0c1efbde37ae85096a96fe20a1\&quot;,\&quot;created\&quot;:\&quot;2022-08-02T05:17:18.33359297Z\&quot;,\&quot;container_config\&quot;:&#123;\&quot;Cmd\&quot;:[\&quot;/bin/sh -c set -x     \\u0026\\u0026 addgroup --system --gid 101 nginx     \\u0026\\u0026 adduser --system --disabled-login --ingroup nginx --no-create-home --home /nonexistent --gecos \\\&quot;nginx user\\\&quot; --shell /bin/false --uid 101 nginx     \\u0026\\u0026 apt-get update     \\u0026\\u0026 apt-get install --no-install-recommends --no-install-suggests -y gnupg1 ca-certificates     \\u0026\\u0026     NGINX_GPGKEY=573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62;     found=&#x27;&#x27;;     for server in         hkp://keyserver.ubuntu.com:80         pgp.mit.edu     ; do         echo \\\&quot;Fetching GPG key <span class="variable">$NGINX_GPGKEY</span> from <span class="variable">$server</span>\\\&quot;;         apt-key adv --keyserver \\\&quot;<span class="variable">$server</span>\\\&quot; --keyserver-options timeout=10 --recv-keys \\\&quot;<span class="variable">$NGINX_GPGKEY</span>\\\&quot; \\u0026\\u0026 found=yes \\u0026\\u0026 break;     done;     test -z \\\&quot;<span class="variable">$found</span>\\\&quot; \\u0026\\u0026 echo \\u003e\\u00262 \\\&quot;error: failed to fetch GPG key <span class="variable">$NGINX_GPGKEY</span>\\\&quot; \\u0026\\u0026 exit 1;     apt-get remove --purge --auto-remove -y gnupg1 \\u0026\\u0026 rm -rf /var/lib/apt/lists/*     \\u0026\\u0026 dpkgArch=\\\&quot;<span class="subst">$(dpkg --print-architecture)</span>\\\&quot;     \\u0026\\u0026 nginxPackages=\\\&quot;         nginx=<span class="variable">$&#123;NGINX_VERSION&#125;</span>-<span class="variable">$&#123;PKG_RELEASE&#125;</span>         nginx-module-xslt=<span class="variable">$&#123;NGINX_VERSION&#125;</span>-<span class="variable">$&#123;PKG_RELEASE&#125;</span>         nginx-module-geoip=<span class="variable">$&#123;NGINX_VERSION&#125;</span>-<span class="variable">$&#123;PKG_RELEASE&#125;</span>         nginx-module-image-filter=<span class="variable">$&#123;NGINX_VERSION&#125;</span>-<span class="variable">$&#123;PKG_RELEASE&#125;</span>         nginx-module-njs=<span class="variable">$&#123;NGINX_VERSION&#125;</span>+<span class="variable">$&#123;NJS_VERSION&#125;</span>-<span class="variable">$&#123;PKG_RELEASE&#125;</span>     \\\&quot;     \\u0026\\u0026 case \\\&quot;<span class="variable">$dpkgArch</span>\\\&quot; in         amd64|arm64)             echo \\\&quot;deb https://nginx.org/packages/mainline/debian/ bullseye nginx\\\&quot; \\u003e\\u003e /etc/apt/sources.list.d/nginx.list             \\u0026\\u0026 apt-get update             ;;         *)             echo \\\&quot;deb-src https://nginx.org/packages/mainline/debian/ bullseye nginx\\\&quot; \\u003e\\u003e /etc/apt/sources.list.d/nginx.list                         \\u0026\\u0026 tempDir=\\\&quot;<span class="subst">$(mktemp -d)</span>\\\&quot;             \\u0026\\u0026 chmod 777 \\\&quot;<span class="variable">$tempDir</span>\\\&quot;                         \\u0026\\u0026 savedAptMark=\\\&quot;<span class="subst">$(apt-mark showmanual)</span>\\\&quot;                         \\u0026\\u0026 apt-get update             \\u0026\\u0026 apt-get build-dep -y <span class="variable">$nginxPackages</span>             \\u0026\\u0026 (                 cd \\\&quot;<span class="variable">$tempDir</span>\\\&quot;                 \\u0026\\u0026 DEB_BUILD_OPTIONS=\\\&quot;nocheck parallel=<span class="subst">$(nproc)</span>\\\&quot;                     apt-get source --compile <span class="variable">$nginxPackages</span>             )                         \\u0026\\u0026 apt-mark showmanual | xargs apt-mark auto \\u003e /dev/null             \\u0026\\u0026 &#123; [ -z \\\&quot;<span class="variable">$savedAptMark</span>\\\&quot; ] || apt-mark manual <span class="variable">$savedAptMark</span>; &#125;                         \\u0026\\u0026 ls -lAFh \\\&quot;<span class="variable">$tempDir</span>\\\&quot;             \\u0026\\u0026 ( cd \\\&quot;<span class="variable">$tempDir</span>\\\&quot; \\u0026\\u0026 dpkg-scanpackages . \\u003e Packages )             \\u0026\\u0026 grep &#x27;^Package: &#x27; \\\&quot;<span class="variable">$tempDir</span>/Packages\\\&quot;             \\u0026\\u0026 echo \\\&quot;deb [ trusted=yes ] file://<span class="variable">$tempDir</span> ./\\\&quot; \\u003e /etc/apt/sources.list.d/temp.list             \\u0026\\u0026 apt-get -o Acquire::GzipIndexes=false update             ;;     esac         \\u0026\\u0026 apt-get install --no-install-recommends --no-install-suggests -y                         <span class="variable">$nginxPackages</span>                         gettext-base                         curl     \\u0026\\u0026 apt-get remove --purge --auto-remove -y \\u0026\\u0026 rm -rf /var/lib/apt/lists/* /etc/apt/sources.list.d/nginx.list         \\u0026\\u0026 if [ -n \\\&quot;<span class="variable">$tempDir</span>\\\&quot; ]; then         apt-get purge -y --auto-remove         \\u0026\\u0026 rm -rf \\\&quot;<span class="variable">$tempDir</span>\\\&quot; /etc/apt/sources.list.d/temp.list;     fi     \\u0026\\u0026 ln -sf /dev/stdout /var/log/nginx/access.log     \\u0026\\u0026 ln -sf /dev/stderr /var/log/nginx/error.log     \\u0026\\u0026 mkdir /docker-entrypoint.d\&quot;]&#125;&#125;&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;v1Compatibility&quot;</span>: <span class="string">&quot;&#123;\&quot;id\&quot;:\&quot;3fd6cfd0997f003bf2bd7303d989d421f7467e0c1efbde37ae85096a96fe20a1\&quot;,\&quot;parent\&quot;:\&quot;dcc8c26ddc8409ff37d3895ce5adf5492ce187ea09b4751ec501584e31abf03a\&quot;,\&quot;created\&quot;:\&quot;2022-08-02T05:17:00.535362459Z\&quot;,\&quot;container_config\&quot;:&#123;\&quot;Cmd\&quot;:[\&quot;/bin/sh -c #(nop)  ENV PKG_RELEASE=1~bullseye\&quot;]&#125;,\&quot;throwaway\&quot;:true&#125;&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;v1Compatibility&quot;</span>: <span class="string">&quot;&#123;\&quot;id\&quot;:\&quot;dcc8c26ddc8409ff37d3895ce5adf5492ce187ea09b4751ec501584e31abf03a\&quot;,\&quot;parent\&quot;:\&quot;4df58b427a2c2c53919701c0405aaa071185f1ffdbb014daae09f09a6f56360c\&quot;,\&quot;created\&quot;:\&quot;2022-08-02T05:17:00.433340106Z\&quot;,\&quot;container_config\&quot;:&#123;\&quot;Cmd\&quot;:[\&quot;/bin/sh -c #(nop)  ENV NJS_VERSION=0.7.6\&quot;]&#125;,\&quot;throwaway\&quot;:true&#125;&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;v1Compatibility&quot;</span>: <span class="string">&quot;&#123;\&quot;id\&quot;:\&quot;4df58b427a2c2c53919701c0405aaa071185f1ffdbb014daae09f09a6f56360c\&quot;,\&quot;parent\&quot;:\&quot;2ed7164a1633ba5cfc8e0ce25262eeb1d7a99f38d3414aa87630516e0301e9b3\&quot;,\&quot;created\&quot;:\&quot;2022-08-02T05:17:00.343304803Z\&quot;,\&quot;container_config\&quot;:&#123;\&quot;Cmd\&quot;:[\&quot;/bin/sh -c #(nop)  ENV NGINX_VERSION=1.23.1\&quot;]&#125;,\&quot;throwaway\&quot;:true&#125;&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;v1Compatibility&quot;</span>: <span class="string">&quot;&#123;\&quot;id\&quot;:\&quot;2ed7164a1633ba5cfc8e0ce25262eeb1d7a99f38d3414aa87630516e0301e9b3\&quot;,\&quot;parent\&quot;:\&quot;19bb5024a04e90058473c3a95454bf71af1656ba7e37dd864e403d7fb2d249ac\&quot;,\&quot;created\&quot;:\&quot;2022-08-02T05:17:00.247750692Z\&quot;,\&quot;container_config\&quot;:&#123;\&quot;Cmd\&quot;:[\&quot;/bin/sh -c #(nop)  LABEL maintainer=NGINX Docker Maintainers \\u003cdocker-maint@nginx.com\\u003e\&quot;]&#125;,\&quot;throwaway\&quot;:true&#125;&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;v1Compatibility&quot;</span>: <span class="string">&quot;&#123;\&quot;id\&quot;:\&quot;19bb5024a04e90058473c3a95454bf71af1656ba7e37dd864e403d7fb2d249ac\&quot;,\&quot;parent\&quot;:\&quot;7bd28761fdea7d2851f6653f32245cfbf7d7f0f927f3b32668239cb49d865ee1\&quot;,\&quot;created\&quot;:\&quot;2022-08-02T01:20:05.41127808Z\&quot;,\&quot;container_config\&quot;:&#123;\&quot;Cmd\&quot;:[\&quot;/bin/sh -c #(nop)  CMD [\\\&quot;bash\\\&quot;]\&quot;]&#125;,\&quot;throwaway\&quot;:true&#125;&quot;</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;v1Compatibility&quot;</span>: <span class="string">&quot;&#123;\&quot;id\&quot;:\&quot;7bd28761fdea7d2851f6653f32245cfbf7d7f0f927f3b32668239cb49d865ee1\&quot;,\&quot;created\&quot;:\&quot;2022-08-02T01:20:04.9776465Z\&quot;,\&quot;container_config\&quot;:&#123;\&quot;Cmd\&quot;:[\&quot;/bin/sh -c #(nop) ADD file:0eae0dca665c7044bf242cb1fc92cb8ea744f5af2dd376a558c90bc47349aefe in / \&quot;]&#125;&#125;&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">   ],</span><br><span class="line">   <span class="string">&quot;signatures&quot;</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">         <span class="string">&quot;header&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;jwk&quot;</span>: &#123;</span><br><span class="line">               <span class="string">&quot;crv&quot;</span>: <span class="string">&quot;P-256&quot;</span>,</span><br><span class="line">               <span class="string">&quot;kid&quot;</span>: <span class="string">&quot;V6GK:RYTU:FNW5:UNFW:5VU7:2STC:7EVV:OU4V:GCNH:4G25:B4DC:6LPO&quot;</span>,</span><br><span class="line">               <span class="string">&quot;kty&quot;</span>: <span class="string">&quot;EC&quot;</span>,</span><br><span class="line">               <span class="string">&quot;x&quot;</span>: <span class="string">&quot;02YpQs5EF9DzBwcVghEHsuYpr28-i6RpGaG3cnrELpc&quot;</span>,</span><br><span class="line">               <span class="string">&quot;y&quot;</span>: <span class="string">&quot;4gsUgQU-sr7rkFLMLwttkzjm0x5eiHet9qvzXyyD_Dk&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">&quot;alg&quot;</span>: <span class="string">&quot;ES256&quot;</span></span><br><span class="line">         &#125;,</span><br><span class="line">         <span class="string">&quot;signature&quot;</span>: <span class="string">&quot;Q6IIOS3BHeNPo-T8vBWa36RshFtj8ccIbc0zkbePBWWxUezkD1UH0D35mm42-I0XhFNej-_O9UbfTs_lkggtyw&quot;</span>,</span><br><span class="line">         <span class="string">&quot;protected&quot;</span>: <span class="string">&quot;eyJmb3JtYXRMZW5ndGgiOjEyNTM1LCJmb3JtYXRUYWlsIjoiQ24wIiwidGltZSI6IjIwMjItMTAtMjZUMDg6MzQ6NDJaIn0&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">   ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="其它web-api参考文档"><a href="#其它web-api参考文档" class="headerlink" title="其它web api参考文档"></a>其它web api参考文档</h3><p><a target="_blank" rel="noopener" href="https://docs.docker.com/registry/">Dokcer Registry</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/Docker/" rel="tag"># Docker</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2022/05/24/Docker%E9%83%A8%E7%BD%B2RedisCluster/" rel="prev" title="Docker部署RedisCluster">
+      <i class="fa fa-chevron-left"></i> Docker部署RedisCluster
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2022/09/07/Installing-multiple-Go-versions/" rel="next" title="Installing multiple Go versions">
+      Installing multiple Go versions <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83"><span class="nav-number">2.</span> <span class="nav-text">环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E5%A4%87"><span class="nav-number">3.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2"><span class="nav-number">4.</span> <span class="nav-text">部署</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E5%87%86%E5%A4%87"><span class="nav-number">4.1.</span> <span class="nav-text">目录准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%AF%81%E4%B9%A6"><span class="nav-number">4.2.</span> <span class="nav-text">配置证书</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8Cdocker-registry"><span class="nav-number">4.3.</span> <span class="nav-text">运行docker registry</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E6%9C%AC%E6%9C%BA%E5%92%8C%E5%85%B6%E5%AE%83%E8%AE%BE%E5%A4%87%E5%AE%89%E8%A3%85%E4%B8%8A%E8%87%AA%E7%AD%BE%E5%8F%91%E8%AF%81%E4%B9%A6"><span class="nav-number">4.4.</span> <span class="nav-text">在本机和其它设备安装上自签发证书</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.5.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C"><span class="nav-number">5.</span> <span class="nav-text">常用操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93%E4%B8%AD%E7%9A%84%E9%95%9C%E5%83%8F%E5%88%97%E8%A1%A8"><span class="nav-number">5.1.</span> <span class="nav-text">查看私有仓库中的镜像列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E9%95%9C%E5%83%8F%E6%8E%A8%E9%80%81%E8%87%B3registry"><span class="nav-number">5.2.</span> <span class="nav-text">本地镜像推送至registry</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8Eregistry%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F"><span class="nav-number">5.3.</span> <span class="nav-text">从registry拉取镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%9F%90%E9%95%9C%E5%83%8F%E7%9A%84tag%E5%88%97%E8%A1%A8"><span class="nav-number">5.4.</span> <span class="nav-text">查看某镜像的tag列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F%E6%9F%90%E4%B8%AA%E7%89%88%E6%9C%AC%E7%9A%84%E8%AF%A6%E6%83%85"><span class="nav-number">5.5.</span> <span class="nav-text">查看镜像某个版本的详情</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E5%AE%83web-api%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-number">5.6.</span> <span class="nav-text">其它web api参考文档</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yuki"
+      src="/blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Yuki</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yuki</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/schemes/pisces.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/blog/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
