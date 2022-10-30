@@ -1,8 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Docker Compose Getting Start</title>
+    <url>/blog/2022/03/15/Docker-Compose-Getting-Start/</url>
+    <content><![CDATA[<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><p>假设有两个服务：</p>
+<ul>
+<li><p><code>greeting</code></p>
+<blockquote>
+<p>本服务依赖于<code>fibo</code>服务，因此，服务启动前会尝试获取环境变量中的<code>fiboaddr</code>的值来获取<code>fibo</code>服务的地址，并尝试调用<code>fibo</code>服务的接口，成功后才会继续启动</p>
+</blockquote>
+<p>路由：</p>
+<ul>
+<li><code>/</code>：返回一个hello</li>
+<li><code>/user</code>：返回容器中<code>data/user.json</code>路径下的<code>json</code>数据，该数据需要持久化到宿主机中</li>
+<li><code>/fibo?num=&#123;number&#125;</code>：调用<code>fibo</code>服务中的<code>fibo</code>接口并返回结果</li>
+</ul>
+<span id="more"></span>
+
+<p>镜像：</p>
+<p><code>playground:5000/compose-greeter:v1</code></p>
+</li>
+<li><p><code>fibo</code></p>
+<blockquote>
+<p>仅面对greeting服务开放调用，不对外开放调用</p>
+</blockquote>
+<p>路由：</p>
+<ul>
+<li><code>/fibo?num=&#123;number&#125;</code>：计算斐波那契数列中某一下表的值</li>
+</ul>
+<p>镜像：</p>
+<p><code>playground:5000/compose-fibo:v1</code></p>
+</li>
+</ul>
+<h1 id="compose-spec"><a href="#compose-spec" class="headerlink" title="compose spec"></a>compose spec</h1><p>启动准备工作中的两个相关联的服务，我们使用以下的<code>docker-compose.yaml</code></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3.0&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">svc-fibo:</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">fibo</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">playgrouond:5000/compose-fibo:v1</span></span><br><span class="line">    <span class="attr">expose:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">8081</span></span><br><span class="line">    <span class="attr">command:</span> [ <span class="string">&quot;./server&quot;</span>, <span class="string">&quot;-port&quot;</span>, <span class="string">&quot;8081&quot;</span> ]</span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">compose-svc</span></span><br><span class="line">  <span class="attr">svc-greeting:</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">greeter</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">playgrouond:5000/compose-greeter:v1</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">9000</span><span class="string">:8080</span></span><br><span class="line">    <span class="attr">command:</span> [ <span class="string">&quot;./server&quot;</span>, <span class="string">&quot;-port&quot;</span>, <span class="string">&quot;8080&quot;</span> ]</span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">user_data:/home/data</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">fiboaddr=svc-fibo:8081</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">compose-svc</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">svc-fibo</span></span><br><span class="line"><span class="attr">volumes:</span></span><br><span class="line">  <span class="attr">user_data:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">compose-user-data</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">local</span></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">compose-svc:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">compose-svc-yuki</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">bridge</span></span><br></pre></td></tr></table></figure>
+
+<p>下面我们来对文件中的常用配置进行说明</p>
+<h2 id="骨架"><a href="#骨架" class="headerlink" title="骨架"></a>骨架</h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3.9&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">svc-fibo:</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">svc-greeting:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">volumes:</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>文件中的骨架主要是这些内容：</p>
+<ul>
+<li><p>version：docker compose文件格式的版本，与docker版本的关系参考<a href="https://docs.docker.com/compose/compose-file/compose-file-v3/#compose-and-docker-compatibility-matrix">Compose和Dokcer兼容性表格</a></p>
+</li>
+<li><p>services</p>
+<p>列举compose里面要启动的服务的配置，如上述要启动<code>svc-fibo</code>和<code>svc-greeting</code>两个服务，因此在services里面要包含<code>svc-fibo</code>和<code>svc-greeting</code>两个对象</p>
+</li>
+<li><p>volumes</p>
+<p>持久化配置</p>
+</li>
+<li><p>networks</p>
+<p>定义该组容器的网络配置。</p>
+</li>
+</ul>
+<p>接下来针对version外的每部分内容进行说明：</p>
+<h2 id="services"><a href="#services" class="headerlink" title="services"></a>services</h2><p>在services对象中每个服务一个独立的对象，对象中包含以下信息：</p>
+<h3 id="container-name"><a href="#container-name" class="headerlink" title="container_name"></a>container_name</h3><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">container_name:</span> <span class="string">fibo</span></span><br></pre></td></tr></table></figure>
+
+<p>容器启动后的名称。如上面的svc-fibo服务中的该字段的值是fibo，那么容器的名称则为fibo</p>
+<h3 id="image"><a href="#image" class="headerlink" title="image:"></a>image:</h3><p>镜像名称</p>
+<h3 id="expose"><a href="#expose" class="headerlink" title="expose"></a>expose</h3><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">expose:</span></span><br><span class="line">	<span class="bullet">-</span> <span class="number">8081</span></span><br></pre></td></tr></table></figure>
+
+<p>在当前网络中，开放给其它容器可见的端口，但是不会暴露给宿主机。</p>
+<p>他其实只是一个声明，把它去掉了，同一网络下的容器其实依然能正常请求到某个端口的服务</p>
+<h3 id="ports"><a href="#ports" class="headerlink" title="ports"></a>ports</h3><p>绑定容器与宿主机的端口</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">ports:</span></span><br><span class="line">	<span class="bullet">-</span> <span class="number">9000</span><span class="string">:8080</span></span><br></pre></td></tr></table></figure>
+
+<p><code>宿主机端口:容器端口</code>，上面表示宿主机端口9000映射到容器端口8080</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker logs greeter</span><br><span class="line">2022/10/28 07:16:07 listening port 8080....</span><br><span class="line">2022/10/28 07:16:15 - method: GET; path: /fibo; param: map[]</span><br><span class="line">2022/10/28 07:16:21 - method: GET; path: /fibo; param: map[num:[10]]</span><br><span class="line">$ curl http://localhost:9000/fibo?num=10</span><br><span class="line">&#123;<span class="string">&quot;data&quot;</span>:55&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以到容器内部的日志提示监听的端口是8080，但我们是通过宿主机的9000端口访问到具体服务</p>
+<h3 id="environment"><a href="#environment" class="headerlink" title="environment"></a>environment</h3><p>设置容器运行时的环境变量</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">environment:</span><br><span class="line">	- fiboaddr=svc-fibo:8081</span><br></pre></td></tr></table></figure>
+
+<p>如上面的内容指在容器中注入一个值为<code>svc-fibo:8081</code>的环境变量<code>fiboaddr</code>，我们可以进入对应容器中验证该环境变量的存在</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker <span class="built_in">exec</span> -it greeter /bin/sh</span><br><span class="line">/home <span class="comment"># echo $fiboaddr</span></span><br><span class="line">svc-fibo:8081</span><br><span class="line">/home <span class="comment"># exit</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到打印的环境变量<code>fiboaddr</code>的值和在配置文件中保持一致</p>
+<h3 id="restart"><a href="#restart" class="headerlink" title="restart"></a>restart</h3><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">restart:</span> <span class="string">always</span></span><br></pre></td></tr></table></figure>
+
+<p>重启策略，默认是no，表示不主动重启容器，例子中表示容器被退出与销毁会一直尝试重启，其它信息查看<a href="https://docs.docker.com/compose/compose-file/#restart">重启策略</a></p>
+<h3 id="command"><a href="#command" class="headerlink" title="command"></a>command</h3><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">command:</span> [ <span class="string">&quot;./server&quot;</span>, <span class="string">&quot;-port&quot;</span>, <span class="string">&quot;8080&quot;</span> ]</span><br></pre></td></tr></table></figure>
+
+<p>容器启动时执行的指令，会覆盖Dockerfile中的CMD指令。上面表示容器启动的时候会在当前路径下执行：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ./server -port 8080</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="depends-on"><a href="#depends-on" class="headerlink" title="depends_on"></a>depends_on</h3><p>表示容器启动要依赖于其它的容器的存在，即在depends on列表里面的容器启动成功后，本容器才会被启动</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">depends_on:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">svc-fibo</span></span><br></pre></td></tr></table></figure>
+<p>表示容器<code>svc-fibo</code>启动后本容器才会去启动</p>
+<h3 id="volumes"><a href="#volumes" class="headerlink" title="volumes"></a>volumes</h3><p>容器中的目录映射到宿主机的目录中，可以将容器内的数据持久化到宿主机中或者其它存储空间。大致分为两种写法：</p>
+<ul>
+<li><p>直接指定容器中的路径去映射宿主机的路径</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">volumes:</span></span><br><span class="line">	<span class="bullet">-</span> <span class="string">/var/lib/data:/home/data</span></span><br></pre></td></tr></table></figure>
+
+<p>代表容器中的路径<code>/home/data</code>映射到宿主机中的路径<code>/var/lib/data</code></p>
+</li>
+<li><p>指定</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">svc-fibo:</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">user_data:/home/data</span></span><br><span class="line"><span class="attr">volumes:</span></span><br><span class="line">  <span class="attr">user_data:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">compose-user-data</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">local</span></span><br></pre></td></tr></table></figure>
+
+<p>代表容器中的路径<code>/home/data</code>映射到顶部volume层定义的<code>user_data</code>对象</p>
+<p>查看docker中是否存在该volume</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$  docker volume <span class="built_in">ls</span> -f name=compose-user-data</span><br><span class="line">DRIVER    VOLUME NAME</span><br><span class="line"><span class="built_in">local</span>     compose-user-data</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="networks"><a href="#networks" class="headerlink" title="networks"></a>networks</h3><p>指定容器使用顶部networks层定义的网络</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">svc-fibo:</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">compose-svc</span></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">compose-svc:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">compose-svc-yuki</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">bridge</span></span><br></pre></td></tr></table></figure>
+
+<p>指定容器使用顶部networks层定义的网络<code>compose-svc</code></p>
+<h2 id="volume"><a href="#volume" class="headerlink" title="volume"></a>volume</h2><p>定义容器存储对象，用于映射容器内部的路径，持久化容器内部的数据</p>
+<p>通过本方式创建的存储对象在宿主机的位置是<code>/var/lib/docker/volumes/&#123;volume_name&#125;/_data/</code></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">volumes:</span></span><br><span class="line">  <span class="attr">user_data:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">compose-user-data</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">local</span></span><br></pre></td></tr></table></figure>
+
+<p>上面的内容指定了存储对象的名字与驱动，可以通过以下方式查看</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker volume <span class="built_in">ls</span></span><br><span class="line">DRIVER    VOLUME NAME</span><br><span class="line"><span class="built_in">local</span>     compose-user-data</span><br></pre></td></tr></table></figure>
+
+<p>对应到宿主机的位置则是：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">pwd</span></span><br><span class="line">/var/lib/docker/volumes/compose-user-data/_data</span><br></pre></td></tr></table></figure>
+
+<p>如果我们没有指定名字，那么会为我们自动创建的名字是<code>当前文件夹名称+对象名称</code>，假设我们当前docker-compose.yaml处于的目录名称是compose，那么自动创建的名字则是<code>compose_user_data</code></p>
+<p>容器在绑定volume后可以直接读取于写入<code>/var/lib/docker/volumes/&#123;volume_name&#125;/_data/</code>中的数据</p>
+<p>在services层的容器定义中使用时需要指定的是对象的名字而不是volume本身的名字</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">svc-fibo:</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">user_data:/home/data</span> <span class="comment"># 是user_data而不是compose-user-data</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="networks-1"><a href="#networks-1" class="headerlink" title="networks"></a>networks</h2><p>定义docker网络，在同一个网络下的容器之间可以相互通信</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">compose-svc:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">compose-svc-yuki</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">bridge</span></span><br></pre></td></tr></table></figure>
+
+<p>如果我们没有指定名字，那么会为我们自动创建的名字是<code>当前文件夹名称+default</code>，假设我们当前docker-compose.yaml处于的目录名称是compose，那么自动创建的名字则是<code>compose_default</code></p>
+<p>在services层的容器定义中使用时需要指定的是对象的名字而不是network本身的名字</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">compose-svc</span> <span class="comment"># 是compose-svc而不是compose-svc-yuki</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="启动与关闭"><a href="#启动与关闭" class="headerlink" title="启动与关闭"></a>启动与关闭</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker compose up -d</span><br><span class="line">[+] Running 4/4</span><br><span class="line"> ⠿ Network compose-svc-yuki    Created                                                    0.1s</span><br><span class="line"> ⠿ Volume <span class="string">&quot;compose-user-data&quot;</span>  Created                                                    0.0s</span><br><span class="line"> ⠿ Container fibo              Started                                                    0.5s</span><br><span class="line"> ⠿ Container greeter           Started                                                    0.8s</span><br></pre></td></tr></table></figure>
+
+<p>查看当前compose中的容器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$  docker compose ps</span><br><span class="line">NAME                COMMAND                 SERVICE             STATUS              PORTS</span><br><span class="line">fibo                <span class="string">&quot;./server -port 8081&quot;</span>   svc-fibo            running             8081/tcp</span><br><span class="line">greeter             <span class="string">&quot;./server -port 8080&quot;</span>   svc-greeting        running             0.0.0.0:9000-&gt;8080/tcp, :::9000-&gt;8080/tcp</span><br></pre></td></tr></table></figure>
+
+<p>尝试向greeter容器发送请求</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl http://localhost:9000/fibo?num=10</span><br><span class="line">&#123;<span class="string">&quot;data&quot;</span>:55&#125;</span><br></pre></td></tr></table></figure>
+
+<p>查看两个容器中的日志</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker logs greeter</span><br><span class="line">2022/10/28 08:28:18 listening port 8080....</span><br><span class="line">2022/10/28 08:28:48 - method: GET; path: /fibo; param: map[num:[10]]</span><br><span class="line"></span><br><span class="line">$ docker logs fibo</span><br><span class="line">2022/10/28 08:28:17 listening port 8081....</span><br><span class="line">2022/10/28 08:28:18 - method: GET; path: /fibo; param: map[num:[1]]</span><br><span class="line">2022/10/28 08:28:48 - method: GET; path: /fibo; param: map[num:[10]]</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，运行正常，部署完成</p>
+<p>我们可以通过以下命令将compose中定义的容器全部关闭</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker compose down</span><br><span class="line">[+] Running 3/3</span><br><span class="line"> ⠿ Container greeter         Removed                                                      0.3s</span><br><span class="line"> ⠿ Container fibo            Removed                                                      0.2s</span><br><span class="line"> ⠿ Network compose-svc-yuki  Removed                                                      0.1s</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>DevOps</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker Registry部署</title>
-    <url>/blog/2022/05/30/Docker-Registry%E9%83%A8%E7%BD%B2/</url>
+    <url>/blog/2022/03/13/Docker-Registry%E9%83%A8%E7%BD%B2/</url>
     <content><![CDATA[<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p><a href="https://docs.docker.com/registry/">Docker Registry</a>是官方提供的工具，可以用于构建私有的镜像仓库。它通过暴露RESTFUL API来对存放在其中的镜像进行查看与管理。</p>
 <span id="more"></span>
 
@@ -2511,6 +2669,8 @@
     <title>MySQL调优笔记</title>
     <url>/blog/2021/01/18/MySQL%E8%B0%83%E4%BC%98%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<h1 id="数据库优化流程"><a href="#数据库优化流程" class="headerlink" title="数据库优化流程"></a>数据库优化流程</h1><p>从四个角度去优化：1. 硬件，2. 系统配置，3. 数据库表结构，4. SQL与索引</p>
+<span id="more"></span>
+
 <p>优化流程：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">graph TD;</span><br><span class="line">    观察服务器状态--&gt;A&#123;是否存在周期性波动&#125;;</span><br><span class="line">    A--是--&gt;增加缓存或更改缓存失效策略;</span><br><span class="line">    A--否--&gt;D[仍有不规则延迟或卡顿];</span><br><span class="line">    增加缓存或更改缓存失效策略--是--&gt;B&#123;是否解决&#125;;</span><br><span class="line">    B--是--&gt;Done</span><br><span class="line">    B--否--&gt;D</span><br><span class="line">    D--&gt;E[开启慢查询,记录慢查询语句]</span><br><span class="line">    E--&gt;F[分析执行计划, EXPLAIN和SHOW PROFILING]</span><br><span class="line">    F--&gt;H[SQL等待时间长]</span><br><span class="line">    F--&gt;I[SQL执行时间长]</span><br><span class="line">    H--&gt;J[调优服务器参数]</span><br><span class="line">    J--&gt;K&#123;是否解决&#125;;</span><br><span class="line">    K--是--&gt;Done</span><br><span class="line">    I--&gt;L[1.索引设计优化, 2.JOIN表过多, 3.数据表设计优化]</span><br><span class="line">    L--&gt;M&#123;是否解决&#125;</span><br><span class="line">    M--是--&gt;Done</span><br><span class="line">    K--否--&gt;N&#123;SQL查询是否达到瓶颈&#125;</span><br><span class="line">    M--否--&gt;N</span><br><span class="line">    N--否--&gt;重新检查</span><br><span class="line">    N--是--&gt;O[1.读写分离, 2.分表分库]</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
 
@@ -3507,6 +3667,37 @@
       </tags>
   </entry>
   <entry>
+    <title>windows powershell此系统上禁止运行脚本问题解决办法</title>
+    <url>/blog/2019/10/30/powershell%E6%AD%A4%E7%B3%BB%E7%BB%9F%E4%B8%8A%E7%A6%81%E6%AD%A2%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/</url>
+    <content><![CDATA[<p>问题描述：</p>
+<ul>
+<li>在powershell（或者调用powershell的IDE中）使用DOS命令时提示：</li>
+</ul>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">无法加载文件ps1，因为在此系统中禁止执行脚本。有关详细信息，请参阅 <span class="string">&quot;get-help about_signing</span></span><br></pre></td></tr></table></figure>
+
+
+<span id="more"></span>
+<p>解决步骤：</p>
+<ol>
+<li><p>使用管理员权限打开powershell</p>
+</li>
+<li><p>查看当前脚本执行策略</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">get-executionpolicy</span></span><br></pre></td></tr></table></figure>
+
+<p>若返回<code>Restricted</code>，说明不允许执行任何脚本 </p>
+</li>
+<li><p>继续执行以下命令，并且在系统提示后输入Y即可</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">Set-ExecutionPolicy</span> RemoteSigned</span><br></pre></td></tr></table></figure></li>
+</ol>
+]]></content>
+      <categories>
+        <category>其它</category>
+      </categories>
+      <tags>
+        <tag>powershell</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>从零开始搭建一个自己的博客</title>
     <url>/blog/2020/07/16/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/</url>
     <content><![CDATA[<h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>本文记录一下用hexo这个框架从零搭建自己的博客的全过程。因为只是想体验一下hexo这个框架，平时做做学习笔记啥的，偶尔喂自己一点鸡汤╮(╯▽╰)╭，所以像评论这些扩展组件就没有搞，等哪天我想搞了再写上吧→_→…..</p>
@@ -3803,37 +3994,6 @@
       </categories>
       <tags>
         <tag>hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>windows powershell此系统上禁止运行脚本问题解决办法</title>
-    <url>/blog/2019/10/30/powershell%E6%AD%A4%E7%B3%BB%E7%BB%9F%E4%B8%8A%E7%A6%81%E6%AD%A2%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/</url>
-    <content><![CDATA[<p>问题描述：</p>
-<ul>
-<li>在powershell（或者调用powershell的IDE中）使用DOS命令时提示：</li>
-</ul>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">无法加载文件ps1，因为在此系统中禁止执行脚本。有关详细信息，请参阅 <span class="string">&quot;get-help about_signing</span></span><br></pre></td></tr></table></figure>
-
-
-<span id="more"></span>
-<p>解决步骤：</p>
-<ol>
-<li><p>使用管理员权限打开powershell</p>
-</li>
-<li><p>查看当前脚本执行策略</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">get-executionpolicy</span></span><br></pre></td></tr></table></figure>
-
-<p>若返回<code>Restricted</code>，说明不允许执行任何脚本 </p>
-</li>
-<li><p>继续执行以下命令，并且在系统提示后输入Y即可</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">Set-ExecutionPolicy</span> RemoteSigned</span><br></pre></td></tr></table></figure></li>
-</ol>
-]]></content>
-      <categories>
-        <category>其它</category>
-      </categories>
-      <tags>
-        <tag>powershell</tag>
       </tags>
   </entry>
   <entry>
