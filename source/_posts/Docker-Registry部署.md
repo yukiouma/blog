@@ -184,6 +184,20 @@ $ curl https://playground:5000/v2/_catalog
 
 成功返回空仓库列表表示配置成功
 
+### 在docker中配置自签发的证书
+在`/etc/docker/certs.d`中创建`域名:端口号`的文件夹，并将证书改名为`ca.crt`放置到该文件夹中
+
+> 假设registry部署服务器所在的域名是playground，部署端口是5000
+
+```bash
+$ mkdir -p /etc/docker/certs.d/playground:5000
+$ cp $PWD/certs/server.crt /etc/docker/certs.d/playground\:5000/ca.crt
+```
+
+尝试拉取registry中的镜像
+```bash
+$ docker pull playground:5000/nginx:v1
+```
 
 ### 总结
 
