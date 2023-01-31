@@ -505,93 +505,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Go中数组和切片中的一些小技巧</title>
-    <url>/blog/2021/10/28/Go%E4%B8%AD%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%87%E7%89%87%E7%9A%84%E4%B8%80%E4%BA%9B%E6%8A%80%E5%B7%A7/</url>
-    <content><![CDATA[<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://books.studygolang.com/advanced-go-programming-book/ch1-basic/ch1-03-array-string-and-slice.html">Go语言高级编程(Advanced Go Programming)</a></p>
-<h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><ol>
-<li><p>Go中的数组是一个完整的值而不是指向数组头部元素的指针，所以一个数组遍历被复制或者被传递的时候是会复制整个数组，数组较大的时候复制和赋值的开销也会较大。为了避免复制数组带来的开销，可以传递一个指向数组的指针，但是数组指针并不是数组。 </p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := [...]<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</span><br><span class="line">	b := &amp;a</span><br><span class="line">	fmt.Println(b[<span class="number">0</span>])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ol>
-<span id="more"></span>
-<ol start="2">
-<li><p>一个长度为0的数组，实际上对内存的占用也会是0，因此我们可以通过下面的方式，来实现没有付出额外的内存代价，进行了快速的迭代操作</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> times [<span class="number">5</span>][<span class="number">0</span>]<span class="type">int</span></span><br><span class="line">	<span class="keyword">for</span> <span class="keyword">range</span> times &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;hi~&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上面的一段代码声明了一个长度为5，每个元素都是一个空数组的数组，该数组内的每个元素对于内存的占用都是0</p>
-</li>
-<li><p>我们可以通过声明接口数组，来将不同类型的数组都放入数组内</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> element = [...]<span class="keyword">interface</span>&#123;&#125;&#123;<span class="number">123</span>, <span class="string">&quot;hello world&quot;</span>, time.Now()&#125;</span><br><span class="line">	<span class="keyword">for</span> _, v := <span class="keyword">range</span> element &#123;</span><br><span class="line">		fmt.Println(v)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
-</ol>
-<h2 id="切片"><a href="#切片" class="headerlink" title="切片"></a>切片</h2><ol>
-<li><p>在尾部追加元素</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	times := [<span class="number">5</span>][<span class="number">0</span>]<span class="type">int</span>&#123;&#125;</span><br><span class="line">	a := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">	<span class="keyword">for</span> <span class="keyword">range</span> times &#123;</span><br><span class="line">		a = <span class="built_in">append</span>(a, <span class="type">int</span>(time.Now().Unix()))</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%#v\n&quot;</span>, a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>在头部追加元素</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	times := [<span class="number">5</span>][<span class="number">0</span>]<span class="type">int</span>&#123;&#125;</span><br><span class="line">	a := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">	<span class="keyword">for</span> <span class="keyword">range</span> times &#123;</span><br><span class="line">		a = <span class="built_in">append</span>([]<span class="type">int</span>&#123;<span class="type">int</span>(time.Now().Unix())&#125;, a...)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%#v\n&quot;</span>, a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在头部追加元素会导致内存的重新分配，导致已有的元素全部复制一次，因此头部追加的操作性能一般比尾部追加的操作要差</p>
-</li>
-<li><p>使用copy和append配合可以避免创建中间的临时切片，完成添加元素的操作</p>
-<p>比如我们需要在切片中间的第i个未知上追加新的内容</p>
-<p>使用append链式操作，这种情况下会有创建临时切片</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">	a = <span class="built_in">append</span>(a, []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;...)</span><br><span class="line">	<span class="comment">// 在第3位中插入一个99</span></span><br><span class="line">	a = <span class="built_in">append</span>(a[:<span class="number">3</span>], <span class="built_in">append</span>([]<span class="type">int</span>&#123;<span class="number">99</span>&#125;, a[<span class="number">3</span>:]...)...)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%#v\n&quot;</span>, a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>使用append配合从copy操作，我们就可以避免临时切片的创建</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">0</span>, <span class="number">6</span>)</span><br><span class="line">	a = <span class="built_in">append</span>(a, []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;...)</span><br><span class="line">	<span class="comment">// 在第3位中插入一个99</span></span><br><span class="line">	a = <span class="built_in">append</span>(a, <span class="number">0</span>)</span><br><span class="line">	<span class="built_in">copy</span>(a[<span class="number">3</span>+<span class="number">1</span>:], a[<span class="number">3</span>:])</span><br><span class="line">	a[<span class="number">3</span>] = <span class="number">99</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%#v\n&quot;</span>, a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>先在a后面追加一个元素0，然后将第3为后面的元素全部往后移动一位，此时切片值为[1， 2， 3， 4， 4， 5]，最后再替换掉第三位的4变为99</p>
-</li>
-<li><p>切片元素的删除</p>
-<p>从尾部位置删除，直接修改指针中的len即可</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">a = []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">a = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]   <span class="comment">// 删除尾部1个元素</span></span><br><span class="line">a = a[:<span class="built_in">len</span>(a)-N]   <span class="comment">// 删除尾部N个元素</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>从头部位置删除，则有两种操作方法：</p>
-<p>移动数据指针</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"> = []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">a = a[<span class="number">1</span>:] <span class="comment">// 删除开头1个元素</span></span><br><span class="line">a = a[N:] <span class="comment">// 删除开头N个元素</span></span><br></pre></td></tr></table></figure>
-
-<p>不移动指针，使用append或者copy原地完成</p>
-<p>使用append</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">a = []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">a = <span class="built_in">append</span>(a[:<span class="number">0</span>], a[<span class="number">1</span>:]...) <span class="comment">// 删除开头1个元素</span></span><br><span class="line">a = <span class="built_in">append</span>(a[:<span class="number">0</span>], a[N:]...) <span class="comment">// 删除开头N个元素</span></span><br></pre></td></tr></table></figure>
-
-<p>使用copy</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">a = []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">a = a[:<span class="built_in">copy</span>(a, a[<span class="number">1</span>:])] <span class="comment">// 删除开头1个元素</span></span><br><span class="line">a = a[:<span class="built_in">copy</span>(a, a[N:])] <span class="comment">// 删除开头N个元素</span></span><br></pre></td></tr></table></figure>
-
-<p> 对于删除中间的元素，需要对剩余的元素进行一次整体挪动，同样可以用<code>append</code>或<code>copy</code>原地完成 </p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">a = []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, ...&#125;</span><br><span class="line"></span><br><span class="line">a = <span class="built_in">append</span>(a[:i], a[i+<span class="number">1</span>:]...) <span class="comment">// 删除中间1个元素</span></span><br><span class="line">a = <span class="built_in">append</span>(a[:i], a[i+N:]...) <span class="comment">// 删除中间N个元素</span></span><br><span class="line"></span><br><span class="line">a = a[:i+<span class="built_in">copy</span>(a[i:], a[i+<span class="number">1</span>:])]  <span class="comment">// 删除中间1个元素</span></span><br><span class="line">a = a[:i+<span class="built_in">copy</span>(a[i:], a[i+N:])]  <span class="comment">// 删除中间N个元素</span></span><br></pre></td></tr></table></figure>
-
-
-
-
-</li>
-<li><p>避免切片内存泄漏</p>
-<p>切片操作不会复制底层的数据，底层的数据会被保存再内存中，直到它不再被引用。但有时候很可能因为一个小的内存引用导致整个底层的数组处于被使用的状态，这回导致GC延迟对该底层数组的回收</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">extract</span><span class="params">()</span></span> []<span class="type">int</span> &#123;</span><br><span class="line">	a := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">0</span>, <span class="number">100</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">100</span>; i++ &#123;</span><br><span class="line">		a = <span class="built_in">append</span>(a, i)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> a[:<span class="number">10</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们定义了个方法，方法内先生成了一个元素从0到99的切片，然后我们截取切片前10个元素返回。切片的底层是0-99共99个元素，由于返回的是该切片的指针，返回时底层数组仍然处于被该指针引用的状态，因此离开该函数时这100个底层元素都无法被GC马上回收，造成了内存泄漏</p>
-<p>为了修复这个问题，我们应该采取以下方法</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">extract</span><span class="params">()</span></span> []<span class="type">int</span> &#123;</span><br><span class="line">	a := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">0</span>, <span class="number">100</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">100</span>; i++ &#123;</span><br><span class="line">		a = <span class="built_in">append</span>(a, i)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">append</span>([]<span class="type">int</span>&#123;&#125;, a[:<span class="number">10</span>]...)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们将底层的10个元素复制过来，形成一个新的切片，然后返回新的切片。新的切片底层只有10个元素，然后函数结束后，原先的100个元素的切片因为丢失了引用，因此回马上被GC回收</p>
-<p>在删除切片内元素的时候同意会遇到类似的问题</p>
-<p>比如我们移除尾部的元素的时候</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> a []*<span class="type">int</span>&#123; ... &#125;</span><br><span class="line">a = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]    </span><br></pre></td></tr></table></figure>
-
-<p>被删除的最后一个元素依然被引用, 可能导致GC操作被阻碍，我们可以在完成操前，将需要移除的尾部元素设置为nil，然后再执行操作，这样可以保证GC发现需要回收的对象</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> a []*<span class="type">int</span>&#123; ... &#125;</span><br><span class="line">a[<span class="built_in">len</span>(a)<span class="number">-1</span>] = <span class="literal">nil</span> <span class="comment">// GC回收最后一个元素内存</span></span><br><span class="line">a = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]  <span class="comment">// 从切片删除最后一个元素</span></span><br></pre></td></tr></table></figure></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Web开发</category>
-      </categories>
-      <tags>
-        <tag>Golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Go并发编程笔记</title>
     <url>/blog/2022/02/11/Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<h1 id="Goroutine"><a href="#Goroutine" class="headerlink" title="Goroutine"></a>Goroutine</h1><h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><ul>
@@ -889,6 +802,93 @@
 
 
 
+]]></content>
+      <categories>
+        <category>Web开发</category>
+      </categories>
+      <tags>
+        <tag>Golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Go中数组和切片中的一些小技巧</title>
+    <url>/blog/2021/10/28/Go%E4%B8%AD%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%87%E7%89%87%E7%9A%84%E4%B8%80%E4%BA%9B%E6%8A%80%E5%B7%A7/</url>
+    <content><![CDATA[<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://books.studygolang.com/advanced-go-programming-book/ch1-basic/ch1-03-array-string-and-slice.html">Go语言高级编程(Advanced Go Programming)</a></p>
+<h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><ol>
+<li><p>Go中的数组是一个完整的值而不是指向数组头部元素的指针，所以一个数组遍历被复制或者被传递的时候是会复制整个数组，数组较大的时候复制和赋值的开销也会较大。为了避免复制数组带来的开销，可以传递一个指向数组的指针，但是数组指针并不是数组。 </p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := [...]<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</span><br><span class="line">	b := &amp;a</span><br><span class="line">	fmt.Println(b[<span class="number">0</span>])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<span id="more"></span>
+<ol start="2">
+<li><p>一个长度为0的数组，实际上对内存的占用也会是0，因此我们可以通过下面的方式，来实现没有付出额外的内存代价，进行了快速的迭代操作</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> times [<span class="number">5</span>][<span class="number">0</span>]<span class="type">int</span></span><br><span class="line">	<span class="keyword">for</span> <span class="keyword">range</span> times &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;hi~&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的一段代码声明了一个长度为5，每个元素都是一个空数组的数组，该数组内的每个元素对于内存的占用都是0</p>
+</li>
+<li><p>我们可以通过声明接口数组，来将不同类型的数组都放入数组内</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> element = [...]<span class="keyword">interface</span>&#123;&#125;&#123;<span class="number">123</span>, <span class="string">&quot;hello world&quot;</span>, time.Now()&#125;</span><br><span class="line">	<span class="keyword">for</span> _, v := <span class="keyword">range</span> element &#123;</span><br><span class="line">		fmt.Println(v)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="切片"><a href="#切片" class="headerlink" title="切片"></a>切片</h2><ol>
+<li><p>在尾部追加元素</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	times := [<span class="number">5</span>][<span class="number">0</span>]<span class="type">int</span>&#123;&#125;</span><br><span class="line">	a := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">	<span class="keyword">for</span> <span class="keyword">range</span> times &#123;</span><br><span class="line">		a = <span class="built_in">append</span>(a, <span class="type">int</span>(time.Now().Unix()))</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%#v\n&quot;</span>, a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>在头部追加元素</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	times := [<span class="number">5</span>][<span class="number">0</span>]<span class="type">int</span>&#123;&#125;</span><br><span class="line">	a := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">	<span class="keyword">for</span> <span class="keyword">range</span> times &#123;</span><br><span class="line">		a = <span class="built_in">append</span>([]<span class="type">int</span>&#123;<span class="type">int</span>(time.Now().Unix())&#125;, a...)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%#v\n&quot;</span>, a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在头部追加元素会导致内存的重新分配，导致已有的元素全部复制一次，因此头部追加的操作性能一般比尾部追加的操作要差</p>
+</li>
+<li><p>使用copy和append配合可以避免创建中间的临时切片，完成添加元素的操作</p>
+<p>比如我们需要在切片中间的第i个未知上追加新的内容</p>
+<p>使用append链式操作，这种情况下会有创建临时切片</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">	a = <span class="built_in">append</span>(a, []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;...)</span><br><span class="line">	<span class="comment">// 在第3位中插入一个99</span></span><br><span class="line">	a = <span class="built_in">append</span>(a[:<span class="number">3</span>], <span class="built_in">append</span>([]<span class="type">int</span>&#123;<span class="number">99</span>&#125;, a[<span class="number">3</span>:]...)...)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%#v\n&quot;</span>, a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用append配合从copy操作，我们就可以避免临时切片的创建</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">0</span>, <span class="number">6</span>)</span><br><span class="line">	a = <span class="built_in">append</span>(a, []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;...)</span><br><span class="line">	<span class="comment">// 在第3位中插入一个99</span></span><br><span class="line">	a = <span class="built_in">append</span>(a, <span class="number">0</span>)</span><br><span class="line">	<span class="built_in">copy</span>(a[<span class="number">3</span>+<span class="number">1</span>:], a[<span class="number">3</span>:])</span><br><span class="line">	a[<span class="number">3</span>] = <span class="number">99</span></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%#v\n&quot;</span>, a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先在a后面追加一个元素0，然后将第3为后面的元素全部往后移动一位，此时切片值为[1， 2， 3， 4， 4， 5]，最后再替换掉第三位的4变为99</p>
+</li>
+<li><p>切片元素的删除</p>
+<p>从尾部位置删除，直接修改指针中的len即可</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">a = []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">a = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]   <span class="comment">// 删除尾部1个元素</span></span><br><span class="line">a = a[:<span class="built_in">len</span>(a)-N]   <span class="comment">// 删除尾部N个元素</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>从头部位置删除，则有两种操作方法：</p>
+<p>移动数据指针</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"> = []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">a = a[<span class="number">1</span>:] <span class="comment">// 删除开头1个元素</span></span><br><span class="line">a = a[N:] <span class="comment">// 删除开头N个元素</span></span><br></pre></td></tr></table></figure>
+
+<p>不移动指针，使用append或者copy原地完成</p>
+<p>使用append</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">a = []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">a = <span class="built_in">append</span>(a[:<span class="number">0</span>], a[<span class="number">1</span>:]...) <span class="comment">// 删除开头1个元素</span></span><br><span class="line">a = <span class="built_in">append</span>(a[:<span class="number">0</span>], a[N:]...) <span class="comment">// 删除开头N个元素</span></span><br></pre></td></tr></table></figure>
+
+<p>使用copy</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">a = []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">a = a[:<span class="built_in">copy</span>(a, a[<span class="number">1</span>:])] <span class="comment">// 删除开头1个元素</span></span><br><span class="line">a = a[:<span class="built_in">copy</span>(a, a[N:])] <span class="comment">// 删除开头N个元素</span></span><br></pre></td></tr></table></figure>
+
+<p> 对于删除中间的元素，需要对剩余的元素进行一次整体挪动，同样可以用<code>append</code>或<code>copy</code>原地完成 </p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">a = []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, ...&#125;</span><br><span class="line"></span><br><span class="line">a = <span class="built_in">append</span>(a[:i], a[i+<span class="number">1</span>:]...) <span class="comment">// 删除中间1个元素</span></span><br><span class="line">a = <span class="built_in">append</span>(a[:i], a[i+N:]...) <span class="comment">// 删除中间N个元素</span></span><br><span class="line"></span><br><span class="line">a = a[:i+<span class="built_in">copy</span>(a[i:], a[i+<span class="number">1</span>:])]  <span class="comment">// 删除中间1个元素</span></span><br><span class="line">a = a[:i+<span class="built_in">copy</span>(a[i:], a[i+N:])]  <span class="comment">// 删除中间N个元素</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+</li>
+<li><p>避免切片内存泄漏</p>
+<p>切片操作不会复制底层的数据，底层的数据会被保存再内存中，直到它不再被引用。但有时候很可能因为一个小的内存引用导致整个底层的数组处于被使用的状态，这回导致GC延迟对该底层数组的回收</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">extract</span><span class="params">()</span></span> []<span class="type">int</span> &#123;</span><br><span class="line">	a := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">0</span>, <span class="number">100</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">100</span>; i++ &#123;</span><br><span class="line">		a = <span class="built_in">append</span>(a, i)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> a[:<span class="number">10</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们定义了个方法，方法内先生成了一个元素从0到99的切片，然后我们截取切片前10个元素返回。切片的底层是0-99共99个元素，由于返回的是该切片的指针，返回时底层数组仍然处于被该指针引用的状态，因此离开该函数时这100个底层元素都无法被GC马上回收，造成了内存泄漏</p>
+<p>为了修复这个问题，我们应该采取以下方法</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">extract</span><span class="params">()</span></span> []<span class="type">int</span> &#123;</span><br><span class="line">	a := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">0</span>, <span class="number">100</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">100</span>; i++ &#123;</span><br><span class="line">		a = <span class="built_in">append</span>(a, i)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">append</span>([]<span class="type">int</span>&#123;&#125;, a[:<span class="number">10</span>]...)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们将底层的10个元素复制过来，形成一个新的切片，然后返回新的切片。新的切片底层只有10个元素，然后函数结束后，原先的100个元素的切片因为丢失了引用，因此回马上被GC回收</p>
+<p>在删除切片内元素的时候同意会遇到类似的问题</p>
+<p>比如我们移除尾部的元素的时候</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> a []*<span class="type">int</span>&#123; ... &#125;</span><br><span class="line">a = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]    </span><br></pre></td></tr></table></figure>
+
+<p>被删除的最后一个元素依然被引用, 可能导致GC操作被阻碍，我们可以在完成操前，将需要移除的尾部元素设置为nil，然后再执行操作，这样可以保证GC发现需要回收的对象</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> a []*<span class="type">int</span>&#123; ... &#125;</span><br><span class="line">a[<span class="built_in">len</span>(a)<span class="number">-1</span>] = <span class="literal">nil</span> <span class="comment">// GC回收最后一个元素内存</span></span><br><span class="line">a = a[:<span class="built_in">len</span>(a)<span class="number">-1</span>]  <span class="comment">// 从切片删除最后一个元素</span></span><br></pre></td></tr></table></figure></li>
+</ol>
 ]]></content>
       <categories>
         <category>Web开发</category>
@@ -3534,6 +3534,8 @@
 <li>输出的go文件存放的位置</li>
 </ul>
 <p>没有该标志的时候会无法运行</p>
+<span id="more"></span>
+
 <h2 id="–proto-path"><a href="#–proto-path" class="headerlink" title="–proto_path"></a>–proto_path</h2><p>如果需要导入自定义，而且不在一个目录下的proto文件时，我们需要指定–proto_path标志，以告诉<code>protoc</code>可以到哪里去查找导入的proto文件</p>
 <p><code>protoc</code>默认会去查找的路径是：</p>
 <ul>
@@ -4333,6 +4335,83 @@
       </tags>
   </entry>
   <entry>
+    <title>记录使用hexo搭建个人博客</title>
+    <url>/blog/2019/10/31/%E8%AE%B0%E5%BD%95%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><p>本文仅是对自己使用hexo+next搭建博客的一些步骤和遇到的一些“坑”，整个搭建过程几乎都是参考了崔大大（公众号：进击的Coder）的<a href="https://mp.weixin.qq.com/s/qWMsCUjbmD1tocNEt23qVw">利用 GitHub 从零开始搭建一个博客</a>这篇文章，有兴趣的同学可以关注崔大的公众号进行阅读。本文对Node.js的安装，Git安装与环境变量的配置与Gitee账号申请等步骤不作叙述。</p>
+<hr>
+<span id="more"></span>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><ul>
+<li>系统：Win 10</li>
+<li>Git版本：</li>
+<li>Node.js版本：v12.13.0</li>
+<li>Hexo版本： v4.0.0 </li>
+<li>NexTv版本：7.4.2 </li>
+<li>部署位置：GItee</li>
+</ul>
+<hr>
+<h3 id="搭建步骤"><a href="#搭建步骤" class="headerlink" title="搭建步骤"></a>搭建步骤</h3><h4 id="更改npm镜像源，使用cnpm"><a href="#更改npm镜像源，使用cnpm" class="headerlink" title="更改npm镜像源，使用cnpm"></a>更改npm镜像源，使用cnpm</h4><p>嘛….使用淘宝镜像主要的原因是晚上家里的网络使用npm下载的时候真的慢到令人发指….</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">npm install <span class="literal">-g</span> cnpm <span class="literal">--registry</span>=https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
+
+<p>安装成功后可以使用cnpm代替npm啦~</p>
+<h4 id="全局安装Hexo框架"><a href="#全局安装Hexo框架" class="headerlink" title="全局安装Hexo框架"></a>全局安装Hexo框架</h4><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">cnpm i <span class="literal">-g</span> hexo<span class="literal">-cli</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="在目标文件夹下初始化一个Hexo项目（这里就假定我们的项目名称叫blog）"><a href="#在目标文件夹下初始化一个Hexo项目（这里就假定我们的项目名称叫blog）" class="headerlink" title="在目标文件夹下初始化一个Hexo项目（这里就假定我们的项目名称叫blog）"></a>在目标文件夹下初始化一个Hexo项目（这里就假定我们的项目名称叫blog）</h4><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo init blog</span><br></pre></td></tr></table></figure>
+
+<p>这里有个很蛋疼的情况，就是hexo默认是使用npm安装依赖的，所以碰到网速不好的时候可以在使用hexo把基本框架搭建起来后，手动使用cnpm安装依赖包</p>
+<h4 id="将-Hexo-编译生成-HTML-代码"><a href="#将-Hexo-编译生成-HTML-代码" class="headerlink" title="将 Hexo 编译生成 HTML 代码"></a>将 Hexo 编译生成 HTML 代码</h4><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure>
+
+<p>至此博客的基本框架就搭好了，可以使用<code>hexo s</code>启动本地服务，通过访问<code>http://localhost:4000</code>来访问生产的博客了</p>
+<h4 id="部署到Gitee"><a href="#部署到Gitee" class="headerlink" title="部署到Gitee"></a>部署到Gitee</h4><p>为啥选择了Gitee而木有选择大名鼎鼎的Github呢，其实就是想选个服务器在国内的….访问速度比较快，其实Gitee也就是Github的汉化版啦…..不用太纠结</p>
+<ol>
+<li><p>创建一个Repository，并配置好仓库地址啥的</p>
+</li>
+<li><p>修改我们本地项目的根目录下的<code>_config.yml</code>（吐槽一下这个跟<code>xml</code>是啥关系….）</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Site （这些是博客主页的一些静态显示内容，开心就好....）</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">&lt;你的博客的名字&gt;</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&lt;你的博客的副标题&gt;</span></span><br><span class="line"><span class="attr">description:</span></span><br><span class="line"><span class="attr">keywords:</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">&lt;作者&gt;</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">en</span></span><br><span class="line"><span class="attr">timezone:</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># URL 这个位置很重要，请千万要记得配置，之前没有作配置导致css和js木有被正确识别，不知道是不是只有Gitee有这个问题，崔大的文章中使用的Github没有提这个</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">&lt;仓库地址，如https://gitee.com/xxxxx/blog/&gt;</span></span><br><span class="line"><span class="attr">root:</span> <span class="string">&lt;仓库地址的根目录，如/blog&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Deployment</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">&lt;仓库地址+.git，如https://gitee.com/xxxxx/blog.git&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装hexo的一个部署插件hexo-deployer-git</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">cnpm i hexo<span class="literal">-deployer-git</span> <span class="literal">--save</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在根目录一个一键部署的脚本，<code>deploy.sh</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行部署脚本</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">sh deploy.sh</span><br></pre></td></tr></table></figure>
+
+<p>若本计算机是第一次与Gitee进行连接的时候是需要提交用户名和密码的（如果配置了ssh就不用，但是我懒….），以后就可以被Gitee记住直连啦</p>
+</li>
+<li><p>部署完成后，进入项目仓库，点击Service –&gt; Gitee Pages –&gt; Create即可完成部署，部署完成后可以根据部署页面的提示的url进入你的博客查看部署效果啦~</p>
+</li>
+</ol>
+<h4 id="修改主题与样式"><a href="#修改主题与样式" class="headerlink" title="修改主题与样式"></a>修改主题与样式</h4><p>觉得自带的样式不太喜欢….就可以更换一下自己喜欢的主题，本文还是使用崔大推荐的Next，熊猫风格很赞的说</p>
+<ol>
+<li><p>安装Next主题到项目文件夹theme中：</p>
+<p>在项目的根目录右键选择Git Bash，打开后输入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/theme-next/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>修改根目录下的<code>_config.yml</code></p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">theme:</span> <span class="string">next</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>修改<code>theme\next</code>下的<code>_config.yml</code></p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">scheme:</span> <span class="string">Pisces</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>上班修bug困了….明天接着填….</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>个人博客搭建</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>记录一些koa入门知识</title>
     <url>/blog/2019/11/09/%E8%AE%B0%E5%BD%95%E4%B8%80%E4%BA%9Bkoa%E5%85%A5%E9%97%A8%E7%9F%A5%E8%AF%86/</url>
     <content><![CDATA[<h3 id="Koa-安装"><a href="#Koa-安装" class="headerlink" title="Koa 安装"></a>Koa 安装</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">// 初始化一个node项目</span><br><span class="line">npm init -yes</span><br><span class="line">// 安装koa</span><br><span class="line">npm i koa --save</span><br></pre></td></tr></table></figure>
@@ -4431,83 +4510,6 @@
       </categories>
       <tags>
         <tag>Node.js</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>记录使用hexo搭建个人博客</title>
-    <url>/blog/2019/10/31/%E8%AE%B0%E5%BD%95%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><p>本文仅是对自己使用hexo+next搭建博客的一些步骤和遇到的一些“坑”，整个搭建过程几乎都是参考了崔大大（公众号：进击的Coder）的<a href="https://mp.weixin.qq.com/s/qWMsCUjbmD1tocNEt23qVw">利用 GitHub 从零开始搭建一个博客</a>这篇文章，有兴趣的同学可以关注崔大的公众号进行阅读。本文对Node.js的安装，Git安装与环境变量的配置与Gitee账号申请等步骤不作叙述。</p>
-<hr>
-<span id="more"></span>
-<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><ul>
-<li>系统：Win 10</li>
-<li>Git版本：</li>
-<li>Node.js版本：v12.13.0</li>
-<li>Hexo版本： v4.0.0 </li>
-<li>NexTv版本：7.4.2 </li>
-<li>部署位置：GItee</li>
-</ul>
-<hr>
-<h3 id="搭建步骤"><a href="#搭建步骤" class="headerlink" title="搭建步骤"></a>搭建步骤</h3><h4 id="更改npm镜像源，使用cnpm"><a href="#更改npm镜像源，使用cnpm" class="headerlink" title="更改npm镜像源，使用cnpm"></a>更改npm镜像源，使用cnpm</h4><p>嘛….使用淘宝镜像主要的原因是晚上家里的网络使用npm下载的时候真的慢到令人发指….</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">npm install <span class="literal">-g</span> cnpm <span class="literal">--registry</span>=https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
-
-<p>安装成功后可以使用cnpm代替npm啦~</p>
-<h4 id="全局安装Hexo框架"><a href="#全局安装Hexo框架" class="headerlink" title="全局安装Hexo框架"></a>全局安装Hexo框架</h4><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">cnpm i <span class="literal">-g</span> hexo<span class="literal">-cli</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="在目标文件夹下初始化一个Hexo项目（这里就假定我们的项目名称叫blog）"><a href="#在目标文件夹下初始化一个Hexo项目（这里就假定我们的项目名称叫blog）" class="headerlink" title="在目标文件夹下初始化一个Hexo项目（这里就假定我们的项目名称叫blog）"></a>在目标文件夹下初始化一个Hexo项目（这里就假定我们的项目名称叫blog）</h4><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo init blog</span><br></pre></td></tr></table></figure>
-
-<p>这里有个很蛋疼的情况，就是hexo默认是使用npm安装依赖的，所以碰到网速不好的时候可以在使用hexo把基本框架搭建起来后，手动使用cnpm安装依赖包</p>
-<h4 id="将-Hexo-编译生成-HTML-代码"><a href="#将-Hexo-编译生成-HTML-代码" class="headerlink" title="将 Hexo 编译生成 HTML 代码"></a>将 Hexo 编译生成 HTML 代码</h4><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure>
-
-<p>至此博客的基本框架就搭好了，可以使用<code>hexo s</code>启动本地服务，通过访问<code>http://localhost:4000</code>来访问生产的博客了</p>
-<h4 id="部署到Gitee"><a href="#部署到Gitee" class="headerlink" title="部署到Gitee"></a>部署到Gitee</h4><p>为啥选择了Gitee而木有选择大名鼎鼎的Github呢，其实就是想选个服务器在国内的….访问速度比较快，其实Gitee也就是Github的汉化版啦…..不用太纠结</p>
-<ol>
-<li><p>创建一个Repository，并配置好仓库地址啥的</p>
-</li>
-<li><p>修改我们本地项目的根目录下的<code>_config.yml</code>（吐槽一下这个跟<code>xml</code>是啥关系….）</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Site （这些是博客主页的一些静态显示内容，开心就好....）</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">&lt;你的博客的名字&gt;</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&lt;你的博客的副标题&gt;</span></span><br><span class="line"><span class="attr">description:</span></span><br><span class="line"><span class="attr">keywords:</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">&lt;作者&gt;</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">en</span></span><br><span class="line"><span class="attr">timezone:</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># URL 这个位置很重要，请千万要记得配置，之前没有作配置导致css和js木有被正确识别，不知道是不是只有Gitee有这个问题，崔大的文章中使用的Github没有提这个</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">&lt;仓库地址，如https://gitee.com/xxxxx/blog/&gt;</span></span><br><span class="line"><span class="attr">root:</span> <span class="string">&lt;仓库地址的根目录，如/blog&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Deployment</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">&lt;仓库地址+.git，如https://gitee.com/xxxxx/blog.git&gt;</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>安装hexo的一个部署插件hexo-deployer-git</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">cnpm i hexo<span class="literal">-deployer-git</span> <span class="literal">--save</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在根目录一个一键部署的脚本，<code>deploy.sh</code></p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>执行部署脚本</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">sh deploy.sh</span><br></pre></td></tr></table></figure>
-
-<p>若本计算机是第一次与Gitee进行连接的时候是需要提交用户名和密码的（如果配置了ssh就不用，但是我懒….），以后就可以被Gitee记住直连啦</p>
-</li>
-<li><p>部署完成后，进入项目仓库，点击Service –&gt; Gitee Pages –&gt; Create即可完成部署，部署完成后可以根据部署页面的提示的url进入你的博客查看部署效果啦~</p>
-</li>
-</ol>
-<h4 id="修改主题与样式"><a href="#修改主题与样式" class="headerlink" title="修改主题与样式"></a>修改主题与样式</h4><p>觉得自带的样式不太喜欢….就可以更换一下自己喜欢的主题，本文还是使用崔大推荐的Next，熊猫风格很赞的说</p>
-<ol>
-<li><p>安装Next主题到项目文件夹theme中：</p>
-<p>在项目的根目录右键选择Git Bash，打开后输入</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/theme-next/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>修改根目录下的<code>_config.yml</code></p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">theme:</span> <span class="string">next</span></span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>修改<code>theme\next</code>下的<code>_config.yml</code></p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">scheme:</span> <span class="string">Pisces</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>上班修bug困了….明天接着填….</p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>个人博客搭建</category>
-      </categories>
-      <tags>
-        <tag>hexo</tag>
       </tags>
   </entry>
   <entry>
