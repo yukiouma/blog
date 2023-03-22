@@ -180,6 +180,96 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://yukiouma.github.io/blog/2022/02/11/Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpg">
+      <meta itemprop="name" content="Yuki">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Meowthra@ᓚᘏᗢ">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/2022/02/11/Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">Go并发编程笔记</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-02-11 22:24:47" itemprop="dateCreated datePublished" datetime="2022-02-11T22:24:47+00:00">2022-02-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-03-22 15:40:40" itemprop="dateModified" datetime="2023-03-22T15:40:40+00:00">2023-03-22</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/Web%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">Web开发</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Goroutine"><a href="#Goroutine" class="headerlink" title="Goroutine"></a>Goroutine</h1><h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><ul>
+<li><p>轻量，可大量创建，以并发的特性去执行</p>
+</li>
+<li><p>main函数就是作为goroutine执行的，是主goroutine，当该goroutine退出后，它派生的所有goroutine将被强制退出</p>
+</li>
+<li><p>OS调度线程到可用的处理器上运行</p>
+</li>
+<li><p>Go runtime调度goroutine在绑定到单个OS线程的逻辑处理器（一般简称为P）的队列上，最终各个线程到队列中获取一个goroutine去执行</p>
+</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/2022/02/11/Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="https://yukiouma.github.io/blog/2022/01/12/%E5%A6%82%E4%BD%95%E5%8F%91%E5%B8%83Go-Module/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -211,7 +301,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-02-02 13:13:19" itemprop="dateModified" datetime="2023-02-02T13:13:19+00:00">2023-02-02</time>
+                <time title="Modified: 2023-03-22 15:40:40" itemprop="dateModified" datetime="2023-03-22T15:40:40+00:00">2023-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -293,7 +383,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-02-02 13:13:19" itemprop="dateModified" datetime="2023-02-02T13:13:19+00:00">2023-02-02</time>
+                <time title="Modified: 2023-03-22 15:40:40" itemprop="dateModified" datetime="2023-03-22T15:40:40+00:00">2023-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -378,7 +468,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-02-02 13:13:19" itemprop="dateModified" datetime="2023-02-02T13:13:19+00:00">2023-02-02</time>
+                <time title="Modified: 2023-03-22 15:40:40" itemprop="dateModified" datetime="2023-03-22T15:40:40+00:00">2023-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -467,7 +557,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-02-02 13:13:19" itemprop="dateModified" datetime="2023-02-02T13:13:19+00:00">2023-02-02</time>
+                <time title="Modified: 2023-03-22 15:40:40" itemprop="dateModified" datetime="2023-03-22T15:40:40+00:00">2023-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -556,7 +646,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-02-02 13:13:19" itemprop="dateModified" datetime="2023-02-02T13:13:19+00:00">2023-02-02</time>
+                <time title="Modified: 2023-03-22 15:40:40" itemprop="dateModified" datetime="2023-03-22T15:40:40+00:00">2023-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -641,7 +731,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-02-02 13:13:19" itemprop="dateModified" datetime="2023-02-02T13:13:19+00:00">2023-02-02</time>
+                <time title="Modified: 2023-03-22 15:40:40" itemprop="dateModified" datetime="2023-03-22T15:40:40+00:00">2023-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -734,7 +824,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-02-02 13:13:19" itemprop="dateModified" datetime="2023-02-02T13:13:19+00:00">2023-02-02</time>
+                <time title="Modified: 2023-03-22 15:40:40" itemprop="dateModified" datetime="2023-03-22T15:40:40+00:00">2023-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -816,7 +906,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-02-02 13:13:19" itemprop="dateModified" datetime="2023-02-02T13:13:19+00:00">2023-02-02</time>
+                <time title="Modified: 2023-03-22 15:40:40" itemprop="dateModified" datetime="2023-03-22T15:40:40+00:00">2023-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -900,7 +990,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-02-02 13:13:19" itemprop="dateModified" datetime="2023-02-02T13:13:19+00:00">2023-02-02</time>
+                <time title="Modified: 2023-03-22 15:40:40" itemprop="dateModified" datetime="2023-03-22T15:40:40+00:00">2023-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -933,87 +1023,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2021/01/25/InnoDB-MVCC%E7%AC%94%E8%AE%B0/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://yukiouma.github.io/blog/2021/01/20/InnoDB-%E4%BA%8B%E5%8A%A1%E7%AC%94%E8%AE%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpg">
-      <meta itemprop="name" content="Yuki">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Meowthra@ᓚᘏᗢ">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2021/01/20/InnoDB-%E4%BA%8B%E5%8A%A1%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">InnoDB 事务笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2021-01-20 17:55:11" itemprop="dateCreated datePublished" datetime="2021-01-20T17:55:11+00:00">2021-01-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2023-02-02 13:13:19" itemprop="dateModified" datetime="2023-02-02T13:13:19+00:00">2023-02-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/Database/" itemprop="url" rel="index"><span itemprop="name">Database</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>MySQL中仅<code>innoDB</code>支持事务</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/blog/2021/01/20/InnoDB-%E4%BA%8B%E5%8A%A1%E7%AC%94%E8%AE%B0/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -1104,7 +1113,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/blog/archives/">
         
-          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
